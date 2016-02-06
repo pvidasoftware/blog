@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>About</title>
+    <title>Creando un blog estático con JBake</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -10,14 +10,14 @@
     <meta name="generator" content="JBake">
 
     <!-- Le styles -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/asciidoctor.css" rel="stylesheet">
-    <link href="css/base.css" rel="stylesheet">
-    <link href="css/prettify.css" rel="stylesheet">
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/asciidoctor.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link href="../../css/prettify.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-      <script src="js/html5shiv.min.js"></script>
+      <script src="../../js/html5shiv.min.js"></script>
     <![endif]-->
 
     <!-- Fav and touch icons -->
@@ -25,12 +25,12 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">-->
-    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="shortcut icon" href="../../favicon.ico">
   </head>
   <body onload="prettyPrint()">
     <div id="wrap">
    
-
+	
 		<!-- Fixed navbar -->
     <div class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container">
@@ -41,13 +41,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="">@pvidasoftware</a>
+          <a class="navbar-brand" href="../../">@pvidasoftware</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="feed.xml">Subscribe</a></li>
+            <li><a href="../../index.html">Home</a></li>
+            <li><a href="../../about.html">About</a></li>
+            <li><a href="../../feed.xml">Subscribe</a></li>
             <!--li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
               <ul class="dropdown-menu">
@@ -67,24 +67,60 @@
     <div class="container">
 	
 	<div class="page-header">
-		<h1>About</h1>
+		<h1>Creando un blog estático con JBake</h1>
 	</div>
 
-	<p><em>24 septiembre 2013</em></p>
+	<p><em>04 febrero 2016</em></p>
 
-	<p>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vel diam purus. Curabitur ut nisi lacus. 
-Nam id nisl quam. Donec a lorem sit amet libero pretium vulputate vel ut purus. Suspendisse leo arcu, 
-mattis et imperdiet luctus, pulvinar vitae mi. Quisque fermentum sollicitudin feugiat. Mauris nec leo 
-ligula. Vestibulum tristique odio ut risus ultricies a hendrerit quam iaculis. Duis tempor elit sit amet 
-ligula vehicula et iaculis sem placerat. Fusce dictum, metus at volutpat lacinia, elit massa auctor risus, 
-id auctor arcu enim eu augue. Donec ultrices turpis in mi imperdiet ac venenatis sapien sodales. In 
-consequat imperdiet nunc quis bibendum. Nulla semper, erat quis ornare tristique, lectus massa posuere 
-libero, ut vehicula lectus nunc ut lorem. Aliquam erat volutpat.
-</p>
+	<p><div class="paragraph">
+<p>Qué duda cabe que WordPress sigue siendo uno de los reyes para la generación de blogs. Sin embargo plantea algunos
+problemas:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>necesitas alojamiento PHP</p>
+</li>
+<li>
+<p>necesitas una base de datos (MySQL)</p>
+</li>
+<li>
+<p>a pesar de que el proceso de instalación es sencillo, no está al alcance de todos.</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Nuestro primer blog estaba basado en WP, pero PHP no es nuestro lenguaje preferido y aunque nuestro alojamiento nos
+permite utilizar bases de datos y php, creíamos que debíamos aplicar las herramientas y lenguajes que usamos a diario.</p>
+</div>
+<div class="paragraph">
+<p>Y un buen día leyendo el blog de <a href="http://melix.github.io/blog/2014/02/hosting-jbake-github.html">Cedric Champeau</a>
+&#8230;&#8203; descubrimos <a href="http://www.jbake.org" class="bare">http://www.jbake.org</a>, un generador de blog estático en Groovy y
+nos pusimos manos a la obra. Tras buscar un poco más de información y utilidades, este es el entorno que usaremos:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://sdkman.io/">SdkMan</a> como gestor de frameworks.</p>
+</li>
+<li>
+<p><a href="http://groovy-lang.org">Groovy</a> como lenguaje de referencia.</p>
+</li>
+<li>
+<p><a href="https://github.com/cjstehno/lazybones-templates">Chris' Lazybones Templates</a> magnifica plantilla que nos permitirá
+empezar inmediatamente con JBake.</p>
+</li>
+<li>
+<p><a href="https://www.jetbrains.com/idea/">Intellij</a> como entorno desde el que realizar la edición, revisión y publicación.</p>
+</li>
+</ul>
+</div></p>
 
 	<hr />
-
+	
 		</div>
 		<div id="push"></div>
     </div>
@@ -98,9 +134,9 @@ libero, ut vehicula lectus nunc ut lorem. Aliquam erat volutpat.
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/jquery-1.11.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/prettify.js"></script>
+    <script src="../../js/jquery-1.11.1.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/prettify.js"></script>
     
   </body>
 </html>
