@@ -1,0 +1,31 @@
+= Creando un blog estático con JBake
+Jorge Aguilera
+2016-2-4
+:jbake-type: post
+:jbake-status: published
+:jbake-tags: blog, asciidoc
+:idprefix:
+
+Qué duda cabe que WordPress sigue siendo uno de los reyes para la generación de blogs. Sin embargo plantea algunos
+problemas:
+
+* necesitas alojamiento PHP
+* necesitas una base de datos (MySQL)
+* a pesar de que el proceso de instalación es sencillo, no está al alcance de todos.
+* ...
+
+
+Nuestro primer blog estaba basado en WP, pero PHP no es nuestro lenguaje preferido y aunque nuestro alojamiento nos
+permite utilizar bases de datos y php, creíamos que debíamos aplicar las herramientas y lenguajes que usamos a diario.
+
+Y un buen día leyendo el blog de link:http://melix.github.io/blog/2014/02/hosting-jbake-github.html[Cedric Champeau]
+... descubrimos http://www.jbake.org, un generador de blog estático en Groovy y
+nos pusimos manos a la obra. Tras buscar un poco más de información y utilidades, este es el entorno que usaremos:
+
+ * link:http://sdkman.io/[SdkMan] como gestor de frameworks.
+ * link:http://groovy-lang.org[Groovy] como lenguaje de referencia.
+ * link:https://github.com/cjstehno/lazybones-templates[Chris' Lazybones Templates] magnifica plantilla que nos permitirá
+empezar inmediatamente con JBake.
+ * link:https://www.jetbrains.com/idea/[Intellij] como entorno desde el que realizar la edición, revisión y publicación.
+
+
