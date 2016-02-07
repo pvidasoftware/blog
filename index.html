@@ -72,7 +72,10 @@
 	
 		<a href="blog/2016/first-post.html"><h1>Creando un blog estático con JBake</h1></a>
 		<p>04 febrero 2016</p>
-		<p><div class="paragraph">
+		<p><div class="sect1">
+<h2 id="adios_wordpress">Adios WordPress</h2>
+<div class="sectionbody">
+<div class="paragraph">
 <p>Qué duda cabe que WordPress sigue siendo uno de los reyes para la generación de blogs. Sin embargo plantea algunos
 problemas:</p>
 </div>
@@ -117,12 +120,66 @@ empezar inmediatamente con JBake.</p>
 <p><a href="https://www.jetbrains.com/idea/">Intellij</a> como entorno desde el que realizar la edición, revisión y publicación.</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>Como bola extra, la plantilla que nos proporciona Chris nos incluye un entorno y herramientas muy útiles para los "groovyeros":</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>un proyecto Gradle</p>
+</li>
+<li>
+<p>plugin jBake para Gradle</p>
+</li>
+<li>
+<p>plugin ajoberstar.github-pages para publicar en GitHub nuestro blog</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="customizando_nuestro_blog">Customizando nuestro blog</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Una vez tengamos montada la estructura básica y hayamos podido generar nuestro primer blog, podremos empezar
+ a ajustarle a nuestro gusto. Por defecto JBake usa Bootstrap pero podrías usar cualquier otra utilidad o incluso
+ usar la tuya propia. En un próximo post explicaré cómo darle un diseño a tu blog JBake más "<a href="https://www.google.com/design/spec/material-design/introduction.html">material</a>"</p>
+</div>
+<div class="paragraph">
+<p>Lo primero que cambiaremos será el titulo y para ello crearemos una variable de proyecto en el fichero
+de propiedades de jbake:</p>
+</div>
+<div class="listingblock">
+<div class="title">jbake.properties</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>site.title=@pvidasoftware</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ahora podremos usar esa nueva variable en cualquier parte de nuestras páginas:</p>
+</div>
+<div class="listingblock">
+<div class="title">templates/header.gsp</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>&lt;title&gt;&lt;%if (content.title) {%&gt;${content.title}&lt;% } else { %&gt;${config.site_title}&lt;% }%&gt;&lt;/title&gt; <b class="conum">(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>La configuracion site.title se referencia en el template como config.site_title</p>
+</li>
+</ol>
+</div>
+</div>
 </div></p>
   	
 	
 	<hr />
 	
-	<p>Older posts are available in the <a href="/archive.html">archive</a>.</p>
+	<p>Older posts are available in the <a href="archive.html">archive</a>.</p>
 
 		</div>
 		<div id="push"></div>
