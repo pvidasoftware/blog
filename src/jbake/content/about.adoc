@@ -1,0 +1,11 @@
+= About
+Jorge Aguilera
+2016-2-4
+:jbake-type: page
+:jbake-status: published
+:jbake-tags: blog, asciidoc
+:idprefix:
+
+== PuraVida Software
+
+Empresa de consultoría y desarrollos tecnológicos, ubicada en Madrid.

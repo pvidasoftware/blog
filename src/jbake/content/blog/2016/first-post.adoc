@@ -6,6 +6,8 @@ Jorge Aguilera
 :jbake-tags: blog, asciidoc
 :idprefix:
 
+== Adios WordPress
+
 Qué duda cabe que WordPress sigue siendo uno de los reyes para la generación de blogs. Sin embargo plantea algunos
 problemas:
 
@@ -27,5 +29,37 @@ nos pusimos manos a la obra. Tras buscar un poco más de información y utilidad
  * link:https://github.com/cjstehno/lazybones-templates[Chris' Lazybones Templates] magnifica plantilla que nos permitirá
 empezar inmediatamente con JBake.
  * link:https://www.jetbrains.com/idea/[Intellij] como entorno desde el que realizar la edición, revisión y publicación.
+
+Como bola extra, la plantilla que nos proporciona Chris nos incluye un entorno y herramientas muy útiles para los "groovyeros":
+
+* un proyecto Gradle
+* plugin jBake para Gradle
+* plugin ajoberstar.github-pages para publicar en GitHub nuestro blog
+
+
+== Customizando nuestro blog
+
+Una vez tengamos montada la estructura básica y hayamos podido generar nuestro primer blog, podremos empezar
+ a ajustarle a nuestro gusto. Por defecto JBake usa Bootstrap pero podrías usar cualquier otra utilidad o incluso
+ usar la tuya propia. En un próximo post explicaré cómo darle un diseño a tu blog JBake más "link:https://www.google.com/design/spec/material-design/introduction.html[material]"
+
+Lo primero que cambiaremos será el titulo y para ello crearemos una variable de proyecto en el fichero
+de propiedades de jbake:
+
+[source]
+.jbake.properties
+----
+site.title=@pvidasoftware
+----
+
+Ahora podremos usar esa nueva variable en cualquier parte de nuestras páginas:
+
+[source]
+.templates/header.gsp
+----
+<title><%if (content.title) {%>${content.title}<% } else { %>${config.site_title}<% }%></title> // <1>
+----
+<1> La configuracion site.title se referencia en el template como config.site_title
+
 
 
