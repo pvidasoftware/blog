@@ -70,9 +70,21 @@
 		<h1>Blog</h1>
 	</div>
 	
-		<a href="blog/2016/first-post.html"><h1>Creando un blog estático con JBake</h1></a>
-		<p>04 febrero 2016</p>
-		<p><div class="sect1">
+		<a href="blog/2016/queryDSL-post.html"><h3>Construye tu propia DSL</h3></a>
+		<em>11 febrero 2016</em>
+		<!--p><div class="sect1">
+<h2 id="dsl_con_groovy">DSL con Groovy</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>DSL, o <a href="https://es.wikipedia.org/wiki/Lenguaje_espec%C3%ADfico_del_dominio">Lenguaje específico de dominio</a>, con Groovy
+es realmente "sencillo" una vez que se entiende. Existen numerosos recursos, e incluso libros dedicados a ello exclusivamente,
+por lo que no nos extenderemos demasiado en este post, simplemente apuntar que puedes diseñar tu propio DSL de tal forma
+que ...</p-->
+		<hr>
+  	
+		<a href="blog/2016/first-post.html"><h3>Creando un blog estático con JBake</h3></a>
+		<em>04 febrero 2016</em>
+		<!--p><div class="sect1">
 <h2 id="adios_wordpress">Adios WordPress</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -91,90 +103,8 @@ problemas:</p>
 <p>a pesar de que el proceso de instalación es sencillo, no está al alcance de todos.</p>
 </li>
 <li>
-<p>&#8230;&#8203;</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Nuestro primer blog estaba basado en WP, pero PHP no es nuestro lenguaje preferido y aunque nuestro alojamiento nos
-permite utilizar bases de datos y php, creíamos que debíamos aplicar las herramientas y lenguajes que usamos a diario.</p>
-</div>
-<div class="paragraph">
-<p>Y un buen día leyendo el blog de <a href="http://melix.github.io/blog/2014/02/hosting-jbake-github.html">Cedric Champeau</a>
-&#8230;&#8203; descubrimos <a href="http://www.jbake.org" class="bare">http://www.jbake.org</a>, un generador de blog estático en Groovy y
-nos pusimos manos a la obra. Tras buscar un poco más de información y utilidades, este es el entorno que usaremos:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="http://sdkman.io/">SdkMan</a> como gestor de frameworks.</p>
-</li>
-<li>
-<p><a href="http://groovy-lang.org">Groovy</a> como lenguaje de referencia.</p>
-</li>
-<li>
-<p><a href="https://github.com/cjstehno/lazybones-templates">Chris' Lazybones Templates</a> magnifica plantilla que nos permitirá
-empezar inmediatamente con JBake.</p>
-</li>
-<li>
-<p><a href="https://www.jetbrains.com/idea/">Intellij</a> como entorno desde el que realizar la edición, revisión y publicación.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Como bola extra, la plantilla que nos proporciona Chris nos incluye un entorno y herramientas muy útiles para los "groovyeros":</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>un proyecto Gradle</p>
-</li>
-<li>
-<p>plugin jBake para Gradle</p>
-</li>
-<li>
-<p>plugin ajoberstar.github-pages para publicar en GitHub nuestro blog</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="customizando_nuestro_blog">Customizando nuestro blog</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Una vez tengamos montada la estructura básica y hayamos podido generar nuestro primer blog, podremos empezar
- a ajustarle a nuestro gusto. Por defecto JBake usa Bootstrap pero podrías usar cualquier otra utilidad o incluso
- usar la tuya propia. En un próximo post explicaré cómo darle un diseño a tu blog JBake más "<a href="https://www.google.com/design/spec/material-design/introduction.html">material</a>"</p>
-</div>
-<div class="paragraph">
-<p>Lo primero que cambiaremos será el titulo y para ello crearemos una variable de proyecto en el fichero
-de propiedades de jbake:</p>
-</div>
-<div class="listingblock">
-<div class="title">jbake.properties</div>
-<div class="content">
-<pre class="prettyprint highlight"><code>site.title=@pvidasoftware</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Ahora podremos usar esa nueva variable en cualquier parte de nuestras páginas:</p>
-</div>
-<div class="listingblock">
-<div class="title">templates/header.gsp</div>
-<div class="content">
-<pre class="prettyprint highlight"><code>&lt;title&gt;&lt;%if (content.title) {%&gt;${content.title}&lt;% } else { %&gt;${config.site_title}&lt;% }%&gt;&lt;/title&gt; <b class="conum">(1)</b></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<ol>
-<li>
-<p>La configuracion site.title se referencia en el template como config.site_title</p>
-</li>
-</ol>
-</div>
-</div>
-</div></p>
+<p>&#8230;&#820...</p-->
+		<hr>
   	
 	
 	<hr />
@@ -187,7 +117,9 @@ de propiedades de jbake:</p>
     
     <div id="footer">
       <div class="container">
-        <p class="muted credit">&copy; 2014 | Mixed with <a href="http://getbootstrap.com/">Bootstrap v3.1.1</a> | Baked with <a href="http://jbake.org">JBake v2.4.0</a></p>
+        <p class="muted">PuraVida Software,SL c/ Betancunia 1, local A, Madrid 28017, <a href="mailto:contacto@puravida-software.com">Contacto</a>
+            <span class="credit">&copy; 2016 | Mixed with <a href="http://getbootstrap.com/">Bootstrap v3.1.1</a> | Baked with <a href="http://jbake.org">JBake v2.4.0</a></span>
+        </p>
       </div>
     </div>
     
@@ -199,4 +131,16 @@ de propiedades de jbake:</p>
     <script src="js/prettify.js"></script>
     
   </body>
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-687332-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
 </html>

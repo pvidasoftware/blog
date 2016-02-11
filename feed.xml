@@ -6,9 +6,222 @@
     <atom:link href="https://pvidasoftware.github.io/blog/feed.xml" rel="self" type="application/rss+xml" />
     <description>JBake Bootstrap Template</description>
     <language>en-gb</language>
-    <pubDate>dom, 7 feb 2016 20:42:50 +0100</pubDate>
-    <lastBuildDate>dom, 7 feb 2016 20:42:50 +0100</lastBuildDate>
+    <pubDate>jue, 11 feb 2016 16:19:40 +0100</pubDate>
+    <lastBuildDate>jue, 11 feb 2016 16:19:40 +0100</lastBuildDate>
 
+    
+    <item>
+      <title>Construye tu propia DSL</title>
+      <link>https://pvidasoftware.github.io/blog/blog/2016/queryDSL-post.html</link>
+      <pubDate>jue, 11 feb 2016 00:00:00 +0100</pubDate>
+      <guid isPermaLink="false">blog/2016/queryDSL-post.html</guid>
+      <description>
+      &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;dsl_con_groovy&quot;&gt;DSL con Groovy&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;DSL, o &lt;a href=&quot;https://es.wikipedia.org/wiki/Lenguaje_espec%C3%ADfico_del_dominio&quot;&gt;Lenguaje específico de dominio&lt;/a&gt;, con Groovy
+es realmente &quot;sencillo&quot; una vez que se entiende. Existen numerosos recursos, e incluso libros dedicados a ello exclusivamente,
+por lo que no nos extenderemos demasiado en este post, simplemente apuntar que puedes diseñar tu propio DSL de tal forma
+que la comunicación entre departamentos, por ejemplo, sea mucho más fluida y clara, o que tu código sea mucho más fácil de entender.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Para ello vamos a desarrollar un pequeño DSL que nos permitirá construir sentencias SQL (de toda la vida) de una forma
+más manejable.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;querydsl&quot;&gt;QueryDSL&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;( Recuerda que puedes obtener el código de &lt;a href=&quot;https://github.com/pvidasoftware/QueryDSL&quot;&gt;https://github.com/pvidasoftware/QueryDSL&lt;/a&gt; )&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Mediante QueryDSL pretendemos obtener una String para poder lanzar consultas a nuestro motor de base de datos.
+De forma tradicional haríamos algo parecido a:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;String query = &quot;select a.field1, a.field2 from mytable a inner join table2 b on a.field1 = b.field1 where a.field = 501 group by 1&quot;;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Como puedes imaginar, cuando la lista de campos crece, el número de joins aumenta o las condiciones varían la lógica para
+construir la cadena se incrementa haciendola muchas veces imposible de seguir/entender.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Hoy en día exisen numerosos frameworks que ocultan esta complejidad y que incluso hacen el mapping de los datos a objetos, pero
+hay también muchas veces donde no podemos/queremos disponer de estos frameworks.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Imaginemos el ejemplo anterior escrito de esta forma:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;def queryDSL = QueryDSL.build {
+        select &apos;a.field1, a.field2&apos;  &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+        from &apos;mytable a&apos;             &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+        where{                       &lt;b class=&quot;conum&quot;&gt;(3)&lt;/b&gt;
+            and{
+                eq &quot;a.field1&quot;, 501
+            }
+        }
+        innerJoin &quot;table2 b&quot; on &quot;a.field1&quot; eq &quot;b.field1&quot;  &lt;b class=&quot;conum&quot;&gt;(4)&lt;/b&gt;
+        groupBy 1   &lt;b class=&quot;conum&quot;&gt;(5)&lt;/b&gt;
+    }
+String select = queryDSL.SQL&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;colist arabic&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;campos que queremos&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;de qué tabla&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;condiciones de filtro&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;unión con otras tablas&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;agrupar por el primer campo&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Como vemos, las diferentes partes de la sentencia se encuentran separadas de tal forma que nos permite comentarios:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-groovy&quot; data-lang=&quot;groovy&quot;&gt;def queryDSL = QueryDSL.build {
+        // tomamos dos campos e ignoramos el resto
+        select &apos;a.field1, a.field2&apos;
+....&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;o incluso que el orden de la sintáxis no sea rígido :&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-groovy&quot; data-lang=&quot;groovy&quot;&gt;def queryDSL = QueryDSL.build {
+        select &apos;a.field1, a.field2&apos;
+        from &apos;mytable a&apos;
+        innerJoin &quot;table2 b&quot; on &quot;a.field1&quot; eq &quot;b.field1&quot;
+        whrere{
+....&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;construyendo_nuestra_querydsl&quot;&gt;Construyendo nuestra QueryDSL&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;La idea de QueryDSQL es que mediante una closure le iremos indicando las diferentes partes de una query para que al final
+nos devuelva una cadena especialmente diseñada para ser ejecutada como sentencia SQL.
+Así vemos que nuestra DSL tendría que tener una forma de especificar:
+ - campo(s) a recuperar
+ - tabla a la que consultar
+ - posibilidad de enlazar con otras tablas (join)
+ - sintáxis (opcinal) para poder filtrar (where) con posibilidad de parámetros con nombres
+ - sintáxis (opcional) para poder agrupar&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Además vamos a querer que esta DSL nos permita obtener la query para hacer una select y/o un count sin tener que volver
+ a escribir la closure.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;factoría_querydsl&quot;&gt;Factoría QueryDSL&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Lo primero que crearemos será un método estático que aceptará una &quot;closure&quot; como argumento (para saber más de closures
+en groovy visita la documentación de &lt;a href=&quot;http://groovy-lang.org/closures.html:&quot;&gt;Groovy Lang&lt;/a&gt; ):&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-groovy&quot; data-lang=&quot;groovy&quot;&gt;def static QueryDSL build( closure ) {
+        QueryDSL dsl = new QueryDSL()
+        closure.delegate = dsl
+        closure()
+        dsl
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Como puedes ver el método build crea una clase del tipo QueryDSL que al ser privada sólo puede ser creada por él, y se
+lo asigna a la closure como delegate. De esta forma cuando se ejecute la closure los métodos que se llamen dentro de ella
+que no tenga serán redirigidos al delegate para que los resuelva.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;populando_el_dsl&quot;&gt;&quot;Populando&quot; el dsl&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;La closure irá llamando a métodos en nuestro &lt;strong&gt;dsl&lt;/strong&gt; delegate pasandole argumentos.
+De esta forma si la closure llama a un método &quot;select&quot; y el delegate lo implementa, este será llamado automáticamente.
+Además gracias a Groovy elegirá el método más adecuado:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-groovy&quot; data-lang=&quot;groovy&quot;&gt;   def select(String field){
+        this.fields = field
+    }
+
+    def select(String[]fields){
+        this.fields = fields.join(&apos;,&apos;)
+    }
+
+    def select(List fields){
+        this.fields = fields.join(&apos;,&apos;)
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;usando_el_dsl&quot;&gt;Usando el dsl&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Una vez que tenemos un queryDSL &quot;populado&quot; podremos solicitarle que nos devuelva por ejemplo la sentencia SQL para ser
+usada en un data source o la sentencia SQL para contar el número de registros que cumplen la condición:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-groovy&quot; data-lang=&quot;groovy&quot;&gt;new Sql(dataSource).rows(queryDSL.SQL)
+new Sql(dataSource).rows(queryDSL.CountSQL)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;construyendo_la_sentencia&quot;&gt;Construyendo la sentencia&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Cuando le pedimos la cadena SQL a nuestro dsl, este simplemente irá construyendo la sentencia con los datos que ha ido
+guardando durante la ejecución de la closure:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-groovy&quot; data-lang=&quot;groovy&quot;&gt; public String getSQL( ){
+        StringWriter writer = new StringWriter()
+        writer.write(&quot;SELECT $fields&quot;)
+        writer.write(&quot;\nFROM \n$fromTables&quot;)
+        if( whereStr &amp;amp;&amp;amp; whereStr.length())
+            writer.write(&quot;\n$whereStr&quot;)
+        if( groupStr &amp;amp;&amp;amp; groupStr.length())
+            writer.write(&quot;\nGROUP BY $groupStr&quot;)
+        if( trace ){
+            println( writer.toString() )
+        }
+        writer.toString()
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Este DSL es muy básico y no realiza todas las comprobaciones que se deberían pero la idea se entiende. Simplemente va
+uniendo las diferentes partes que ha ido guardando. De esta forma el mismo objeto nos puede devolver un SELECT que un
+COUNT&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+	  </description>
+    </item>
     
     <item>
       <title>Creando un blog estático con JBake</title>
