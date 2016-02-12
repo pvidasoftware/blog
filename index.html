@@ -69,10 +69,17 @@
 	<div class="page-header">
 		<h1>Blog</h1>
 	</div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <a class="twitter-timeline"  href="https://twitter.com/pvidasoftware" data-widget-id="698067031745294336">Tweets por el @pvidasoftware.</a>
+        </div>
+
+        <div class="col-md-9">
 	
-		<a href="blog/2016/queryDSL-post.html"><h3>Construye tu propia DSL</h3></a>
-		<em>11 febrero 2016</em>
-		<!--p><div class="sect1">
+		    <a href="blog/2016/queryDSL-post.html"><h3>Construye tu propia DSL</h3></a>
+		    <em>11 febrero 2016</em>
+		    <!--p><div class="sect1">
 <h2 id="dsl_con_groovy">DSL con Groovy</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -80,11 +87,10 @@
 es realmente "sencillo" una vez que se entiende. Existen numerosos recursos, e incluso libros dedicados a ello exclusivamente,
 por lo que no nos extenderemos demasiado en este post, simplemente apuntar que puedes diseñar tu propio DSL de tal forma
 que ...</p-->
-		<hr>
   	
-		<a href="blog/2016/first-post.html"><h3>Creando un blog estático con JBake</h3></a>
-		<em>04 febrero 2016</em>
-		<!--p><div class="sect1">
+		    <a href="blog/2016/first-post.html"><h3>Creando un blog estático con JBake</h3></a>
+		    <em>04 febrero 2016</em>
+		    <!--p><div class="sect1">
 <h2 id="adios_wordpress">Adios WordPress</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -104,10 +110,10 @@ problemas:</p>
 </li>
 <li>
 <p>&#8230;&#820...</p-->
-		<hr>
   	
+  	    </div>
 	
-	<hr />
+	</div>
 	
 	<p>Older posts are available in the <a href="archive.html">archive</a>.</p>
 
@@ -132,6 +138,7 @@ problemas:</p>
     
   </body>
 
+<!-- google -->
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -142,5 +149,23 @@ problemas:</p>
     ga('send', 'pageview');
 
   </script>
+
+<!-- twitter -->
+  <script>window.twttr = (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0],
+      t = window.twttr || {};
+    if (d.getElementById(id)) return t;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "https://platform.twitter.com/widgets.js";
+    fjs.parentNode.insertBefore(js, fjs);
+
+    t._e = [];
+    t.ready = function(f) {
+      t._e.push(f);
+    };
+
+    return t;
+  }(document, "script", "twitter-wjs"));</script>
 
 </html>
