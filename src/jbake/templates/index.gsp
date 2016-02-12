@@ -20,7 +20,7 @@
   	    </div>
 	
 	</div>
-	
+
 	<p>Older posts are available in the <a href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>${config.archive_file}">archive</a>.</p>
 
 <%include "footer.gsp"%>
