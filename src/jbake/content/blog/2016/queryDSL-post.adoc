@@ -1,0 +1,167 @@
+= Construye tu propia DSL
+Jorge Aguilera
+2016-2-11
+:jbake-type: post
+:jbake-status: published
+:jbake-tags: blog, asciidoc
+:idprefix:
+
+== DSL con Groovy
+
+DSL, o link:https://es.wikipedia.org/wiki/Lenguaje_espec%C3%ADfico_del_dominio[Lenguaje específico de dominio], con Groovy
+es realmente "sencillo" una vez que se entiende. Existen numerosos recursos, e incluso libros dedicados a ello exclusivamente,
+por lo que no nos extenderemos demasiado en este post, simplemente apuntar que puedes diseñar tu propio DSL de tal forma
+que la comunicación entre departamentos, por ejemplo, sea mucho más fluida y clara, o que tu código sea mucho más fácil de entender.
+
+Para ello vamos a desarrollar un pequeño DSL que nos permitirá construir sentencias SQL (de toda la vida) de una forma
+más manejable.
+
+=== QueryDSL
+
+( Recuerda que puedes obtener el código de link:https://github.com/pvidasoftware/QueryDSL[https://github.com/pvidasoftware/QueryDSL] )
+
+Mediante QueryDSL pretendemos obtener una String para poder lanzar consultas a nuestro motor de base de datos.
+De forma tradicional haríamos algo parecido a:
+
+```java
+String query = "select a.field1, a.field2 from mytable a inner join table2 b on a.field1 = b.field1 where a.field = 501 group by 1";
+```
+Como puedes imaginar, cuando la lista de campos crece, el número de joins aumenta o las condiciones varían la lógica para
+construir la cadena se incrementa haciendola muchas veces imposible de seguir/entender.
+
+Hoy en día exisen numerosos frameworks que ocultan esta complejidad y que incluso hacen el mapping de los datos a objetos, pero
+hay también muchas veces donde no podemos/queremos disponer de estos frameworks.
+
+Imaginemos el ejemplo anterior escrito de esta forma:
+
+[source]
+----
+def queryDSL = QueryDSL.build {
+        select 'a.field1, a.field2'  <1>
+        from 'mytable a'             <2>
+        where{                       <3>
+            and{
+                eq "a.field1", 501
+            }
+        }
+        innerJoin "table2 b" on "a.field1" eq "b.field1"  <4>
+        groupBy 1   <5>
+    }
+String select = queryDSL.SQL
+----
+<1> campos que queremos
+<2> de qué tabla
+<3> condiciones de filtro
+<4> unión con otras tablas
+<5> agrupar por el primer campo
+
+Como vemos, las diferentes partes de la sentencia se encuentran separadas de tal forma que nos permite comentarios:
+```groovy
+def queryDSL = QueryDSL.build {
+        // tomamos dos campos e ignoramos el resto
+        select 'a.field1, a.field2'
+....
+```
+
+o incluso que el orden de la sintáxis no sea rígido :
+```groovy
+def queryDSL = QueryDSL.build {
+        select 'a.field1, a.field2'
+        from 'mytable a'
+        innerJoin "table2 b" on "a.field1" eq "b.field1"
+        whrere{
+....
+
+```
+
+
+=== Construyendo nuestra QueryDSL
+
+La idea de QueryDSQL es que mediante una closure le iremos indicando las diferentes partes de una query para que al final
+nos devuelva una cadena especialmente diseñada para ser ejecutada como sentencia SQL.
+Así vemos que nuestra DSL tendría que tener una forma de especificar:
+ - campo(s) a recuperar
+ - tabla a la que consultar
+ - posibilidad de enlazar con otras tablas (join)
+ - sintáxis (opcinal) para poder filtrar (where) con posibilidad de parámetros con nombres
+ - sintáxis (opcional) para poder agrupar
+
+Además vamos a querer que esta DSL nos permita obtener la query para hacer una select y/o un count sin tener que volver
+ a escribir la closure.
+
+=== Factoría QueryDSL
+
+Lo primero que crearemos será un método estático que aceptará una "closure" como argumento (para saber más de closures
+en groovy visita la documentación de link:http://groovy-lang.org/closures.html:[Groovy Lang] ):
+
+```groovy
+def static QueryDSL build( closure ) {
+        QueryDSL dsl = new QueryDSL()
+        closure.delegate = dsl
+        closure()
+        dsl
+    }
+```
+
+Como puedes ver el método build crea una clase del tipo QueryDSL que al ser privada sólo puede ser creada por él, y se
+lo asigna a la closure como delegate. De esta forma cuando se ejecute la closure los métodos que se llamen dentro de ella
+que no tenga serán redirigidos al delegate para que los resuelva.
+
+
+=== "Populando" el dsl
+
+La closure irá llamando a métodos en nuestro *dsl* delegate pasandole argumentos.
+De esta forma si la closure llama a un método "select" y el delegate lo implementa, este será llamado automáticamente.
+Además gracias a Groovy elegirá el método más adecuado:
+
+```groovy
+   def select(String field){
+        this.fields = field
+    }
+
+    def select(String[]fields){
+        this.fields = fields.join(',')
+    }
+
+    def select(List fields){
+        this.fields = fields.join(',')
+    }
+```
+
+=== Usando el dsl
+
+Una vez que tenemos un queryDSL "populado" podremos solicitarle que nos devuelva por ejemplo la sentencia SQL para ser
+usada en un data source o la sentencia SQL para contar el número de registros que cumplen la condición:
+
+```groovy
+new Sql(dataSource).rows(queryDSL.SQL)
+new Sql(dataSource).rows(queryDSL.CountSQL)
+
+```
+
+=== Construyendo la sentencia
+
+Cuando le pedimos la cadena SQL a nuestro dsl, este simplemente irá construyendo la sentencia con los datos que ha ido
+guardando durante la ejecución de la closure:
+
+```groovy
+ public String getSQL( ){
+        StringWriter writer = new StringWriter()
+        writer.write("SELECT $fields")
+        writer.write("\nFROM \n$fromTables")
+        if( whereStr && whereStr.length())
+            writer.write("\n$whereStr")
+        if( groupStr && groupStr.length())
+            writer.write("\nGROUP BY $groupStr")
+        if( trace ){
+            println( writer.toString() )
+        }
+        writer.toString()
+    }
+```
+
+Este DSL es muy básico y no realiza todas las comprobaciones que se deberían pero la idea se entiende. Simplemente va
+uniendo las diferentes partes que ha ido guardando. De esta forma el mismo objeto nos puede devolver un SELECT que un
+COUNT
+
+
