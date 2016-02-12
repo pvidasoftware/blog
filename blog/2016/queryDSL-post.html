@@ -274,6 +274,126 @@ uniendo las diferentes partes que ha ido guardando. De esta forma el mismo objet
 COUNT</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="rizando_el_rizo">Rizando el rizo</h3>
+<div class="paragraph">
+<p>Hasta aquí el DSL no tiene mucha complicación y aunque ya nos puede servir para hacer cosas sencillas en muchos casos
+nuestro lenguaje de negocio nos pedirá que seamos un poco más "rico" en la composición.</p>
+</div>
+<div class="paragraph">
+<p>Un buen ejemplo en QueryDSL es la parte en la que queremos indicar la unión con otra table e indicar los campos por
+ los que queremos realizar esta union:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">def queryDSL = QueryDSL.build {
+....
+        innerJoin "table2 b" on "a.field1" eq "b.field1"
+....
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Nuestro lenguaje va a permitirnos indicar la tabla mediante <strong>innerJoin</strong> y además para este caso nos va a permitir especificar
+por qué campos hacerlo mediante <strong>on</strong> y cómo realizar esta unión mediante alguno de los operadores <strong>eq,ne,le,gt,&#8230;&#8203;</strong>
+ He buscado que esta sintáxis sea similar a la típica de una sentencia SQL para facilitar su uso, pero con un poco de imaginación
+ podríamos haber diseñado otro DSL que nos resulte más explicativo, como por ejemplo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">def queryDSL = QueryDSL.build {
+....
+        // una innerJoin un poco más verbose:
+        la unes con "table2" por el campo "field1" cuando son iguales
+....
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Para poder hacer que nuestra DSL acepte la sintáxis expuesta usaremos una técnica de Groovy donde el método <strong>innerJoin</strong>
+devuelve un mapa de closures admitidas (en nuestro caso <strong>on</strong> únicamente). Esta técnica se puede usar recursivamente de
+tal forma que una closure nos devuelva un nuevo mapa con la sintáxis que admite después de ella:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">def innerJoin( String table  ){
+        join("inner",table)
+}
+
+def join( String op, String table2){
+        QueryDSL dsl = this
+        [
+                on:{ f1 -&gt;
+                    [
+                     eq:{f2-&gt;
+                        dsl.addJoin(op,table2,f1,'=',f2)
+                         dsl
+                     },
+                     ge:{f2-&gt;
+                         dsl.addJoin(op,table2,f1,'&gt;=',f2)
+                         dsl
+                     },
+                     le:{f2-&gt;
+                         dsl.addJoin(op,table2,f1,'=&lt;',f2)
+                         dsl
+                     },
+                     gt:{f2-&gt;
+                         dsl.addJoin(op,table2,f1,'&gt;',f2)
+                         dsl
+                     },
+                     lt:{f2-&gt;
+                         dsl.addJoin(op,table2,f1,'&lt;',f2)
+                         dsl
+                     },
+                     distinct:{f2-&gt;
+                         dsl.addJoin(op,table2,f1,'&lt;&gt;',f2)
+                         dsl
+                     },
+                    ]
+                }
+        ]
+    }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Como podemos ver <strong>innerJoin</strong> simplemente delega en el método <strong>join</strong> indicándole el tipo join que queremos hacer (inner, left, right&#8230;&#8203;)
+ y pasándole el argumento que ha recibido (String table).</p>
+</div>
+<div class="paragraph">
+<p>Lo primero que hará <strong>join</strong> será guardarse una referencia a sí mismo para poder continuar con la closure principal una vez
+interpretada en la que estamos y después devolverá un Map de closures donde la clave permitirá a Groovy saber cúal ejecutar, <strong>on</strong>
+en nuestro caso.</p>
+</div>
+<div class="paragraph">
+<p><strong>on</strong> aceptará como argumentos el nombre de un campo (f1) y a su vez devolverá un nuevo mapa de las posibles closures que
+admite ( eq, ge, le, .. ). En este caso cada una de ellas espera una cadena que indica el segundo campo (f2) y como todas
+son muy parecidas simplemente llamamos a una función común <strong>addJoin</strong> donde unimos todos los argumentos que hemos ido recolectando.</p>
+</div>
+<div class="paragraph">
+<p>Por último las closures finales de <strong>innerJoin</strong> devolverán la referencia que guardamos al inicio para que se siga con nuestro DSL.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="bien_y_para_qué_una_dsl">Bien, &#8230;&#8203; y para qué una DSL ?</h3>
+<div class="paragraph">
+<p>Crear tus propias DSLs te puede permitir facilitar la interacción con la parte de negocio (la gente de ventas, contabilidad, &#8230;&#8203;).
+Por ejemplo, supongamos que has diseñado un sistema de seguimiento de entregas para el departamento de atención al cliente donde existe
+un compromiso de entrega en función del dia de la semana, del año, si es fiesta, etc.</p>
+</div>
+<div class="paragraph">
+<p>Podríamos diseñar un DSL que el departamento de atencion al cliente podría proporcionarnos cada mes parecido a:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>pedido Lunes, Miercoles, Viernes     entrega  2 días despues
+pedido Martes                        entrega  Miercoles
+pedido 6 de Enero                    entrega  9 enero</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>la imaginación es el límite.</p>
+</div>
+</div>
 </div>
 </div></p>
 
