@@ -1,0 +1,134 @@
+= Añadiendo Slides a JBake
+Jorge Aguilera
+2016-2-16
+:jbake-type: post
+:jbake-status: published
+:jbake-tags: blog, asciidoc
+:idprefix:
+
+== slides en nuestro blog
+
+JBake permite crear contenido estático más allá de post en el blog. Cuenta con un sistema de plantilla y una configuración
+realmente simple para que podamos crear nuevos tipos de páginas en nuestro blog.
+
+En nuestro caso vamos a incluir un sistema de presentaciones basado
+en link:http://jmpressjs.github.io/docs/index.html[JmPress] (el cual a su vez se basa en
+link:http://impress.github.io/impress.js/#/bored#[ImpressJs]).
+
+Para ello vamos a:
+
+- crear un nuevo espacio dentro del menú dedicado a nuestras presentaciones
+- añadir los javascript + css necesarios a nuestro asset
+- crear un nuevo template *presentation.gsp* y añadirlo a la configuración de JBake
+- crear nuestra primera presentación
+
+== Nueva opción del menú
+
+[source]
+.templates/menu.gsp
+----
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Slides <b class="caret"></b></a>  // <1>
+              <ul class="dropdown-menu">
+	<%presentations.each {ppt ->%>                                   // <2>
+		    <li><a href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>${ppt.uri}">${ppt.title}</a></li> // <3>
+  	<%}%>
+              </ul>
+            </li>
+----
+<1> Creamos un dropdown con bootstrap llamado Slides
+<2> Pediremos a JBake que nos de los contenidos de tipo *presentationS*
+<3> Creamos un enlace al slide
+
+== Añadir contenido a asset
+
+Simplemente descargaremos los js+css necesarios y los ubicaremos en el directorio que corresponda. Así mismo modificaremos
+la plantilla para que los incluya. Podriamos incluirlos de forma genérica o mejor aún únicamente cuando el contenido lo necesite:
+
+[source]
+.templates/header.gsp
+----
+<%if( content.type == 'presentation') {%>
+    <link href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>css/jmpressjs.simple.css" rel="stylesheet" type="text/css">
+<%}%>
+----
+
+[source]
+.templates/footer.gsp
+----
+<%if( content.type == 'presentation') {%>
+<script>
+    \$(function() {                 // <1>
+        \$('#jmpress').jmpress();   // <2>
+    });
+</script>
+<%}%>
+----
+<1> Necesitamos "escapar" los simbolos de JQuery al estar dentro de un GSP
+<2> *jpmress* será como llamaremos a nuestro contenedor de slides
+
+
+== Creando un nuevo tipo de contenido
+
+Primero indicaremos a JBake que existe un nuevo tipo de contenido *presentation*:
+
+[source]
+.jbake.properties
+----
+template.presentation.file=presentation.gsp
+----
+
+y creamos una nueva plantilla para este tipo de contenido:
+
+[source]
+.presentation.gsp
+----
+<%include "header.gsp"%>
+
+	<%include "menu.gsp"%>
+
+    <div id="jmpress">   // <1>
+    ${content.body}
+    </div>
+
+<%include "footer.gsp"%>
+----
+<1> jmpress indentifica a nuestro contenedor de slides
+
+
+== Creando nuestra primera slide
+
+Ahora solo resta crear una presentación que queramos que aparezca en nuestro blog dentro de la sección *Slides* por
+lo que en crearemos:
+- un directorio slides dentro de content para alojar nuestras presentaciones (el nombre puede ser lo que quieras)
+- un nuevo documento HTML con la etiqueta type=presentation
+
+[source]
+.slides/mi-primer-slide.html
+----
+title=Mi primera slide
+date=2016-02-16
+type=presentation
+tags=blog, asciidoc, jpmpress, impressjs, jbake
+status=published
+~~~~~~
+
+<div id="home" class="step">
+    <p>Hello! My name is jmpress.js...</p>
+</div>
+<div class="step" data-x="1000">
+    <p>and this is a really simple demo.</p>
+</div>
+<div class="step" data-x="2000">
+    <p>You might think it is boring...</p>
+</div>
+<div class="step" data-x="3000">
+    <p>but that is the point. This is a simple example.</p>
+</div>
+
+----
+
+
+== Generando y publicando
+
+Simplemente resta, como cada vez que añadimos contenido a JBake, generar el contenido y publicarlo.

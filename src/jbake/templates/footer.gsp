@@ -16,7 +16,8 @@
     <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>js/jquery-1.11.1.min.js"></script>
     <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>js/bootstrap.min.js"></script>
     <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>js/prettify.js"></script>
-    
+
+    <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>js/jmpress.custom.js"></script>
   </body>
 
 <!-- google -->
@@ -48,5 +49,14 @@
 
     return t;
   }(document, "script", "twitter-wjs"));</script>
+<!-- twitter -->
+
+<%if( content.type == 'presentation') {%>
+<script>
+    \$(function() {
+        \$('#jmpress').jmpress();
+    });
+</script>
+<%}%>
 
 </html>
