@@ -6,9 +6,202 @@
     <atom:link href="https://pvidasoftware.github.io/blog/feed.xml" rel="self" type="application/rss+xml" />
     <description>JBake Bootstrap Template</description>
     <language>en-gb</language>
-    <pubDate>vie, 12 feb 2016 12:34:32 +0100</pubDate>
-    <lastBuildDate>vie, 12 feb 2016 12:34:32 +0100</lastBuildDate>
+    <pubDate>mar, 16 feb 2016 12:36:56 +0100</pubDate>
+    <lastBuildDate>mar, 16 feb 2016 12:36:56 +0100</lastBuildDate>
 
+    
+    <item>
+      <title>Añadiendo Slides a JBake</title>
+      <link>https://pvidasoftware.github.io/blog/blog/2016/add-jmpress-jbake.html</link>
+      <pubDate>mar, 16 feb 2016 00:00:00 +0100</pubDate>
+      <guid isPermaLink="false">blog/2016/add-jmpress-jbake.html</guid>
+      <description>
+      &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;slides_en_nuestro_blog&quot;&gt;slides en nuestro blog&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;JBake permite crear contenido estático más allá de post en el blog. Cuenta con un sistema de plantilla y una configuración
+realmente simple para que podamos crear nuevos tipos de páginas en nuestro blog.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;En nuestro caso vamos a incluir un sistema de presentaciones basado
+en &lt;a href=&quot;http://jmpressjs.github.io/docs/index.html&quot;&gt;JmPress&lt;/a&gt; (el cual a su vez se basa en
+&lt;a href=&quot;http://impress.github.io/impress.js/&lt;mark&gt;/bored&lt;/mark&gt;&quot;&gt;ImpressJs&lt;/a&gt;).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Para ello vamos a:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;crear un nuevo espacio dentro del menú dedicado a nuestras presentaciones&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;añadir los javascript + css necesarios a nuestro asset&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;crear un nuevo template &lt;strong&gt;presentation.gsp&lt;/strong&gt; y añadirlo a la configuración de JBake&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;crear nuestra primera presentación&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;nueva_opción_del_menú&quot;&gt;Nueva opción del menú&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;templates/menu.gsp&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;            &amp;lt;li class=&quot;dropdown&quot;&amp;gt;
+              &amp;lt;a href=&quot;#&quot; class=&quot;dropdown-toggle&quot; data-toggle=&quot;dropdown&quot;&amp;gt;Slides &amp;lt;b class=&quot;caret&quot;&amp;gt;&amp;lt;/b&amp;gt;&amp;lt;/a&amp;gt;  &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+              &amp;lt;ul class=&quot;dropdown-menu&quot;&amp;gt;
+	&amp;lt;%presentations.each {ppt -&amp;gt;%&amp;gt;                                   &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+		    &amp;lt;li&amp;gt;&amp;lt;a href=&quot;&amp;lt;%if (content.rootpath) {%&amp;gt;${content.rootpath}&amp;lt;% } else { %&amp;gt;&amp;lt;% }%&amp;gt;${ppt.uri}&quot;&amp;gt;${ppt.title}&amp;lt;/a&amp;gt;&amp;lt;/li&amp;gt; &lt;b class=&quot;conum&quot;&gt;(3)&lt;/b&gt;
+  	&amp;lt;%}%&amp;gt;
+              &amp;lt;/ul&amp;gt;
+            &amp;lt;/li&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;colist arabic&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Creamos un dropdown con bootstrap llamado Slides&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Pediremos a JBake que nos de los contenidos de tipo &lt;strong&gt;presentationS&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Creamos un enlace al slide&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;añadir_contenido_a_asset&quot;&gt;Añadir contenido a asset&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Simplemente descargaremos los js+css necesarios y los ubicaremos en el directorio que corresponda. Así mismo modificaremos
+la plantilla para que los incluya. Podriamos incluirlos de forma genérica o mejor aún únicamente cuando el contenido lo necesite:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;templates/header.gsp&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;&amp;lt;%if( content.type == &apos;presentation&apos;) {%&amp;gt;
+    &amp;lt;link href=&quot;&amp;lt;%if (content.rootpath) {%&amp;gt;${content.rootpath}&amp;lt;% } else { %&amp;gt;&amp;lt;% }%&amp;gt;css/jmpressjs.simple.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;&amp;gt;
+&amp;lt;%}%&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;templates/footer.gsp&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;&amp;lt;%if( content.type == &apos;presentation&apos;) {%&amp;gt;
+&amp;lt;script&amp;gt;
+    \$(function() {                 &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+        \$(&apos;#jmpress&apos;).jmpress();   &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+    });
+&amp;lt;/script&amp;gt;
+&amp;lt;%}%&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;colist arabic&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Necesitamos &quot;escapar&quot; los simbolos de JQuery al estar dentro de un GSP&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;jpmress&lt;/strong&gt; será como llamaremos a nuestro contenedor de slides&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;creando_un_nuevo_tipo_de_contenido&quot;&gt;Creando un nuevo tipo de contenido&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Primero indicaremos a JBake que existe un nuevo tipo de contenido &lt;strong&gt;presentation&lt;/strong&gt;:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;jbake.properties&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;template.presentation.file=presentation.gsp&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;y creamos una nueva plantilla para este tipo de contenido:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;presentation.gsp&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;&amp;lt;%include &quot;header.gsp&quot;%&amp;gt;
+
+	&amp;lt;%include &quot;menu.gsp&quot;%&amp;gt;
+
+    &amp;lt;div id=&quot;jmpress&quot;&amp;gt;   &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+    ${content.body}
+    &amp;lt;/div&amp;gt;
+
+&amp;lt;%include &quot;footer.gsp&quot;%&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;colist arabic&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;jmpress indentifica a nuestro contenedor de slides&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;creando_nuestra_primera_slide&quot;&gt;Creando nuestra primera slide&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Ahora solo resta crear una presentación que queramos que aparezca en nuestro blog dentro de la sección &lt;strong&gt;Slides&lt;/strong&gt; por
+lo que en crearemos:
+- un directorio slides dentro de content para alojar nuestras presentaciones (el nombre puede ser lo que quieras)
+- un nuevo documento HTML con la etiqueta type=presentation&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;slides/mi-primer-slide.html&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;title=Mi primera slide
+date=2016-02-16
+type=presentation
+tags=blog, asciidoc, jpmpress, impressjs, jbake
+status=published
+~~~~~~
+
+&amp;lt;div id=&quot;home&quot; class=&quot;step&quot;&amp;gt;
+    &amp;lt;p&amp;gt;Hello! My name is jmpress.js...&amp;lt;/p&amp;gt;
+&amp;lt;/div&amp;gt;
+&amp;lt;div class=&quot;step&quot; data-x=&quot;1000&quot;&amp;gt;
+    &amp;lt;p&amp;gt;and this is a really simple demo.&amp;lt;/p&amp;gt;
+&amp;lt;/div&amp;gt;
+&amp;lt;div class=&quot;step&quot; data-x=&quot;2000&quot;&amp;gt;
+    &amp;lt;p&amp;gt;You might think it is boring...&amp;lt;/p&amp;gt;
+&amp;lt;/div&amp;gt;
+&amp;lt;div class=&quot;step&quot; data-x=&quot;3000&quot;&amp;gt;
+    &amp;lt;p&amp;gt;but that is the point. This is a simple example.&amp;lt;/p&amp;gt;
+&amp;lt;/div&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;generando_y_publicando&quot;&gt;Generando y publicando&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Simplemente resta, como cada vez que añadimos contenido a JBake, generar el contenido y publicarlo.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+	  </description>
+    </item>
     
     <item>
       <title>Construye tu propia DSL</title>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Añadiendo Slides a JBake</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="keywords" content="">
+    <meta name="generator" content="JBake">
+
+    <!-- Le styles -->
+    <link href="../../css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../../css/asciidoctor.css" rel="stylesheet" type="text/css">
+    <link href="../../css/base.css" rel="stylesheet" type="text/css">
+    <link href="../../css/prettify.css" rel="stylesheet" type="text/css">
+
+
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <!--<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">-->
+    <link rel="shortcut icon" href="../../favicon.ico">
+  </head>
+  <body onload="prettyPrint()">
+    <div id="wrap">
+   
+	
+		<!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../../">@pvidasoftware</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="../../index.html">Home</a></li>
+            <li><a href="../../about.html">About</a></li>
+            <li><a href="../../feed.xml">Subscribe</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Slides <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+	
+		    <li><a href="../../slides/puravida-software.html">Puravida Software</a></li>
+  	
+              </ul>
+            </li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+    <div class="container">
+	
+	<div class="page-header">
+		<h1>Añadiendo Slides a JBake</h1>
+	</div>
+
+	<p><em>16 febrero 2016</em></p>
+
+	<p><div class="sect1">
+<h2 id="slides_en_nuestro_blog">slides en nuestro blog</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>JBake permite crear contenido estático más allá de post en el blog. Cuenta con un sistema de plantilla y una configuración
+realmente simple para que podamos crear nuevos tipos de páginas en nuestro blog.</p>
+</div>
+<div class="paragraph">
+<p>En nuestro caso vamos a incluir un sistema de presentaciones basado
+en <a href="http://jmpressjs.github.io/docs/index.html">JmPress</a> (el cual a su vez se basa en
+<a href="http://impress.github.io/impress.js/<mark>/bored</mark>">ImpressJs</a>).</p>
+</div>
+<div class="paragraph">
+<p>Para ello vamos a:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>crear un nuevo espacio dentro del menú dedicado a nuestras presentaciones</p>
+</li>
+<li>
+<p>añadir los javascript + css necesarios a nuestro asset</p>
+</li>
+<li>
+<p>crear un nuevo template <strong>presentation.gsp</strong> y añadirlo a la configuración de JBake</p>
+</li>
+<li>
+<p>crear nuestra primera presentación</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="nueva_opción_del_menú">Nueva opción del menú</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="title">templates/menu.gsp</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>            &lt;li class="dropdown"&gt;
+              &lt;a href="#" class="dropdown-toggle" data-toggle="dropdown"&gt;Slides &lt;b class="caret"&gt;&lt;/b&gt;&lt;/a&gt;  <b class="conum">(1)</b>
+              &lt;ul class="dropdown-menu"&gt;
+	&lt;%presentations.each {ppt -&gt;%&gt;                                   <b class="conum">(2)</b>
+		    &lt;li&gt;&lt;a href="&lt;%if (content.rootpath) {%&gt;${content.rootpath}&lt;% } else { %&gt;&lt;% }%&gt;${ppt.uri}"&gt;${ppt.title}&lt;/a&gt;&lt;/li&gt; <b class="conum">(3)</b>
+  	&lt;%}%&gt;
+              &lt;/ul&gt;
+            &lt;/li&gt;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>Creamos un dropdown con bootstrap llamado Slides</p>
+</li>
+<li>
+<p>Pediremos a JBake que nos de los contenidos de tipo <strong>presentationS</strong></p>
+</li>
+<li>
+<p>Creamos un enlace al slide</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="añadir_contenido_a_asset">Añadir contenido a asset</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Simplemente descargaremos los js+css necesarios y los ubicaremos en el directorio que corresponda. Así mismo modificaremos
+la plantilla para que los incluya. Podriamos incluirlos de forma genérica o mejor aún únicamente cuando el contenido lo necesite:</p>
+</div>
+<div class="listingblock">
+<div class="title">templates/header.gsp</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>&lt;%if( content.type == 'presentation') {%&gt;
+    &lt;link href="&lt;%if (content.rootpath) {%&gt;${content.rootpath}&lt;% } else { %&gt;&lt;% }%&gt;css/jmpressjs.simple.css" rel="stylesheet" type="text/css"&gt;
+&lt;%}%&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">templates/footer.gsp</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>&lt;%if( content.type == 'presentation') {%&gt;
+&lt;script&gt;
+    \$(function() {                 <b class="conum">(1)</b>
+        \$('#jmpress').jmpress();   <b class="conum">(2)</b>
+    });
+&lt;/script&gt;
+&lt;%}%&gt;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>Necesitamos "escapar" los simbolos de JQuery al estar dentro de un GSP</p>
+</li>
+<li>
+<p><strong>jpmress</strong> será como llamaremos a nuestro contenedor de slides</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="creando_un_nuevo_tipo_de_contenido">Creando un nuevo tipo de contenido</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Primero indicaremos a JBake que existe un nuevo tipo de contenido <strong>presentation</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="title">jbake.properties</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>template.presentation.file=presentation.gsp</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>y creamos una nueva plantilla para este tipo de contenido:</p>
+</div>
+<div class="listingblock">
+<div class="title">presentation.gsp</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>&lt;%include "header.gsp"%&gt;
+
+	&lt;%include "menu.gsp"%&gt;
+
+    &lt;div id="jmpress"&gt;   <b class="conum">(1)</b>
+    ${content.body}
+    &lt;/div&gt;
+
+&lt;%include "footer.gsp"%&gt;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>jmpress indentifica a nuestro contenedor de slides</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="creando_nuestra_primera_slide">Creando nuestra primera slide</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Ahora solo resta crear una presentación que queramos que aparezca en nuestro blog dentro de la sección <strong>Slides</strong> por
+lo que en crearemos:
+- un directorio slides dentro de content para alojar nuestras presentaciones (el nombre puede ser lo que quieras)
+- un nuevo documento HTML con la etiqueta type=presentation</p>
+</div>
+<div class="listingblock">
+<div class="title">slides/mi-primer-slide.html</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>title=Mi primera slide
+date=2016-02-16
+type=presentation
+tags=blog, asciidoc, jpmpress, impressjs, jbake
+status=published
+~~~~~~
+
+&lt;div id="home" class="step"&gt;
+    &lt;p&gt;Hello! My name is jmpress.js...&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="step" data-x="1000"&gt;
+    &lt;p&gt;and this is a really simple demo.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="step" data-x="2000"&gt;
+    &lt;p&gt;You might think it is boring...&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="step" data-x="3000"&gt;
+    &lt;p&gt;but that is the point. This is a simple example.&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="generando_y_publicando">Generando y publicando</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Simplemente resta, como cada vez que añadimos contenido a JBake, generar el contenido y publicarlo.</p>
+</div>
+</div>
+</div></p>
+
+	<hr />
+	
+		</div>
+		<div id="push"></div>
+    </div>
+    
+    <div id="footer">
+      <div class="container">
+        <p class="muted">PuraVida Software,SL c/ Betancunia 1, local A, Madrid 28017, <a href="mailto:contacto@puravida-software.com">Contacto</a>
+            <span class="credit">&copy; 2016 | Mixed with <a href="http://getbootstrap.com/">Bootstrap v3.1.1</a> | Baked with <a href="http://jbake.org">JBake v2.4.0</a></span>
+        </p>
+      </div>
+    </div>
+    
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../../js/jquery-1.11.1.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/prettify.js"></script>
+
+    <script src="../../js/jmpress.custom.js"></script>
+  </body>
+
+<!-- google -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-687332-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+<!-- twitter -->
+  <script>window.twttr = (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0],
+      t = window.twttr || {};
+    if (d.getElementById(id)) return t;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "https://platform.twitter.com/widgets.js";
+    fjs.parentNode.insertBefore(js, fjs);
+
+    t._e = [];
+    t.ready = function(f) {
+      t._e.push(f);
+    };
+
+    return t;
+  }(document, "script", "twitter-wjs"));</script>
+<!-- twitter -->
+
+
+
+</html>
