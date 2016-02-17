@@ -6,8 +6,8 @@
     <atom:link href="https://pvidasoftware.github.io/blog/feed.xml" rel="self" type="application/rss+xml" />
     <description>JBake Bootstrap Template</description>
     <language>en-gb</language>
-    <pubDate>mar, 16 feb 2016 12:36:56 +0100</pubDate>
-    <lastBuildDate>mar, 16 feb 2016 12:36:56 +0100</lastBuildDate>
+    <pubDate>mié, 17 feb 2016 10:25:48 +0100</pubDate>
+    <lastBuildDate>mié, 17 feb 2016 10:25:48 +0100</lastBuildDate>
 
     
     <item>
@@ -302,7 +302,7 @@ String select = queryDSL.SQL&lt;/code&gt;&lt;/pre&gt;
         select &apos;a.field1, a.field2&apos;
         from &apos;mytable a&apos;
         innerJoin &quot;table2 b&quot; on &quot;a.field1&quot; eq &quot;b.field1&quot;
-        whrere{
+        where{
 ....&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
