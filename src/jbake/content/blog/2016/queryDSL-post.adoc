@@ -69,7 +69,7 @@ def queryDSL = QueryDSL.build {
         select 'a.field1, a.field2'
         from 'mytable a'
         innerJoin "table2 b" on "a.field1" eq "b.field1"
-        whrere{
+        where{
 ....
 
 ```
