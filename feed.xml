@@ -6,9 +6,233 @@
     <atom:link href="https://pvidasoftware.github.io/blog/feed.xml" rel="self" type="application/rss+xml" />
     <description>JBake Bootstrap Template</description>
     <language>en-gb</language>
-    <pubDate>mié, 17 feb 2016 10:25:48 +0100</pubDate>
-    <lastBuildDate>mié, 17 feb 2016 10:25:48 +0100</lastBuildDate>
+    <pubDate>vie, 19 feb 2016 11:41:42 +0100</pubDate>
+    <lastBuildDate>vie, 19 feb 2016 11:41:42 +0100</lastBuildDate>
 
+    
+    <item>
+      <title>Test Driven para documentar RESTful (1/2)</title>
+      <link>https://pvidasoftware.github.io/blog/blog/2016/twitterpeople_1_2.html</link>
+      <pubDate>vie, 19 feb 2016 00:00:00 +0100</pubDate>
+      <guid isPermaLink="false">blog/2016/twitterpeople_1_2.html</guid>
+      <description>
+      &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;usar_los_test_para_documentar_tus_servicios_restful&quot;&gt;Usar los test para documentar tus servicios RESTful&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;En esta serie de post vamos a ver cómo aprovechar tus pruebas contra un servicio REST (¿porque haces test
+  en tus desarrollos, verdad ?) para que automáticamente generen una documentación sobre el mismo que pueda servir al
+  resto del equipo a comprender el API. Al ser los propios test los que generarán la documentación tendremos la seguridad
+  que esta se encontrará actualizada pues si falla un test ni se genera producto ni se genera documentación.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Existen herramientas orientadas a la documentación de servicios REST como &lt;a href=&quot;http://swagger.io/&quot;&gt;Swagger&lt;/a&gt;,
+&lt;a href=&quot;http://jsondoc.org/&quot;&gt;JSONDoc&lt;/a&gt; e incluso muchas de ellas incorporan un &quot;playground&quot; donde podemos interactuar contra el servicio.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Sin embargo Swagger puede ser una utilidad muy densa y si el proyecto es pequeño-mediano no justificar su uso. Así mismo
+JSONDoc no se integra correctamente con un controller Grails (o no he sido capaz de hacerlo).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;spring_rest_doc&quot;&gt;Spring-rest-doc&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/spring-projects/spring-restdocs/&quot;&gt;Spring-rest-doc&lt;/a&gt; es un proyecto de Spring con un enfoque algo
+diferente a las herramientas comentadas donde la idea principal es unir una documentación propia del proyecto junto con
+ los resultados de las pruebas unitarias de tal forma que, si todos los test se han ejecutado correctamente, tengamos una
+ documentación final completa y real. Además dicha documentación podrá ser incluida en la propia aplicación para que se
+  encuentre accesible en el mismo contexto.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Así pues, la idea básica es:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;crear documentación &quot;plantilla&quot; donde explicamos nuestros recursos RESTful. Esta documentación es parte del proyecto
+y se encontará versionada.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;hacer referencia dentro de esta a &quot;snippets&quot; que serán generados automáticamente por nuestros test. Básicamente cada
+uno de ellos generará un documento &quot;curl&quot;, un documento &quot;request&quot; y un documento &quot;response&quot;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;crear los test encargados de realizar las solicitudes REST y generar los snippets si el test se ejecuta correctamente.
+Estos test pueden ser realizados mediante JUnit (siguiendo la documentación del proyecto) o mediante Spock (no documentado hasta la fecha)&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;twitterpeople&quot;&gt;TwitterPeople&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Para explicar cómo integrar spring-rest-doc en nuestra aplicación Grails Rest, en este primer post vamos a crear una aplicación,
+&lt;a href=&quot;https://github.com/pvidasoftware/twitterpeople&quot;&gt;TwitterPeople&lt;/a&gt;, la cual simplemente expone un recurso &lt;strong&gt;Person&lt;/strong&gt; contra el que realizar peticiones REST.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;TwitterPeople es un &quot;proxy&quot; de usuarios de Twitter de tal forma que al iniciar la aplicación la base de datos se encuentra
+vacía y según se realizan peticiones REST al recurso &lt;strong&gt;Person&lt;/strong&gt; accede a Twitter para buscar el usuario solicitado y si existe
+lo importa a su base de datos como un &lt;strong&gt;Person&lt;/strong&gt; y a partir de este punto se encuentra accesible como recurso REST.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;creamos_una_aplicación_rest_api&quot;&gt;creamos una aplicación rest-api&lt;/h3&gt;
+&lt;div class=&quot;listingblock console&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;$grails create-app twitterpeople --profile rest-api
+
+$cd twitterpeople
+
+$grails compile
+
+$grails idea&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;añadimos_dependencias_twitter4j&quot;&gt;añadimos dependencias Twitter4J&lt;/h3&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;/build.gradle&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;dependencies{
+    ...
+    compile &quot;org.twitter4j:twitter4j-core:4.0.4&quot;
+    ...
+}
+....
+bootRun {
+    jvmArgs = [
+            &quot;-Dtwitter4j.oauth.consumerKey=${consumerKey}&quot;,
+            &quot;-Dtwitter4j.oauth.consumerSecret=${consumerSecret}&quot;,
+            &quot;-Dtwitter4j.oauth.accessToken=${accessToken}&quot;,
+            &quot;-Dtwitter4j.oauth.accessTokenSecret=${secretToken}&quot;
+    ]
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;/gradle.properties&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;consumerKey=lO****************Go*****
+consumerSecret=tlhfC**********0U******************gbrW***********
+accessToken=*********-***************************************c
+secretToken=N***********************ai*0**********plufrC&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;grails-app/conf/spring/resources.groovy&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;    twitter(twitter4j.TwitterFactory) { bean -&amp;gt;
+        bean.factoryMethod = &quot;getSingleton&quot;
+        bean.singleton = true
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;creamos_artefactos_domain_service_interceptor&quot;&gt;creamos artefactos (domain, service, interceptor)&lt;/h3&gt;
+&lt;div class=&quot;listingblock console&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;$grails create-domain-class Person&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;grails-app/domain/twitterpeople/Person.groovy&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;    @Resource(uri=&apos;/people&apos;, formats=[&apos;json&apos;], readOnly=true)
+    class Person {
+
+    // Person es un subconjunto de atributos de un User de Twitter
+    ...
+
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock console&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;$grails create-service TwitterProxy&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;grails-app/services/twitterpeople/TwitterProxyService.groovy&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;     boolean createPerson( String id) {
+     // si el id no existe buscaremos en twitter un usuario con ese nick
+     // y lo incluiremos a la base de datos como un Person
+     ...
+     }&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;grails-app/controllers/twitterpeople/PersonInterceptor.groovy&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;    TwitterProxyService twitterProxyService
+
+        boolean before(){
+            switch( params.action ){
+                case &apos;show&apos;:
+                    return twitterProxyService.createPerson(params.id)
+            }
+
+            true
+        }&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;testeando_nuestro_servicio&quot;&gt;Testeando nuestro servicio&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Por último crearíamos nuestro Rest Test utilizando RestBuilder como herramienta para invocar al servicio&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;src/integration-test/twitterpeople/SimpleSpec.groovy&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;...
+        given:
+        RestBuilder rest = new RestBuilder()
+
+        when:
+        RestResponse response = rest.get(&quot;http://localhost:8080/people&quot;)
+
+        then:
+        response.status == 200
+...&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;probamos_la_aplicación_desde_consola&quot;&gt;probamos la aplicación desde consola&lt;/h3&gt;
+&lt;div class=&quot;listingblock console&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;$gradle bootRun
+
+curl http://localhost:8080/people
+[]
+
+curl http://localhost:8080/people/jagedn
+{&quot;id&quot;:&quot;jagedn&quot;,&quot;description&quot;:&quot;no, si yo yaaa ....&quot;,&quot;followersCount&quot;:54,&quot;friendsCount&quot;:111,&quot;location&quot;:&quot;aqui&quot;}
+
+curl http://localhost:8080/people
+[{&quot;id&quot;:&quot;jagedn&quot;,&quot;description&quot;:&quot;no, si yo yaaa ....&quot;,&quot;followersCount&quot;:54,&quot;friendsCount&quot;:111,&quot;location&quot;:&quot;aqui&quot;}]&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;documentación&quot;&gt;Documentación&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;En el siguiente post veremos cómo nuestro SimpleSpec puede ayudarnos para generar la documentación necesaria para
+el servicio REST People.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+	  </description>
+    </item>
     
     <item>
       <title>Añadiendo Slides a JBake</title>
