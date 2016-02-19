@@ -1,0 +1,192 @@
+= Test Driven para documentar RESTful (1/2)
+Jorge Aguilera
+2016-2-19
+:jbake-type: post
+:jbake-status: published
+:jbake-tags: blog, grails, restful, test-driven
+:idprefix:
+
+== Usar los test para documentar tus servicios RESTful
+
+En esta serie de post vamos a ver cómo aprovechar tus pruebas contra un servicio REST (¿porque haces test
+  en tus desarrollos, verdad ?) para que automáticamente generen una documentación sobre el mismo que pueda servir al
+  resto del equipo a comprender el API. Al ser los propios test los que generarán la documentación tendremos la seguridad
+  que esta se encontrará actualizada pues si falla un test ni se genera producto ni se genera documentación.
+
+Existen herramientas orientadas a la documentación de servicios REST como link:http://swagger.io/[Swagger],
+link:http://jsondoc.org/[JSONDoc] e incluso muchas de ellas incorporan un "playground" donde podemos interactuar contra el servicio.
+
+Sin embargo Swagger puede ser una utilidad muy densa y si el proyecto es pequeño-mediano no justificar su uso. Así mismo
+JSONDoc no se integra correctamente con un controller Grails (o no he sido capaz de hacerlo).
+
+
+== Spring-rest-doc
+
+link:https://github.com/spring-projects/spring-restdocs/[Spring-rest-doc] es un proyecto de Spring con un enfoque algo
+diferente a las herramientas comentadas donde la idea principal es unir una documentación propia del proyecto junto con
+ los resultados de las pruebas unitarias de tal forma que, si todos los test se han ejecutado correctamente, tengamos una
+ documentación final completa y real. Además dicha documentación podrá ser incluida en la propia aplicación para que se
+  encuentre accesible en el mismo contexto.
+
+Así pues, la idea básica es:
+
+- crear documentación "plantilla" donde explicamos nuestros recursos RESTful. Esta documentación es parte del proyecto
+y se encontará versionada.
+- hacer referencia dentro de esta a "snippets" que serán generados automáticamente por nuestros test. Básicamente cada
+uno de ellos generará un documento "curl", un documento "request" y un documento "response".
+- crear los test encargados de realizar las solicitudes REST y generar los snippets si el test se ejecuta correctamente.
+Estos test pueden ser realizados mediante JUnit (siguiendo la documentación del proyecto) o mediante Spock (no documentado hasta la fecha)
+
+
+
+== TwitterPeople
+
+Para explicar cómo integrar spring-rest-doc en nuestra aplicación Grails Rest, en este primer post vamos a crear una aplicación,
+link:https://github.com/pvidasoftware/twitterpeople[TwitterPeople], la cual simplemente expone un recurso *Person* contra el que realizar peticiones REST.
+
+TwitterPeople es un "proxy" de usuarios de Twitter de tal forma que al iniciar la aplicación la base de datos se encuentra
+vacía y según se realizan peticiones REST al recurso *Person* accede a Twitter para buscar el usuario solicitado y si existe
+lo importa a su base de datos como un *Person* y a partir de este punto se encuentra accesible como recurso REST.
+
+=== creamos una aplicación rest-api
+
+[source.console]
+----
+$grails create-app twitterpeople --profile rest-api
+
+$cd twitterpeople
+
+$grails compile
+
+$grails idea
+----
+
+=== añadimos dependencias Twitter4J
+
+[source]
+./build.gradle
+----
+dependencies{
+    ...
+    compile "org.twitter4j:twitter4j-core:4.0.4"
+    ...
+}
+....
+bootRun {
+    jvmArgs = [
+            "-Dtwitter4j.oauth.consumerKey=${consumerKey}",
+            "-Dtwitter4j.oauth.consumerSecret=${consumerSecret}",
+            "-Dtwitter4j.oauth.accessToken=${accessToken}",
+            "-Dtwitter4j.oauth.accessTokenSecret=${secretToken}"
+    ]
+}
+----
+
+[source]
+./gradle.properties
+----
+consumerKey=lO****************Go*****
+consumerSecret=tlhfC**********0U******************gbrW***********
+accessToken=*********-***************************************c
+secretToken=N***********************ai*0**********plufrC
+----
+
+[source]
+.grails-app/conf/spring/resources.groovy
+----
+    twitter(twitter4j.TwitterFactory) { bean ->
+        bean.factoryMethod = "getSingleton"
+        bean.singleton = true
+    }
+----
+
+=== creamos artefactos (domain, service, interceptor)
+
+[source.console]
+----
+$grails create-domain-class Person
+----
+
+[source]
+.grails-app/domain/twitterpeople/Person.groovy
+----
+    @Resource(uri='/people', formats=['json'], readOnly=true)
+    class Person {
+
+    // Person es un subconjunto de atributos de un User de Twitter
+    ...
+
+    }
+----
+
+[source.console]
+----
+$grails create-service TwitterProxy
+----
+
+[source]
+.grails-app/services/twitterpeople/TwitterProxyService.groovy
+----
+     boolean createPerson( String id) {
+     // si el id no existe buscaremos en twitter un usuario con ese nick
+     // y lo incluiremos a la base de datos como un Person
+     ...
+     }
+----
+
+
+[source]
+.grails-app/controllers/twitterpeople/PersonInterceptor.groovy
+----
+    TwitterProxyService twitterProxyService
+
+        boolean before(){
+            switch( params.action ){
+                case 'show':
+                    return twitterProxyService.createPerson(params.id)
+            }
+
+            true
+        }
+----
+
+=== Testeando nuestro servicio
+
+Por último crearíamos nuestro Rest Test utilizando RestBuilder como herramienta para invocar al servicio
+
+[source]
+.src/integration-test/twitterpeople/SimpleSpec.groovy
+----
+...
+        given:
+        RestBuilder rest = new RestBuilder()
+
+        when:
+        RestResponse response = rest.get("http://localhost:8080/people")
+
+        then:
+        response.status == 200
+...
+----
+
+=== probamos la aplicación desde consola
+
+[source.console]
+----
+$gradle bootRun
+
+curl http://localhost:8080/people
+[]
+
+curl http://localhost:8080/people/jagedn
+{"id":"jagedn","description":"no, si yo yaaa ....","followersCount":54,"friendsCount":111,"location":"aqui"}
+
+curl http://localhost:8080/people
+[{"id":"jagedn","description":"no, si yo yaaa ....","followersCount":54,"friendsCount":111,"location":"aqui"}]
+----
+
+
+== Documentación
+
+En el siguiente post veremos cómo nuestro SimpleSpec puede ayudarnos para generar la documentación necesaria para
+el servicio REST People.
