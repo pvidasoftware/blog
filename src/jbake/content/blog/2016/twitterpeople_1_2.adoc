@@ -188,5 +188,5 @@ curl http://localhost:8080/people
 
 == Documentación
 
-En el siguiente post veremos cómo nuestro SimpleSpec puede ayudarnos para generar la documentación necesaria para
+En el siguiente link:twitterpeople_2_2.html[post] veremos cómo nuestro SimpleSpec puede ayudarnos para generar la documentación necesaria para
 el servicio REST People.
