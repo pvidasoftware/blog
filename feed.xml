@@ -6,8 +6,8 @@
     <atom:link href="https://pvidasoftware.github.io/blog/feed.xml" rel="self" type="application/rss+xml" />
     <description>JBake Bootstrap Template</description>
     <language>en-gb</language>
-    <pubDate>vie, 19 feb 2016 11:41:42 +0100</pubDate>
-    <lastBuildDate>vie, 19 feb 2016 11:41:42 +0100</lastBuildDate>
+    <pubDate>sáb, 20 feb 2016 11:08:44 +0100</pubDate>
+    <lastBuildDate>sáb, 20 feb 2016 11:08:44 +0100</lastBuildDate>
 
     
     <item>
@@ -226,8 +226,386 @@ curl http://localhost:8080/people
 &lt;h2 id=&quot;documentación&quot;&gt;Documentación&lt;/h2&gt;
 &lt;div class=&quot;sectionbody&quot;&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;En el siguiente post veremos cómo nuestro SimpleSpec puede ayudarnos para generar la documentación necesaria para
+&lt;p&gt;En el siguiente &lt;a href=&quot;twitterpeople_2_2.html&quot;&gt;post&lt;/a&gt; veremos cómo nuestro SimpleSpec puede ayudarnos para generar la documentación necesaria para
 el servicio REST People.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+	  </description>
+    </item>
+    
+    <item>
+      <title>Test Driven para documentar RESTful (2/2)</title>
+      <link>https://pvidasoftware.github.io/blog/blog/2016/twitterpeople_2_2.html</link>
+      <pubDate>vie, 19 feb 2016 00:00:00 +0100</pubDate>
+      <guid isPermaLink="false">blog/2016/twitterpeople_2_2.html</guid>
+      <description>
+      &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;spring_rest_doc_and_rest_assured&quot;&gt;Spring-rest-doc and Rest-Assured&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Si has leído el primer &lt;a href=&quot;twitterpeople_1_2.html&quot;&gt;post&lt;/a&gt; de esta serie recordarás que nuestro objetivo
+ es crear una aplicación Grails RESTful que incluya una documentación lo suficientemente clara, precisa y actualizada para
+ que un consumidor de nuestro recurso pueda comprender y utilizar el API.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Para ello hemos creado una aplicación que ofrece un recurso &lt;strong&gt;Person&lt;/strong&gt; y que se alimenta de usuarios de Twitter. Esta
+aplicación es muy básica y simplemente nos sirve para tener un API sobre el que demostrar cómo utilizar Test-Driven
+para tener una documentación actualizada y fiable.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/spring-projects/spring-restdocs/&quot;&gt;Spring-rest-doc&lt;/a&gt; es un proyecto de Spring cuya idea es
+ utilizar documentación creada por nosotros, con AsciiDoctor, junto con documentación creada por pruebas de forma
+ automática, usando fuertemente Spring MVC Test. El problema es que Spring MVC Test no es fácil de utilizar en
+ una aplicación Grails (o al menos yo no lo he conseguido).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/jayway/rest-assured&quot;&gt;Rest Assured&lt;/a&gt; por otra parte es un proyecto que proporciona un
+extenso DSL orientado a testear servicios REST de una forma cómoda en Java (y por supuesto en Groovy) por lo que
+la unión de ambas herramientas nos permitirá desarrollar unos test claros y muy &quot;groovieros&quot;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;configurando_dependencias&quot;&gt;Configurando dependencias&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;listingblock groovy&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;/build.gradle&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;...
+plugins {
+    id &quot;org.asciidoctor.convert&quot; version &quot;1.5.2&quot;
+}
+
+ext {
+...
+    springRestdocsVersion = &apos;1.1.0.M1&apos;              &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+    snippetsDir = file(&apos;build/generated-snippets&apos;)  &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+}
+
+test {
+    outputs.dir snippetsDir  &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+}
+
+asciidoctor {
+    attributes &apos;snippets&apos;: snippetsDir  &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+    inputs.dir snippetsDir
+    dependsOn integrationTest           &lt;b class=&quot;conum&quot;&gt;(3)&lt;/b&gt;
+}
+
+jar {
+    dependsOn asciidoctor
+    from (&quot;${asciidoctor.outputDir}/html5&quot;) {
+        into &apos;static/docs&apos;              &lt;b class=&quot;conum&quot;&gt;(4)&lt;/b&gt;
+    }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;colist arabic&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;A día de hoy la versión última que funciona se encuentra en estado M1&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Usaremos este directorio para alojar los &quot;snippets&quot; generados automáticamente por los test&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;La tarea asciidoctor generará la documentación únicamente si todos los test han sido correctos&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Tenemos la posibilidad de incluir la documentación dentro del propio jar para que sea accesible vía web&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;preparando_nuestra_documentación&quot;&gt;Preparando nuestra documentación&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;La documentación de todo proyecto debería ser parte del proyecto y como tal encontrarse versionada. Para ello
+nos crearemos el directorio src/docs/asciidoc donde alojaremos nuestros documentos AsciiDoc.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Para este ejemplo usaremos un simple &lt;strong&gt;Index&lt;/strong&gt; pero en los proyectos de referencia puedes encontrar ejemplos mucho
+más completos (un apidoc, getting-started, ..).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock asciidoc&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;/src/docs/asciidoc/index.adoc&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt; blablabla ... TwitterPeople es un simple ejemplo de cómo usar pruebas unitarias de servicios
+ REST y usarlas para autodocumentarlas blablabla  &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+
+  include :: {snippets}/people/curl-request.adoc[]   &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+  include :: {snippets}/people/http-request.adoc[]  &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+  include :: {snippets}/people/http-response.adoc[]  &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;colist arabic&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;nuestra documentación incluye documentos que serán generados por los test&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;cada test generará en el directorio oportuno un curl, un request y un response&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;creando_un_spec&quot;&gt;Creando un Spec&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Para nuestro ejemplo vamos a crear un Spec que testee los recursos /people/ y /people/${username}&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock groovy&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;/src/integration-test/groovy/twitterpeople/PeopleSpec&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;  void &quot;test index&quot;() {
+
+        given:
+        def request = given(documentationSpec)
+                .accept(&quot;application/json&quot;)
+                .filter(document(&quot;people&quot;,      &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+                preprocessRequest(modifyUris()
+                        .scheme(&quot;http&quot;)
+                        .host(&quot;localhost&quot;)
+                        .removePort())))
+        when:
+        def then = request
+                .when()
+                .port(8080)
+                .get(&quot;/people&quot;)                 &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+                .then()
+
+        then:
+        then.assertThat().statusCode(is(200));
+
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;colist arabic&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;document(&quot;people&quot;) generará el snippet en &quot;people&quot; el cual se refencia en el include de index.adoc&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;get(&quot;/people&quot;) realizará una petición REST sobre people&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Como se puede observar podemos indicar a cada test a relizar dónde queremos que genere los snippets así
+como mantener el código al estilo de un test Spock incluso mediante el uso de &quot;where&quot;:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock groovy&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;/src/integration-test/groovy/twitterpeople/PeopleSpec&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt; void &quot;test person #username&quot;() {
+
+         given:
+         def request = given(documentationSpec)
+                 .accept(&quot;application/json&quot;)
+                 .filter(document(&quot;people/${document}&quot;, &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+                 preprocessRequest(modifyUris()
+                         .scheme(&quot;http&quot;)
+                         .host(&quot;localhost&quot;)
+                         .removePort())))
+         when:
+         def then = request
+                 .when()
+                 .port(8080)
+                 .get(&quot;/people/${username}&quot;)    &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+                 .then()
+
+         then:
+         then.assertThat().statusCode(is(200));
+         then.assertThat().content(&apos;id&apos;, equalTo(username));
+
+         where:
+         username | document
+         &apos;jagedn&apos; | &quot;person1&quot;   &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+     }&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;colist arabic&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Podemos hacer que para cada caso del test el snippet se genere en un directorio diferente&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Recurso a testear personalizado en cada caso del test&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class=&quot;admonitionblock note&quot;&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td class=&quot;icon&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;Note&lt;/div&gt;
+&lt;/td&gt;
+&lt;td class=&quot;content&quot;&gt;
+&lt;a href=&quot;https://twitter.com/JennStrater:&quot;&gt;Jenn Strater&lt;/a&gt; tiene un ejemplo de un test sobre un controller más &quot;limpio&quot;
+      que el de TwitterPeople en &lt;a href=&quot;https://github.com/jlstrater/gr8data/blob/master/src/test/groovy/gr8data/controllers/CompanyControllerSpec.groovy&quot;&gt;GitHub&lt;/a&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;build&quot;&gt;Build&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Por último sólo resta generar nuestra aplicación y si no hay ningún error y todos los test se ejecutan correctamente
+la tarea asciidoc se encargará de &quot;enmaquetar&quot; nuestros documentos junto con los snippets y de adjuntarlo en nuestro
+jar.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;bootrun&quot;&gt;bootRun&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Ahora podemos ejecutar nuestra aplicación:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock console&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;$ java -jar twitterpeople.0-1.jar&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;admonitionblock note&quot;&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td class=&quot;icon&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;Note&lt;/div&gt;
+&lt;/td&gt;
+&lt;td class=&quot;content&quot;&gt;
+Puesto que Twitter4J requiere de un fichero de configuracion con las claves de autentificacion de tu aplicación
+en twitter primero deberás crearlo y añadirlas tal como se indica en &lt;a href=&quot;http://twitter4j.org/en/configuration.html&quot; class=&quot;bare&quot;&gt;http://twitter4j.org/en/configuration.html&lt;/a&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Gracias a que SpringBot incluye la capacidad de poder acceder a los recursos que se encuentren bajo el directorio
+&lt;strong&gt;static&lt;/strong&gt; nuestra documentación será también accesible:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock console&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;$ firefox http://localhost:8080/twitterpeople/docs/index.html&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;donde verías la documentación completa generada:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;header&quot;&gt;
+&lt;h1&gt;TwitterPeople, Grails proxy de usuarios de Twitter&lt;/h1&gt;
+&lt;div class=&quot;details&quot;&gt;
+&lt;span id=&quot;author&quot; class=&quot;author&quot;&gt;Jorge Aguilera&lt;/span&gt;&lt;br&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&quot;content&quot;&gt;
+&lt;div id=&quot;preamble&quot;&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;TwitterPeople es un simple ejemplo de cómo usar pruebas unitarias de servicios
+REST y usarlas para autodocumentarlas.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;El único recurso disponible en TwitterPeople es un Person que contiene
+un subconjunto de atributos de un usuario de Twitter. Al inicio de la aplicación
+únicamente existe un usuario de pruebas para demostrar su funcionalidad. Según se
+le solicitan nuevos identificadores la aplicación buscará si ya existe el recurso
+en la base de datos y si no existe acudirá a Twitter a recuperarlo. Si a su vez, existe en
+Twitter creará un Person en base a los atributos que recupera y a partir de entonces
+ya estará disponbile para futuras peticiones.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_people&quot;&gt;People&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Podemos recuperar una lista de Person (People) mediante la invocación de un GET:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;highlightjs highlight&quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;$ curl &apos;http://localhost/people&apos; -i -H &apos;Accept: application/json&apos;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;highlightjs highlight&quot;&gt;&lt;code class=&quot;language-http&quot; data-lang=&quot;http&quot;&gt;GET /people HTTP/1.1
+Accept: application/json
+Host: localhost&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;highlightjs highlight&quot;&gt;&lt;code class=&quot;language-http&quot; data-lang=&quot;http&quot;&gt;HTTP/1.1 200 OK
+Server: Apache-Coyote/1.1
+X-Application-Context: application:test
+Content-Type: application/json;charset=UTF-8
+Transfer-Encoding: chunked
+Date: Fri, 19 Feb 2016 10:28:27 GMT
+Content-Length: 110
+
+[{&quot;id&quot;:&quot;jagedn&quot;,&quot;description&quot;:&quot;no, si yo yaaa ....&quot;,&quot;followersCount&quot;:54,&quot;friendsCount&quot;:111,&quot;location&quot;:&quot;aqui&quot;}]&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_person&quot;&gt;Person&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Para obtener los datos de un Person utilizaremos su nick como identificador (en lugar
+del Id de Twitter):&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;highlightjs highlight&quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;$ curl &apos;http://localhost/people/jagedn&apos; -i -H &apos;Accept: application/json&apos;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;highlightjs highlight&quot;&gt;&lt;code class=&quot;language-http&quot; data-lang=&quot;http&quot;&gt;GET /people/jagedn HTTP/1.1
+Accept: application/json
+Host: localhost&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;highlightjs highlight&quot;&gt;&lt;code class=&quot;language-http&quot; data-lang=&quot;http&quot;&gt;HTTP/1.1 200 OK
+Server: Apache-Coyote/1.1
+X-Application-Context: application:test
+Content-Type: application/json;charset=UTF-8
+Transfer-Encoding: chunked
+Date: Fri, 19 Feb 2016 10:28:27 GMT
+Content-Length: 108
+
+{&quot;id&quot;:&quot;jagedn&quot;,&quot;description&quot;:&quot;no, si yo yaaa ....&quot;,&quot;followersCount&quot;:54,&quot;friendsCount&quot;:111,&quot;location&quot;:&quot;aqui&quot;}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;siguientes_pasos&quot;&gt;Siguientes pasos&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;El Spec creado es una primera versión y seguramente podría/debería ser mejorado.
+Como he comentado, el &lt;a href=&quot;https://github.com/jlstrater/gr8data/blob/master/src/test/groovy/gr8data/controllers/CompanyControllerSpec.groovy&quot;&gt;test&lt;/a&gt; de
+Jenny es más &quot;limpio&quot; pero por otra parte el nuestro usa alguna funcionalidad extra que puede ser interesante a tener en cuenta.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Por otra parte el DSL que ofrece &lt;a href=&quot;https://github.com/jayway/rest-assured&quot;&gt;Rest Assured&lt;/a&gt; es muy completo y requiere de un estudio
+más profundo para poder aprovecharlo mejor. De todas formas creo que el ejemplo visto debería servir para no hacerle
+ pereza e incluir un componente tan importante como una buena documentación en tus entregas.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
