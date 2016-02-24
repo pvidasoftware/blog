@@ -1,0 +1,70 @@
+= start/stop Grails
+Jorge Aguilera
+2016-2-24
+:jbake-type: post
+:jbake-status: published
+:jbake-tags: blog, grails, microservices
+:idprefix:
+
+== Arrancar y parar aplicaciones Grails
+
+Existen multitud de recursos donde se explica cómo configurar el puerto en el que quieres que tu
+aplicación Grails/SpringBoot escuche peticiones HTTP, pero en pocos donde se documente cómo pararla.
+En este post breve comentaremos ambos casos.
+
+
+=== Configurar el puerto de escucha
+
+Probablemente sabrás que mediante la variable de entorno *server.port* se puede configurar el puerto de escucha para tu
+aplicación Grails. Esta variable la puedes establecer en diferentes sitios:
+
+En tiempo de desarrollo, indicandolo en el fichero *application.yml*
+
+[source.properties]
+./conf/application.yml
+----
+server:
+     port: 8001
+----
+
+En tiempo de ejecución, pasándolo como una varible de sistema
+
+[source.console]
+----
+$ grails -Dserver.port=8001 run-app
+----
+
+o indicándolo en el *application.properties* :
+
+[source.properties]
+./application.properties
+----
+server.port = 8001
+----
+
+=== Parar la aplicación
+
+Una vez que nuestra aplicación se encuentra ofreciendo servicios seguramente llegará un momento en el que necesitaremos
+pararla, por ejemplo para actualizarla con una nueva versión, etc. Alguna de las formas que podrías usar para realizar
+el cambio podría ser reiniciando el servidor (un poco drástico, no?) o buscando el pid (process id) y enviando un kill
+(fácil de hacer en entornos linux), etc.
+
+Sin embargo, existe una forma, no tan documentada, mediante la cual podrémos hacer un shutdown de nuestra aplicación
+de una forma ordenada. Para ello deberemos activar el *endpoint* que permanecerá a la escucha mediante la variable
+de entorno *endpoints.shutdown.enabled*
+
+[source.properties]
+./application.properties
+----
+...
+server.port = 8001
+endpoints.shutdown.enabled=true
+...
+----
+
+y cuando necesitemos parar la aplicación podremos hacerlo desde una consola realizando un post al endpoint:
+
+[source.console]
+----
+$ curl -X POST localhost:8001/shutdown
+----
