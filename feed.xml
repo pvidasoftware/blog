@@ -6,9 +6,93 @@
     <atom:link href="https://pvidasoftware.github.io/blog/feed.xml" rel="self" type="application/rss+xml" />
     <description>JBake Bootstrap Template</description>
     <language>en-gb</language>
-    <pubDate>sáb, 20 feb 2016 11:08:44 +0100</pubDate>
-    <lastBuildDate>sáb, 20 feb 2016 11:08:44 +0100</lastBuildDate>
+    <pubDate>mié, 24 feb 2016 13:57:51 +0100</pubDate>
+    <lastBuildDate>mié, 24 feb 2016 13:57:51 +0100</lastBuildDate>
 
+    
+    <item>
+      <title>start/stop Grails</title>
+      <link>https://pvidasoftware.github.io/blog/blog/2016/start-stop-grails.html</link>
+      <pubDate>mié, 24 feb 2016 00:00:00 +0100</pubDate>
+      <guid isPermaLink="false">blog/2016/start-stop-grails.html</guid>
+      <description>
+      &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;arrancar_y_parar_aplicaciones_grails&quot;&gt;Arrancar y parar aplicaciones Grails&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Existen multitud de recursos donde se explica cómo configurar el puerto en el que quieres que tu
+aplicación Grails/SpringBoot escuche peticiones HTTP, pero en pocos donde se documente cómo pararla.
+En este post breve comentaremos ambos casos.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;configurar_el_puerto_de_escucha&quot;&gt;Configurar el puerto de escucha&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Probablemente sabrás que mediante la variable de entorno &lt;strong&gt;server.port&lt;/strong&gt; se puede configurar el puerto de escucha para tu
+aplicación Grails. Esta variable la puedes establecer en diferentes sitios:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;En tiempo de desarrollo, indicandolo en el fichero &lt;strong&gt;application.yml&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock properties&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;/conf/application.yml&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;server:
+     port: 8001&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;En tiempo de ejecución, pasándolo como una varible de sistema&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock console&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;$ grails -Dserver.port=8001 run-app&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;o indicándolo en el &lt;strong&gt;application.properties&lt;/strong&gt; :&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock properties&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;/application.properties&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;server.port = 8001&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;parar_la_aplicación&quot;&gt;Parar la aplicación&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Una vez que nuestra aplicación se encuentra ofreciendo servicios seguramente llegará un momento en el que necesitaremos
+pararla, por ejemplo para actualizarla con una nueva versión, etc. Alguna de las formas que podrías usar para realizar
+el cambio podría ser reiniciando el servidor (un poco drástico, no?) o buscando el pid (process id) y enviando un kill
+(fácil de hacer en entornos linux), etc.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Sin embargo, existe una forma, no tan documentada, mediante la cual podrémos hacer un shutdown de nuestra aplicación
+de una forma ordenada. Para ello deberemos activar el &lt;strong&gt;endpoint&lt;/strong&gt; que permanecerá a la escucha mediante la variable
+de entorno &lt;strong&gt;endpoints.shutdown.enabled&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock properties&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;/application.properties&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;...
+server.port = 8001
+endpoints.shutdown.enabled=true
+...&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;y cuando necesitemos parar la aplicación podremos hacerlo desde una consola realizando un post al endpoint:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock console&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;$ curl -X POST localhost:8001/shutdown&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+	  </description>
+    </item>
     
     <item>
       <title>Test Driven para documentar RESTful (1/2)</title>
