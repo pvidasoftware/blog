@@ -100,6 +100,7 @@ y creamos una nueva plantilla para este tipo de contenido:
 
 Ahora solo resta crear una presentación que queramos que aparezca en nuestro blog dentro de la sección *Slides* por
 lo que en crearemos:
+
 - un directorio slides dentro de content para alojar nuestras presentaciones (el nombre puede ser lo que quieras)
 - un nuevo documento HTML con la etiqueta type=presentation
 
