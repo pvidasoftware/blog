@@ -1,14 +1,11 @@
-		</div>
-		<div id="push"></div>
-    </div>
-    
-    <div id="footer">
+
+    <footer class="footer">
       <div class="container">
-        <p class="muted">PuraVida Software,SL c/ Betancunia 1, local A, Madrid 28017, <a href="mailto:contacto@puravida-software.com">Contacto</a>
+        <p class="text-muted">PuraVida Software,SL c/ Betancunia 1, local A, Madrid 28017, <a href="mailto:contacto@puravida-software.com">Contacto</a>
             <span class="credit">&copy; 2016 | Mixed with <a href="http://getbootstrap.com/">Bootstrap v3.1.1</a> | Baked with <a href="http://jbake.org">JBake ${version}</a></span>
         </p>
       </div>
-    </div>
+    </footer>
     
     <!-- Le javascript
     ================================================== -->
@@ -17,7 +14,27 @@
     <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>js/bootstrap.min.js"></script>
     <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>js/prettify.js"></script>
 
-    <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>js/jmpress.custom.js"></script>
+    <%if( content.type == 'presentation') {%>
+    <!-- Required Modernizr file -->
+    <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/modernizr.custom.js"></script>
+
+    <!-- Required JS files. -->
+    <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/core/deck.core.js"></script>
+
+    <!-- Extension JS files. Add or remove as needed. -->
+    <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/extensions/menu/deck.menu.js"></script>
+    <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/extensions/goto/deck.goto.js"></script>
+    <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/extensions/status/deck.status.js"></script>
+    <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/extensions/navigation/deck.navigation.js"></script>
+    <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/extensions/scale/deck.scale.js"></script>
+
+    <script>
+        \$(function() {
+            \$.deck('.slide');
+        });
+    </script>
+    <%}%>
+
   </body>
 
 <!-- google -->
@@ -50,13 +67,5 @@
     return t;
   }(document, "script", "twitter-wjs"));</script>
 <!-- twitter -->
-
-<%if( content.type == 'presentation') {%>
-<script>
-    \$(function() {
-        \$('#jmpress').jmpress();
-    });
-</script>
-<%}%>
 
 </html>

@@ -6,6 +6,11 @@ Jorge Aguilera
 :jbake-tags: blog, asciidoc
 :idprefix:
 
-== PuraVida Software
+== El blog tecnológico de PuraVida Software
 
-Empresa de consultoría y desarrollos tecnológicos, ubicada en Madrid.
+PuraVida Software es una empresa de desarrollos tecnológicos ubicada en Madrid orientada a ofrecer a
+sus clientes soluciones a medida especialmente en aquellas áreas dónde la integración, innovación y/o
+agilidad son claves para el éxito del proyecto.
+
+Mediante este blog compartimos aquellos conocimientos que consideramos pueden ser de utilidad a la
+comunidad de desarrolladores, especialmente dirigidos a Groovy y su ecosistema.

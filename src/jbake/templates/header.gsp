@@ -16,7 +16,23 @@
     <link href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>css/prettify.css" rel="stylesheet" type="text/css">
 
 <%if( content.type == 'presentation') {%>
-    <link href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>css/jmpressjs.simple.css" rel="stylesheet" type="text/css">
+    <link href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/core/deck.core.css" rel="stylesheet" type="text/css">
+
+      <link rel="stylesheet" media="screen" href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/extensions/goto/deck.goto.css">
+      <link rel="stylesheet" media="screen" href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/extensions/menu/deck.menu.css">
+      <link rel="stylesheet" media="screen" href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/extensions/navigation/deck.navigation.css">
+      <link rel="stylesheet" media="screen" href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/extensions/status/deck.status.css">
+      <link rel="stylesheet" media="screen" href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/extensions/scale/deck.scale.css">
+
+      <!-- Style theme. More available in /themes/style/ or create your own. -->
+      <link rel="stylesheet" media="screen" href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/themes/style/web-2.0.css">
+
+      <!-- Transition theme. More available in /themes/transition/ or create your own. -->
+      <link rel="stylesheet" media="screen" href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/themes/transition/horizontal-slide.css">
+
+      <!-- Basic black and white print styles -->
+      <link rel="stylesheet" media="print" href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/core/print.css">
+
 <%}%>
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -31,6 +47,6 @@
     <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">-->
     <link rel="shortcut icon" href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>favicon.ico">
   </head>
+
   <body onload="prettyPrint()">
-    <div id="wrap">
-   
+
