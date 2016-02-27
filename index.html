@@ -29,12 +29,13 @@
     <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">-->
     <link rel="shortcut icon" href="favicon.ico">
   </head>
+
   <body onload="prettyPrint()">
-    <div id="wrap">
-   
+
+
 
 		<!-- Fixed navbar -->
-    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <nav class="navbar navbar-default" role="navigation">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -61,23 +62,21 @@
           </ul>
         </div><!--/.nav-collapse -->
       </div>
-    </div>
+    </nav>
+
+
     <div class="container">
 
-	<div class="page-header">
-		<h1>Blog</h1>
-	</div>
+        <div class="row">
+            <div class="col-md-3">
+                <a class="twitter-timeline"  href="https://twitter.com/pvidasoftware" data-widget-id="698067031745294336">@pvidasoftware.</a>
+            </div>
 
-    <div class="row">
-        <div class="col-md-3">
-            <a class="twitter-timeline"  href="https://twitter.com/pvidasoftware" data-widget-id="698067031745294336">Tweets por el @pvidasoftware.</a>
-        </div>
-
-        <div class="col-md-9">
-	
-		    <a href="blog/2016/start-stop-grails.html"><h3>start/stop Grails</h3></a>
-		    <em>24 febrero 2016</em>
-		    <!--p><div class="sect1">
+            <div class="col-md-9">
+        
+                <a href="blog/2016/start-stop-grails.html"><h3>start/stop Grails</h3></a>
+                <em>24 febrero 2016</em>
+                <!--p><div class="sect1">
 <h2 id="arrancar_y_parar_aplicaciones_grails">Arrancar y parar aplicaciones Grails</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -87,20 +86,10 @@ En este post breve comentaremos ambos casos.</p>
 </div>
 <div class="sect2">
 <h3 id="configurar_el_puerto_de_escucha">Configurar el puerto de ...</p-->
-  	
-		    <a href="blog/2016/twitterpeople_1_2.html"><h3>Test Driven para documentar RESTful (1/2)</h3></a>
-		    <em>19 febrero 2016</em>
-		    <!--p><div class="sect1">
-<h2 id="usar_los_test_para_documentar_tus_servicios_restful">Usar los test para documentar tus servicios RESTful</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>En esta serie de post vamos a ver cómo aprovechar tus pruebas contra un servicio REST (¿porque haces test
-  en tus desarrollos, verdad ?) para que automáticamente generen una documentación sobre el mismo que pueda servir al
-  resto del equipo a comprender el API. Al ser los propios test los que generarán la ...</p-->
-  	
-		    <a href="blog/2016/twitterpeople_2_2.html"><h3>Test Driven para documentar RESTful (2/2)</h3></a>
-		    <em>19 febrero 2016</em>
-		    <!--p><div class="sect1">
+        
+                <a href="blog/2016/twitterpeople_2_2.html"><h3>Test Driven para documentar RESTful (2/2)</h3></a>
+                <em>20 febrero 2016</em>
+                <!--p><div class="sect1">
 <h2 id="spring_rest_doc_and_rest_assured">Spring-rest-doc and Rest-Assured</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -110,10 +99,20 @@ En este post breve comentaremos ambos casos.</p>
 </div>
 <div class="paragraph">
 <p>P...</p-->
-  	
-		    <a href="blog/2016/add-jmpress-jbake.html"><h3>Añadiendo Slides a JBake</h3></a>
-		    <em>16 febrero 2016</em>
-		    <!--p><div class="sect1">
+        
+                <a href="blog/2016/twitterpeople_1_2.html"><h3>Test Driven para documentar RESTful (1/2)</h3></a>
+                <em>19 febrero 2016</em>
+                <!--p><div class="sect1">
+<h2 id="usar_los_test_para_documentar_tus_servicios_restful">Usar los test para documentar tus servicios RESTful</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>En esta serie de post vamos a ver cómo aprovechar tus pruebas contra un servicio REST (¿porque haces test
+  en tus desarrollos, verdad ?) para que automáticamente generen una documentación sobre el mismo que pueda servir al
+  resto del equipo a comprender el API. Al ser los propios test los que generarán la ...</p-->
+        
+                <a href="blog/2016/add-jmpress-jbake.html"><h3>Añadiendo Slides a JBake</h3></a>
+                <em>16 febrero 2016</em>
+                <!--p><div class="sect1">
 <h2 id="slides_en_nuestro_blog">slides en nuestro blog</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -123,10 +122,10 @@ realmente simple para que podamos crear nuevos tipos de páginas en nuestro blog
 <div class="paragraph">
 <p>En nuestro caso vamos a incluir un sistema de presentaciones basado
 en <a href="http://jmpressjs.github.io/docs/index.html">J...</p-->
-  	
-		    <a href="blog/2016/queryDSL-post.html"><h3>Construye tu propia DSL</h3></a>
-		    <em>11 febrero 2016</em>
-		    <!--p><div class="sect1">
+        
+                <a href="blog/2016/queryDSL-post.html"><h3>Construye tu propia DSL</h3></a>
+                <em>11 febrero 2016</em>
+                <!--p><div class="sect1">
 <h2 id="dsl_con_groovy">DSL con Groovy</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -134,24 +133,21 @@ en <a href="http://jmpressjs.github.io/docs/index.html">J...</p-->
 es realmente "sencillo" una vez que se entiende. Existen numerosos recursos, e incluso libros dedicados a ello exclusivamente,
 por lo que no nos extenderemos demasiado en este post, simplemente apuntar que puedes diseñar tu propio DSL de tal forma
 que ...</p-->
-  	
-  	    </div>
+        
+            <p>Older posts are available in the <a href="archive.html">archive</a>.</p>
+            </div>
 
-	</div>
-
-	<p>Older posts are available in the <a href="archive.html">archive</a>.</p>
-
-		</div>
-		<div id="push"></div>
+        </div>
     </div>
-    
-    <div id="footer">
+
+
+    <footer class="footer">
       <div class="container">
-        <p class="muted">PuraVida Software,SL c/ Betancunia 1, local A, Madrid 28017, <a href="mailto:contacto@puravida-software.com">Contacto</a>
+        <p class="text-muted">PuraVida Software,SL c/ Betancunia 1, local A, Madrid 28017, <a href="mailto:contacto@puravida-software.com">Contacto</a>
             <span class="credit">&copy; 2016 | Mixed with <a href="http://getbootstrap.com/">Bootstrap v3.1.1</a> | Baked with <a href="http://jbake.org">JBake v2.4.0</a></span>
         </p>
       </div>
-    </div>
+    </footer>
     
     <!-- Le javascript
     ================================================== -->
@@ -160,7 +156,8 @@ que ...</p-->
     <script src="js/bootstrap.min.js"></script>
     <script src="js/prettify.js"></script>
 
-    <script src="js/jmpress.custom.js"></script>
+    
+
   </body>
 
 <!-- google -->
@@ -193,7 +190,5 @@ que ...</p-->
     return t;
   }(document, "script", "twitter-wjs"));</script>
 <!-- twitter -->
-
-
 
 </html>
