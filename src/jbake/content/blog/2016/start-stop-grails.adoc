@@ -4,6 +4,7 @@ Jorge Aguilera
 :jbake-type: post
 :jbake-status: published
 :jbake-tags: blog, grails, microservices
+:jbake-description: arrancar y para aplicaciones Grails
 :idprefix:
 
 == Arrancar y parar aplicaciones Grails

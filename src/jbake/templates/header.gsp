@@ -4,17 +4,17 @@
     <meta charset="utf-8"/>
     <title><%if (content.title) {%>${content.title}<% } else { %>${config.site_title}<% }%></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <meta name="keywords" content="">
+    <meta name="description" content="${content.description ?: content.title ?: ''}">
+    <meta name="author" content="pvidasoftware">
+    <meta name="keywords" content="${content.tags?.join(',')}">
     <meta name="generator" content="JBake">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@pvidasoftware">
     <meta name="twitter:creator" content="@pvidasoftware">
     <meta name="twitter:title" content="${content.title ?: 'Blog PuraVida Software'}">
-    <meta name="twitter:description" content="${content.description ?: ''}">
-    <meta name="twitter:image" content="http://pvidasoftware.github.io/blog/${content.image ?: 'slides/pvlogo.png' }">
+    <meta name="twitter:description" content="${content.description ?: content.title ?: 'Blog PuraVida Software'}">
+    <meta name="twitter:image" content="https://pvidasoftware.github.io/blog/${content.image ?: 'slides/pvlogo.png' }">
 
 
     <!-- Le styles -->
