@@ -9,7 +9,16 @@
     <meta name="keywords" content="">
     <meta name="generator" content="JBake">
 
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@pvidasoftware">
+    <meta name="twitter:creator" content="@pvidasoftware">
+    <meta name="twitter:title" content="${content.title ?: 'Blog PuraVida Software'}">
+    <meta name="twitter:description" content="${content.description ?: ''}">
+    <meta name="twitter:image" content="http://pvidasoftware.github.io/blog/${content.image ?: 'slides/pvlogo.png' }">
+
+
     <!-- Le styles -->
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet">
     <link href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>css/asciidoctor.css" rel="stylesheet" type="text/css">
     <link href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>css/base.css" rel="stylesheet" type="text/css">

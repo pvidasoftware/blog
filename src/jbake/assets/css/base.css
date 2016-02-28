@@ -38,3 +38,12 @@ code {
   height: 80%;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
 }
+
+ul.share-buttons{
+  list-style: none;
+  padding: 0;
+}
+
+ul.share-buttons li{
+  display: inline;
+}

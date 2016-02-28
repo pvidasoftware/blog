@@ -24,6 +24,33 @@
               </ul>
             </li>
           </ul>
+
+          <% String socialRoot = "https%3A%2F%2Fpvidasoftware.github.io/blog/${content.uri}" %>
+
+          <ul class="nav navbar-nav navbar-right share-buttons">
+            <%
+            StringBuilder twitter = new StringBuilder('https://twitter.com/intent/tweet?')
+            twitter.append('source=')
+                    .append( socialRoot )
+                    .append( '&text=' )
+                    .append( content.title ?: '' )
+                    .append( '%20')
+                    .append( socialRoot )
+                    .append( '&via=pvidasoftware' )
+            %>
+            <li><a href="${twitter.toString()}" target="_blank" title="Tweet"><i class="fa fa-twitter-square fa-2x"></i></a></li>
+
+            <%
+            StringBuilder google = new StringBuilder('https://plus.google.com/share?')
+            google.append('url=')
+                    .append( socialRoot )
+            %>
+            <li><a href="${google.toString()}" target="_blank" title="${content.title ?:'Share on Google+'}"><i class="fa fa-google-plus-square fa-2x"></i></a></li>
+
+            <li><a href="http://www.linkedin.com/shareArticle?mini=true&url=${socialRoot}&title=${content.title ?: 'PuraVida Software'}&summary=&source=${socialRoot}" target="_blank" title="Share on LinkedIn"><i class="fa fa-linkedin-square fa-2x"></i></a></li>
+            <li><a href="mailto:?subject=PuraVidaSoftware&body=:%20https%3A%2F%2Fpvidasoftware.github.io%2Fblog" target="_blank" title="Email"><i class="fa fa-envelope-square fa-2x"></i></a></li>
+          </ul>
+
         </div><!--/.nav-collapse -->
       </div>
     </nav>
