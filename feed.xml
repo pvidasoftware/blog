@@ -6,8 +6,8 @@
     <atom:link href="https://pvidasoftware.github.io/blog/feed.xml" rel="self" type="application/rss+xml" />
     <description>JBake Bootstrap Template</description>
     <language>en-gb</language>
-    <pubDate>lun, 14 mar 2016 17:29:48 +0100</pubDate>
-    <lastBuildDate>lun, 14 mar 2016 17:29:48 +0100</lastBuildDate>
+    <pubDate>lun, 14 mar 2016 19:29:22 +0100</pubDate>
+    <lastBuildDate>lun, 14 mar 2016 19:29:22 +0100</lastBuildDate>
 
     
     <item>
@@ -222,7 +222,12 @@ más completos (un apidoc, getting-started, ..).&lt;/p&gt;
 &lt;div class=&quot;listingblock groovy&quot;&gt;
 &lt;div class=&quot;title&quot;&gt;/src/integration-test/groovy/twitterpeople/PeopleSpec&lt;/div&gt;
 &lt;div class=&quot;content&quot;&gt;
-&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;  void &quot;test index&quot;() {
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;    ...
+    final ManualRestDocumentation restDocumentation = new ManualRestDocumentation(&apos;build/generated-snippets&apos;)
+    private RequestSpecification documentationSpec
+    ...
+
+  void &quot;test index&quot;() {
 
         given:
         def request = given(documentationSpec)
@@ -262,12 +267,7 @@ como mantener el código al estilo de un test Spock incluso mediante el uso de &
 &lt;div class=&quot;listingblock groovy&quot;&gt;
 &lt;div class=&quot;title&quot;&gt;/src/integration-test/groovy/twitterpeople/PeopleSpec&lt;/div&gt;
 &lt;div class=&quot;content&quot;&gt;
-&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;    ...
-    final ManualRestDocumentation restDocumentation = new ManualRestDocumentation(&apos;build/generated-snippets&apos;)
-    private RequestSpecification documentationSpec
-    ...
-
- void &quot;test person #username&quot;() {
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt; void &quot;test person #username&quot;() {
 
          given:
              def fields = [
@@ -371,7 +371,7 @@ en twitter primero deberás crearlo y añadirlas tal como se indica en &lt;a hre
 &lt;/div&gt;
 &lt;div class=&quot;listingblock console&quot;&gt;
 &lt;div class=&quot;content&quot;&gt;
-&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;$ firefox http://localhost:8080/twitterpeople/docs/index.html&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;$ firefox http://localhost:8080/static/docs/index.html&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;

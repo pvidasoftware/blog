@@ -219,7 +219,12 @@ más completos (un apidoc, getting-started, ..).</p>
 <div class="listingblock groovy">
 <div class="title">/src/integration-test/groovy/twitterpeople/PeopleSpec</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>  void "test index"() {
+<pre class="prettyprint highlight"><code>    ...
+    final ManualRestDocumentation restDocumentation = new ManualRestDocumentation('build/generated-snippets')
+    private RequestSpecification documentationSpec
+    ...
+
+  void "test index"() {
 
         given:
         def request = given(documentationSpec)
@@ -259,12 +264,7 @@ como mantener el código al estilo de un test Spock incluso mediante el uso de "
 <div class="listingblock groovy">
 <div class="title">/src/integration-test/groovy/twitterpeople/PeopleSpec</div>
 <div class="content">
-<pre class="prettyprint highlight"><code>    ...
-    final ManualRestDocumentation restDocumentation = new ManualRestDocumentation('build/generated-snippets')
-    private RequestSpecification documentationSpec
-    ...
-
- void "test person #username"() {
+<pre class="prettyprint highlight"><code> void "test person #username"() {
 
          given:
              def fields = [
@@ -368,7 +368,7 @@ en twitter primero deberás crearlo y añadirlas tal como se indica en <a href="
 </div>
 <div class="listingblock console">
 <div class="content">
-<pre class="prettyprint highlight"><code>$ firefox http://localhost:8080/twitterpeople/docs/index.html</code></pre>
+<pre class="prettyprint highlight"><code>$ firefox http://localhost:8080/static/docs/index.html</code></pre>
 </div>
 </div>
 <div class="paragraph">
