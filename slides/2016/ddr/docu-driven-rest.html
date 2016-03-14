@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Testea y Documenta tu REST</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Testea y Documenta tu REST">
+    <meta name="author" content="pvidasoftware">
+    <meta name="keywords" content="blog,asciidoc,spring-rest,grails">
+    <meta name="generator" content="JBake">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@pvidasoftware">
+    <meta name="twitter:creator" content="@pvidasoftware">
+    <meta name="twitter:title" content="Testea y Documenta tu REST">
+    <meta name="twitter:description" content="Testea y Documenta tu REST">
+    <meta name="twitter:image" content="https://pvidasoftware.github.io/blog/slides/pvlogo.png">
+
+
+    <!-- Le styles -->
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../../../css/asciidoctor.css" rel="stylesheet" type="text/css">
+    <link href="../../../css/base.css" rel="stylesheet" type="text/css">
+    <link href="../../../css/prettify.css" rel="stylesheet" type="text/css">
+
+
+    <link href="../../../deck/core/deck.core.css" rel="stylesheet" type="text/css">
+
+      <link rel="stylesheet" media="screen" href="../../../deck/extensions/goto/deck.goto.css">
+      <link rel="stylesheet" media="screen" href="../../../deck/extensions/menu/deck.menu.css">
+      <link rel="stylesheet" media="screen" href="../../../deck/extensions/navigation/deck.navigation.css">
+      <link rel="stylesheet" media="screen" href="../../../deck/extensions/status/deck.status.css">
+      <link rel="stylesheet" media="screen" href="../../../deck/extensions/scale/deck.scale.css">
+
+      <!-- Style theme. More available in /themes/style/ or create your own. -->
+      <link rel="stylesheet" media="screen" href="../../../deck/themes/style/web-2.0.css">
+
+      <!-- Transition theme. More available in /themes/transition/ or create your own. -->
+      <link rel="stylesheet" media="screen" href="../../../deck/themes/transition/horizontal-slide.css">
+
+      <!-- Basic black and white print styles -->
+      <link rel="stylesheet" media="print" href="../../../deck/core/print.css">
+
+
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <!--<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">-->
+    <link rel="shortcut icon" href="../../../favicon.ico">
+  </head>
+
+  <body onload="prettyPrint()">
+
+
+
+	<!-- Fixed navbar -->
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../../../">@pvidasoftware</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="../../../index.html">Home</a></li>
+            <li><a href="../../../about.html">About</a></li>
+            <li><a href="../../../feed.xml">Subscribe</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Slides <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+	
+		    <li><a href="../../../slides/2016/ddr/docu-driven-rest.html">Testea y Documenta tu REST</a></li>
+  	
+		    <li><a href="../../../slides/puravida-software.html">Quién es Puravida Software</a></li>
+  	
+              </ul>
+            </li>
+          </ul>
+
+          
+
+          <ul class="nav navbar-nav navbar-right share-buttons">
+            
+            <li><a href="https://twitter.com/intent/tweet?source=https%3A%2F%2Fpvidasoftware.github.io/blog/slides/2016/ddr/docu-driven-rest.html&text=Testea y Documenta tu REST%20https%3A%2F%2Fpvidasoftware.github.io/blog/slides/2016/ddr/docu-driven-rest.html&via=pvidasoftware" target="_blank" title="Tweet"><i class="fa fa-twitter-square fa-2x"></i></a></li>
+
+            
+            <li><a href="https://plus.google.com/share?url=https%3A%2F%2Fpvidasoftware.github.io/blog/slides/2016/ddr/docu-driven-rest.html" target="_blank" title="Testea y Documenta tu REST"><i class="fa fa-google-plus-square fa-2x"></i></a></li>
+
+            <li><a href="http://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fpvidasoftware.github.io/blog/slides/2016/ddr/docu-driven-rest.html&title=Testea y Documenta tu REST&summary=&source=https%3A%2F%2Fpvidasoftware.github.io/blog/slides/2016/ddr/docu-driven-rest.html" target="_blank" title="Share on LinkedIn"><i class="fa fa-linkedin-square fa-2x"></i></a></li>
+            <li><a href="mailto:?subject=PuraVidaSoftware&body=:%20https%3A%2F%2Fpvidasoftware.github.io%2Fblog" target="_blank" title="Email"><i class="fa fa-envelope-square fa-2x"></i></a></li>
+          </ul>
+
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+
+<div class="deck-frame">
+<div class="deck-container">
+
+    <!-- Begin slides. Just make elements with a class of slide. -->
+        
+<style>
+    .deck-container section{
+        background-image:url('../../pvlogo.png');
+        background-repeat: no-repeat;
+        background-position: top left;
+        background-size: 80px 60px;
+    }
+
+    .intro .deck-slide-scaler{
+        padding-top : 120px;
+    }
+
+</style>
+
+<section class="slide intro">
+    <h2>REST TDD&amp;D</h2>
+    <p>Test Driven Development and Documenting a Grails Rest app </p>
+    <p class="slide">o cómo usar Spock para completar tu documentación</p>
+    <p class="slide">en realidad, cómo hacer que documentas como un profesional mientras los test lo hacen por tí</p>
+</section>
+
+
+<section class="slide" id="presentation">
+    <h2>Links e Info</h2>
+    <dl>
+        <dt class="slide">
+            <h3>@jagedn Jorge Aguilera (me)</h3><p>20+ años dándole a la tecla</p>
+            <h3>@pvidasoftware Puravida Software</h3><p>Open source, open mind</p>
+        </dt>
+        <dt class="slide">
+            <h5>Grails (http://www.grails.org)</h5>
+            <h5>Spock (http://spockframework.org)</h5>
+            <h5>spring-rest-doc (projects.spring.io/spring-restdocs)</h5>
+            <h5>rest-assured (https://github.com/jayway/rest-assured)</h5>
+            <h5>AsciiDoc (http://asciidoctor.org)</h5>
+            <h5>@JennStrater https://github.com/jlstrater/gr8data</h5>
+        </dt>
+    </dl>
+</section>
+
+<section class="slide" id="quevamosaver">
+    <h2>Qué vamos a ver</h2>
+    <ul>
+        <li class="slide">
+            <h3>Objetivo</h3>
+            <p>Utilizar los test (unitarios y de integracion) para que hagan el trabajo sucio
+                de documentar nuestras APIs REST</p>
+            <p>Si la documentación no es válida, los servicios REST NO son válidos<br/> (y viceversa,claro)</p>
+        </li>
+        <li class="slide">
+            <h3>Un poco de historia</h3>
+            <p>(reciente, tranquilos)</p>
+        </li>
+        <li class="slide">
+            <h3>TwitterPeople</h3>
+            <p>Grails 3.x REST application</p>
+        </li>
+        <li class="slide">
+            <h3>Spockear</h3>
+            <p>Un poco de test nunca viene mal</p>
+        </li>
+        <li class="slide">
+            <h3>Documentando</h3>
+            <p>Que es a lo que hemos venido</p>
+        </li>
+    </ul>
+</section>
+
+<section class="slide" id="objetivo">
+    <h2>Objetivo</h2>
+    <img src="objetivo.png"/>
+</section>
+
+<section class="slide" id="historia">
+    <h2>Un poco de REST-historia (personal)</h2>
+    <div class="slide">
+        <h3>o de cómo me dejé las pestañas con SOA...</h3>
+        <p>que si primero el contrato vs que si primero el java</p>
+        <p>que si cabecera, que si security, que si payload, ....</p>
+    </div>
+    <div class="slide">
+        <h3>y en tu radar suena REST..</h3>
+        <p>y lo entiendes, y dices esto es para mí... y además Grails tiene un RestController </p>
+        <p>.. y hasta un plugin para securizar las llamadas ( @alvaro_sanchez ) </p>
+        <p>...pero no todo es tan fácil, que si version del API, que si POST o PUT...</p>
+    </div>
+</section>
+
+<section class="slide" id="historiaimg">
+    <h2>El camino al nirvana:</h2>
+    <table>
+        <tr>
+            <td width="50%">
+                <ol>
+                    <li class="slide">Llamadas RPC por todos lados</li>
+                    <li class="slide">Ofreces los datos de tus tablas</li>
+                    <li class="slide">Permites actualizar, e incluso borrar!!</li>
+                    <li class="slide">Te gustaría incluos enlazas recursos</li>
+                </ol>
+            </td>
+            <td width="50%">
+                <p class="slide">
+                    <img src="glory_of_rest_1.png"/>
+                    <cite>http://martinfowler.com/articles/richardsonMaturityModel.html</cite>
+                </p>
+            </td>
+        </tr>
+    </table>
+</section>
+
+<section class="slide intro">
+    <h2>TwitterPeople</h2>
+    <p>Proxy de usuarios de Twitter</p>
+    <p>https://github.com/jagedn/twitterpeople</p>
+    <p>Solicitamos un recurso Person a nuestro servicio y si no lo tiene lo importa desde Twitter</p>
+    <p>(Podíamos hacer la típica aplicación a base de datos, pero ...)</p>
+</section>
+
+<section class="slide" id="twitterpeople1">
+    <h2>Person</h2>
+    <table class="tableblock frame-all grid-all spread">
+        <colgroup>
+            <col style="width: 33%;">
+            <col style="width: 33%;">
+            <col style="width: 33%;">
+        </colgroup>
+        <thead>
+        <tr>
+            <th class="tableblock halign-left valign-top">Path</th>
+            <th class="tableblock halign-left valign-top">Type</th>
+            <th class="tableblock halign-left valign-top">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="tableblock halign-left valign-top"><p class="tableblock">id</p></td>
+            <td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+            <td class="tableblock halign-left valign-top"><p class="tableblock">user name</p></td>
+        </tr>
+        <tr>
+            <td class="tableblock halign-left valign-top"><p class="tableblock">description</p></td>
+            <td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+            <td class="tableblock halign-left valign-top"></td>
+        </tr>
+        <tr>
+            <td class="tableblock halign-left valign-top"><p class="tableblock">followersCount</p></td>
+            <td class="tableblock halign-left valign-top"><p class="tableblock">Number</p></td>
+            <td class="tableblock halign-left valign-top"><p class="tableblock">how many followers</p></td>
+        </tr>
+        <tr>
+            <td class="tableblock halign-left valign-top"><p class="tableblock">friendsCount</p></td>
+            <td class="tableblock halign-left valign-top"><p class="tableblock">Number</p></td>
+            <td class="tableblock halign-left valign-top"><p class="tableblock">how many friends</p></td>
+        </tr>
+        <tr>
+            <td class="tableblock halign-left valign-top"><p class="tableblock">location</p></td>
+            <td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+            <td class="tableblock halign-left valign-top"></td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section class="slide" id="twitterpeople2">
+    <h2>TwitterPeople</h2>
+    <p>
+        <code>java -jar twitterpeople-0.1.jar</code>
+    </p>
+    <p>
+        <img src="glaforge.png"/>
+    </p>
+
+</section>
+
+<section class="slide" id="spock">
+    <h2>Un test</h2>
+    <div class="listingblock groovy fullwidth">
+        <div class="title">/src/integration-test/groovy/twitterpeople/SimpleSpec</div>
+        <div class="content">
+        <pre class="prettyprint highlight"><code>
+            void "test user #username"(){
+            given:
+            RestBuilder rest = new RestBuilder()
+            when:
+            RestResponse response = rest.get("http://localhost:8080/people/${username}")
+            then:
+            response.status == 200
+            response.json.id == username
+            where:
+            username | description
+            'jagedn' | "nooo, si yo ya...."
+            'un_voluntario' | 'seguro que falla el test'
+            }
+        </code></pre>
+        </div>
+    </div>
+</section>
+
+
+
+<section class="slide" id="domain">
+    <h2>People recurso</h2>
+        <div class="listingblock groovy fullwidth">
+        <div class="title">/src/grails-app/domain/twitterpeople/Person</div>
+        <div class="content">
+        <pre class="prettyprint highlight"><code>
+package twitterpeople
+import grails.rest.Resource
+
+@Resource(uri='/people',formats=['json','hal'],readOnly=true)
+class Person {
+    static constraints = {
+        description nullable:true
+        location nullable:true
+    }
+    static mapping = {
+        id generator: 'assigned', type:'string'
+    }
+    String id
+    String description
+    int followersCount
+    int friendsCount
+    String location
+}
+        </code></pre>
+        </div>
+        </div>
+</section>
+
+<section class="slide" id="interceptor">
+    <h2>People interceptor</h2>
+    <div class="listingblock groovy fullwidth">
+        <div class="title">/src/grails-app/controller/twitterpeople/PersonInterceptor</div>
+        <div class="content">
+        <pre class="prettyprint highlight"><code>
+class PersonInterceptor {
+TwitterProxyService twitterProxyService
+    boolean before(){
+        switch( params.action ){
+        case 'show':
+            twitterProxyService.createPerson(params.id)
+        }
+        true
+    }
+}
+        </code></pre>
+        </div>
+    </div>
+</section>
+
+<section class="slide" id="service">
+    <h2>TwitterProxyService</h2>
+    <div class="listingblock groovy fullwidth">
+        <div class="title">/src/grails-app/services/twitterpeople/TwitterProxyService</div>
+        <div class="content">
+        <pre class="prettyprint highlight"><code>
+class TwitterProxyService {
+    Twitter twitter
+    Person createPerson( id ) {
+        Person add
+        User user
+        if( "$id".isNumber() == false ){
+            add=Person.get(id)
+            if(add){
+                return add
+            }
+            user = twitter.showUser("@${id}")
+        }else{
+            user = twitter.showUser( id as long)
+        }
+        if( user ){
+            add = new Person(user.properties)
+            add.id = id
+            if( add.validate() ) {
+                add.save(flush: true)
+            }
+            else{
+                println add.errors
+            }
+        }
+        add
+    }
+}
+        </code></pre>
+        </div>
+    </div>
+</section>
+
+
+<section class="slide" id="doc-tools">
+    <h2>
+        Documentando ...
+    </h2>
+    <ul>
+        <li class="slide"><h2>Swagger</h2><p>uffff supercomplicado</p></li>
+        <li class="slide"><h2>JsonDoc</h2><p>incorpora un playground ... pero no funciona bien en Grails</p></li>
+        <li class="slide"><h2>Spring-rest-doc</h2>
+            <p>(http://projects.spring.io/spring-restdocs) Spring REST Docs helps you to document <b>RESTful services</b>.
+                It combines <b>hand-written</b> documentation written with <b>Asciidoctor</b>
+                and <b>auto-generated snippets</b> produced with Spring MVC Test.
+            </p></li>
+        <li class="slide"><h2>rest-assured</h2>
+            <p>(https://github.com/jayway/rest-assured) Extenso DSL orientado a testear servicios REST</p></li>
+    </ul>
+
+</section>
+
+<section class="slide" id="twitterpeople_2_2">
+    <h2 style="padding-top:100px">
+        Step by step ...
+    </h2>
+    <div>
+        <ul>
+            <li><a href="../../../blog/2016/twitterpeople_2_2.html" target="_blank">Preparar entorno</a></li>
+            <li><a href="../../../blog/2016/twitterpeople_2_2.html" target="_blank">PeopleSpec</a></li>
+            <li><a href="../../../blog/2016/twitterpeople_2_2.html" target="_blank">Documentación base</a></li>
+            <li>Compilar y empaquetar</li>
+            <li>Documentación generada en nuestro proyecto</li>
+            <li>Visualizando la documentación in-situ</li>
+            <li>....</li>
+            <li>Nuevas especificaciones, nuevos cambios, nueva documentación</li>
+        </ul>
+    </div>
+</section>
+
+    <!-- End slides. -->
+
+    <!-- Begin extension snippets. Add or remove as needed. -->
+    <!-- deck.navigation snippet -->
+    <div aria-role="navigation">
+      <a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
+      <a href="#" class="deck-next-link" title="Next">&#8594;</a>
+    </div>
+
+    <!-- deck.status snippet -->
+    <p class="deck-status" aria-role="status">
+      <span class="deck-status-current"></span>
+      /
+      <span class="deck-status-total"></span>
+    </p>
+
+    <!-- deck.goto snippet -->
+    <form action="." method="get" class="goto-form">
+      <label for="goto-slide">Go to slide:</label>
+      <input type="text" name="slidenum" id="goto-slide" list="goto-datalist">
+      <datalist id="goto-datalist"></datalist>
+      <input type="submit" value="Go">
+    </form>
+
+    <!-- End extension snippets. -->
+</div>
+</div>
+
+
+    <footer class="footer">
+      <div class="container">
+        <p class="text-muted">PuraVida Software,SL c/ Betancunia 1, local A, Madrid 28017, <a href="mailto:contacto@puravida-software.com">Contacto</a>
+            <span class="credit">&copy; 2016 | Mixed with <a href="http://getbootstrap.com/">Bootstrap v3.1.1</a> | Baked with <a href="http://jbake.org">JBake v2.4.0</a></span>
+        </p>
+      </div>
+    </footer>
+    
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../../../js/jquery-1.11.1.min.js"></script>
+    <script src="../../../js/bootstrap.min.js"></script>
+    <script src="../../../js/prettify.js"></script>
+
+    
+    <!-- Required Modernizr file -->
+    <script src="../../../deck/modernizr.custom.js"></script>
+
+    <!-- Required JS files. -->
+    <script src="../../../deck/core/deck.core.js"></script>
+
+    <!-- Extension JS files. Add or remove as needed. -->
+    <script src="../../../deck/extensions/menu/deck.menu.js"></script>
+    <script src="../../../deck/extensions/goto/deck.goto.js"></script>
+    <script src="../../../deck/extensions/status/deck.status.js"></script>
+    <script src="../../../deck/extensions/navigation/deck.navigation.js"></script>
+    <script src="../../../deck/extensions/scale/deck.scale.js"></script>
+
+    <script>
+        $(function() {
+            $.deck('.slide');
+        });
+    </script>
+    
+
+  </body>
+
+<!-- google -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-687332-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+<!-- twitter -->
+  <script>window.twttr = (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0],
+      t = window.twttr || {};
+    if (d.getElementById(id)) return t;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "https://platform.twitter.com/widgets.js";
+    fjs.parentNode.insertBefore(js, fjs);
+
+    t._e = [];
+    t.ready = function(f) {
+      t._e.push(f);
+    };
+
+    return t;
+  }(document, "script", "twitter-wjs"));</script>
+<!-- twitter -->
+
+</html>

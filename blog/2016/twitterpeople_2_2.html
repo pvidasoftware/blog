@@ -64,6 +64,8 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Slides <b class="caret"></b></a>
               <ul class="dropdown-menu">
 	
+		    <li><a href="../../slides/2016/ddr/docu-driven-rest.html">Testea y Documenta tu REST</a></li>
+  	
 		    <li><a href="../../slides/puravida-software.html">Quién es Puravida Software</a></li>
   	
               </ul>
@@ -257,16 +259,33 @@ como mantener el código al estilo de un test Spock incluso mediante el uso de "
 <div class="listingblock groovy">
 <div class="title">/src/integration-test/groovy/twitterpeople/PeopleSpec</div>
 <div class="content">
-<pre class="prettyprint highlight"><code> void "test person #username"() {
+<pre class="prettyprint highlight"><code>    ...
+    final ManualRestDocumentation restDocumentation = new ManualRestDocumentation('build/generated-snippets')
+    private RequestSpecification documentationSpec
+    ...
+
+ void "test person #username"() {
 
          given:
-         def request = given(documentationSpec)
-                 .accept("application/json")
-                 .filter(document("people/${document}", <b class="conum">(1)</b>
-                 preprocessRequest(modifyUris()
-                         .scheme("http")
-                         .host("localhost")
-                         .removePort())))
+             def fields = [
+                     fieldWithPath('id').description('user name'),
+                     fieldWithPath('description').description(''),
+                     fieldWithPath('followersCount').description('how many followers'),
+                     fieldWithPath('friendsCount').description('how many friends'),
+                     fieldWithPath('location').description(''),
+                     //fieldWithPath('dateCreated').description('when was created in our system'),
+             ]
+
+             def request = given(documentationSpec)
+                     .accept("application/json")
+                     .filter(document("people/${document}",
+                     preprocessRequest(modifyUris()
+                             .scheme("http")
+                             .host("localhost")
+                             .removePort()),
+                     preprocessResponse(prettyPrint()),
+                     new ResponseFieldsSnippet(fields))
+             )
          when:
          def then = request
                  .when()
