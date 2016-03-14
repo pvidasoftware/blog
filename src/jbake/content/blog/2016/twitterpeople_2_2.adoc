@@ -96,6 +96,11 @@ Para nuestro ejemplo vamos a crear un Spec que testee los recursos /people/ y /p
 ./src/integration-test/groovy/twitterpeople/PeopleSpec
 ----
 
+    ...
+    final ManualRestDocumentation restDocumentation = new ManualRestDocumentation('build/generated-snippets')
+    private RequestSpecification documentationSpec
+    ...
+
   void "test index"() {
 
         given:
@@ -128,11 +133,6 @@ como mantener el código al estilo de un test Spock incluso mediante el uso de "
 [source.groovy]
 ./src/integration-test/groovy/twitterpeople/PeopleSpec
 ----
-
-    ...
-    final ManualRestDocumentation restDocumentation = new ManualRestDocumentation('build/generated-snippets')
-    private RequestSpecification documentationSpec
-    ...
 
  void "test person #username"() {
 
@@ -206,7 +206,7 @@ Gracias a que SpringBot incluye la capacidad de poder acceder a los recursos que
 [source.console]
 ----
 
-$ firefox http://localhost:8080/twitterpeople/docs/index.html
+$ firefox http://localhost:8080/static/docs/index.html
 
 ----
 

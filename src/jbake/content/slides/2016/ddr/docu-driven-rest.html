@@ -166,19 +166,19 @@ status=preview
         <div class="title">/src/integration-test/groovy/twitterpeople/SimpleSpec</div>
         <div class="content">
         <pre class="prettyprint highlight"><code>
-            void "test user #username"(){
-            given:
-            RestBuilder rest = new RestBuilder()
-            when:
-            RestResponse response = rest.get("http://localhost:8080/people/${username}")
-            then:
-            response.status == 200
-            response.json.id == username
-            where:
-            username | description
-            'jagedn' | "nooo, si yo ya...."
-            'un_voluntario' | 'seguro que falla el test'
-            }
+void "test user #username"(){
+    given:
+        RestBuilder rest = new RestBuilder()
+    when:
+        RestResponse response = rest.get("http://localhost:8080/people/${username}")
+    then:
+        response.status == 200
+        response.json.id == username
+    where:
+        username | description
+        'jagedn' | "nooo, si yo ya...."
+        'un_voluntario' | 'seguro que falla el test'
+}
         </code></pre>
         </div>
     </div>
@@ -240,7 +240,8 @@ TwitterProxyService twitterProxyService
     <h2>TwitterProxyService</h2>
     <div class="listingblock groovy fullwidth">
         <div class="title">/src/grails-app/services/twitterpeople/TwitterProxyService</div>
-        <div class="content">
+        <div class="listingblock groovy fullwidth">
+            <div class="content">
         <pre class="prettyprint highlight"><code>
 class TwitterProxyService {
     Twitter twitter
@@ -270,6 +271,10 @@ class TwitterProxyService {
     }
 }
         </code></pre>
+            </td>
+        </tr>
+    </table>
+            </div>
         </div>
     </div>
 </section>
@@ -299,13 +304,13 @@ class TwitterProxyService {
     </h2>
     <div>
         <ul>
-            <li class="slide"><a href="../../../blog/2016/twitterpeople_2_2.html" target="_blank">Preparar entorno</a></li>
-            <li class="slide"><a href="../../../blog/2016/twitterpeople_2_2.html" target="_blank">PeopleSpec</a></li>
-            <li class="slide"><a href="../../../blog/2016/twitterpeople_2_2.html" target="_blank">Documentación base</a></li>
-            <li class="slide">Compilar y empaquetar</li>
-            <li class="slide">Documentación generada en nuestro proyecto</li>
-            <li class="slide">Visualizando la documentación in-situ</li>
-            <li class="slide">....Nuevas especificaciones, nuevos cambios, nueva documentación</li>
+            <li class="slide"><a href="../../../blog/2016/twitterpeople_2_2.html#configurando_dependencias" target="_blank">Preparar entorno</a></li>
+            <li class="slide"><a href="../../../blog/2016/twitterpeople_2_2.html#preparando_nuestra_documentación" target="_blank">Documentación base</a></li>
+            <li class="slide"><a href="../../../blog/2016/twitterpeople_2_2.html#creando_un_spec" target="_blank">PeopleSpec</a></li>
+            <li class="slide"><a href="../../../blog/2016/twitterpeople_2_2.html#build" target="_blank">Compilar, empaquetar y ejecutar</a></li>
+            <li class="slide"><a href="http://localhost:8080/people/jagedn" target="_blank">Vive!!!</a></li>
+            <li class="slide"><a href="http://localhost:8080/static/docs/index.html" target="_blank">Visualizando la documentación in-situ</a></li>
+            <li class="slide">....Nuevas especificaciones, nuevos cambios, nueva documentación, vamos allá</li>
         </ul>
     </div>
 </section>
@@ -326,4 +331,9 @@ class TwitterProxyService {
         <h5>@JennStrater https://github.com/jlstrater/gr8data</h5>
         </dt>
     </dl>
+</section>
+
+
+<section class="slide" id="tnks">
+    <h1>Gracias</h1>
 </section>
