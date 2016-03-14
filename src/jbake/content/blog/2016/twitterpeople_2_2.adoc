@@ -129,16 +129,33 @@ como mantener el código al estilo de un test Spock incluso mediante el uso de "
 ./src/integration-test/groovy/twitterpeople/PeopleSpec
 ----
 
+    ...
+    final ManualRestDocumentation restDocumentation = new ManualRestDocumentation('build/generated-snippets')
+    private RequestSpecification documentationSpec
+    ...
+
  void "test person #username"() {
 
          given:
-         def request = given(documentationSpec)
-                 .accept("application/json")
-                 .filter(document("people/${document}", //<1>
-                 preprocessRequest(modifyUris()
-                         .scheme("http")
-                         .host("localhost")
-                         .removePort())))
+             def fields = [
+                     fieldWithPath('id').description('user name'),
+                     fieldWithPath('description').description(''),
+                     fieldWithPath('followersCount').description('how many followers'),
+                     fieldWithPath('friendsCount').description('how many friends'),
+                     fieldWithPath('location').description(''),
+                     //fieldWithPath('dateCreated').description('when was created in our system'),
+             ]
+
+             def request = given(documentationSpec)
+                     .accept("application/json")
+                     .filter(document("people/${document}",
+                     preprocessRequest(modifyUris()
+                             .scheme("http")
+                             .host("localhost")
+                             .removePort()),
+                     preprocessResponse(prettyPrint()),
+                     new ResponseFieldsSnippet(fields))
+             )
          when:
          def then = request
                  .when()
