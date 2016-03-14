@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Creando un blog estático con JBake</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Creando un blog estático con JBake">
+    <meta name="author" content="pvidasoftware">
+    <meta name="keywords" content="blog,asciidoc">
+    <meta name="generator" content="JBake">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@pvidasoftware">
+    <meta name="twitter:creator" content="@pvidasoftware">
+    <meta name="twitter:title" content="Creando un blog estático con JBake">
+    <meta name="twitter:description" content="Creando un blog estático con JBake">
+    <meta name="twitter:image" content="https://pvidasoftware.github.io/blog/slides/pvlogo.png">
+
+
+    <!-- Le styles -->
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../../css/asciidoctor.css" rel="stylesheet" type="text/css">
+    <link href="../../css/base.css" rel="stylesheet" type="text/css">
+    <link href="../../css/prettify.css" rel="stylesheet" type="text/css">
+
+
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <!--<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">-->
+    <link rel="shortcut icon" href="../../favicon.ico">
+  </head>
+
+  <body onload="prettyPrint()">
+
+
+	
+		<!-- Fixed navbar -->
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../../">@pvidasoftware</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="../../index.html">Home</a></li>
+            <li><a href="../../about.html">About</a></li>
+            <li><a href="../../feed.xml">Subscribe</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Slides <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+	
+		    <li><a href="../../slides/2016/ddr/docu-driven-rest.html">Testea y Documenta tu REST</a></li>
+  	
+		    <li><a href="../../slides/puravida-software.html">Quién es Puravida Software</a></li>
+  	
+              </ul>
+            </li>
+          </ul>
+
+          
+
+          <ul class="nav navbar-nav navbar-right share-buttons">
+            
+            <li><a href="https://twitter.com/intent/tweet?source=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/first-post.html&text=Creando un blog estático con JBake%20https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/first-post.html&via=pvidasoftware" target="_blank" title="Tweet"><i class="fa fa-twitter-square fa-2x"></i></a></li>
+
+            
+            <li><a href="https://plus.google.com/share?url=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/first-post.html" target="_blank" title="Creando un blog estático con JBake"><i class="fa fa-google-plus-square fa-2x"></i></a></li>
+
+            <li><a href="http://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/first-post.html&title=Creando un blog estático con JBake&summary=&source=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/first-post.html" target="_blank" title="Share on LinkedIn"><i class="fa fa-linkedin-square fa-2x"></i></a></li>
+            <li><a href="mailto:?subject=PuraVidaSoftware&body=:%20https%3A%2F%2Fpvidasoftware.github.io%2Fblog" target="_blank" title="Email"><i class="fa fa-envelope-square fa-2x"></i></a></li>
+          </ul>
+
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+
+	<div class="container">
+
+	<div class="page-header">
+		<h1>Creando un blog estático con JBake</h1>
+	    <p><em>04 febrero 2016</em></p>
+	</div>
+
+	<p><div class="sect1">
+<h2 id="adios_wordpress">Adios WordPress</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Qué duda cabe que WordPress sigue siendo uno de los reyes para la generación de blogs. Sin embargo plantea algunos
+problemas:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>necesitas alojamiento PHP</p>
+</li>
+<li>
+<p>necesitas una base de datos (MySQL)</p>
+</li>
+<li>
+<p>a pesar de que el proceso de instalación es sencillo, no está al alcance de todos.</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Nuestro primer blog estaba basado en WP, pero PHP no es nuestro lenguaje preferido y aunque nuestro alojamiento nos
+permite utilizar bases de datos y php, creíamos que debíamos aplicar las herramientas y lenguajes que usamos a diario.</p>
+</div>
+<div class="paragraph">
+<p>Y un buen día leyendo el blog de <a href="http://melix.github.io/blog/2014/02/hosting-jbake-github.html">Cedric Champeau</a>
+&#8230;&#8203; descubrimos <a href="http://www.jbake.org" class="bare">http://www.jbake.org</a>, un generador de blog estático en Groovy y
+nos pusimos manos a la obra. Tras buscar un poco más de información y utilidades, este es el entorno que usaremos:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://sdkman.io/">SdkMan</a> como gestor de frameworks.</p>
+</li>
+<li>
+<p><a href="http://groovy-lang.org">Groovy</a> como lenguaje de referencia.</p>
+</li>
+<li>
+<p><a href="https://github.com/cjstehno/lazybones-templates">Chris' Lazybones Templates</a> magnifica plantilla que nos permitirá
+empezar inmediatamente con JBake.</p>
+</li>
+<li>
+<p><a href="https://www.jetbrains.com/idea/">Intellij</a> como entorno desde el que realizar la edición, revisión y publicación.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Como bola extra, la plantilla que nos proporciona Chris nos incluye un entorno y herramientas muy útiles para los "groovyeros":</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>un proyecto Gradle</p>
+</li>
+<li>
+<p>plugin jBake para Gradle</p>
+</li>
+<li>
+<p>plugin ajoberstar.github-pages para publicar en GitHub nuestro blog</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="customizando_nuestro_blog">Customizando nuestro blog</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Una vez tengamos montada la estructura básica y hayamos podido generar nuestro primer blog, podremos empezar
+ a ajustarle a nuestro gusto. Por defecto JBake usa Bootstrap pero podrías usar cualquier otra utilidad o incluso
+ usar la tuya propia. En un próximo post explicaré cómo darle un diseño a tu blog JBake más "<a href="https://www.google.com/design/spec/material-design/introduction.html">material</a>"</p>
+</div>
+<div class="paragraph">
+<p>Lo primero que cambiaremos será el titulo y para ello crearemos una variable de proyecto en el fichero
+de propiedades de jbake:</p>
+</div>
+<div class="listingblock">
+<div class="title">jbake.properties</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>site.title=@pvidasoftware</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ahora podremos usar esa nueva variable en cualquier parte de nuestras páginas:</p>
+</div>
+<div class="listingblock">
+<div class="title">templates/header.gsp</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>&lt;title&gt;&lt;%if (content.title) {%&gt;${content.title}&lt;% } else { %&gt;${config.site_title}&lt;% }%&gt;&lt;/title&gt; <b class="conum">(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>La configuracion site.title se referencia en el template como config.site_title</p>
+</li>
+</ol>
+</div>
+</div>
+</div></p>
+
+	</div>
+
+
+    <footer class="footer">
+      <div class="container">
+        <p class="text-muted">PuraVida Software,SL c/ Betancunia 1, local A, Madrid 28017, <a href="mailto:contacto@puravida-software.com">Contacto</a>
+            <span class="credit">&copy; 2016 | Mixed with <a href="http://getbootstrap.com/">Bootstrap v3.1.1</a> | Baked with <a href="http://jbake.org">JBake v2.4.0</a></span>
+        </p>
+      </div>
+    </footer>
+    
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../../js/jquery-1.11.1.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/prettify.js"></script>
+
+    
+
+  </body>
+
+<!-- google -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-687332-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+<!-- twitter -->
+  <script>window.twttr = (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0],
+      t = window.twttr || {};
+    if (d.getElementById(id)) return t;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "https://platform.twitter.com/widgets.js";
+    fjs.parentNode.insertBefore(js, fjs);
+
+    t._e = [];
+    t.ready = function(f) {
+      t._e.push(f);
+    };
+
+    return t;
+  }(document, "script", "twitter-wjs"));</script>
+<!-- twitter -->
+
+</html>

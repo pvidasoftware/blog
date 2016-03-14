@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+    <url>
+    	<loc>https://pvidasoftware.github.io/blogabout.html</loc>
+    	<lastmod>2016-02-04</lastmod>
+    </url>
+
+    <url>
+    	<loc>https://pvidasoftware.github.io/blog404.html</loc>
+    	<lastmod>2015-04-03</lastmod>
+    </url>
+
+    <url>
+    	<loc>https://pvidasoftware.github.io/blogblog/2016/start-stop-grails.html</loc>
+    	<lastmod>2016-02-24</lastmod>
+    </url>
+
+    <url>
+    	<loc>https://pvidasoftware.github.io/blogblog/2016/twitterpeople_2_2.html</loc>
+    	<lastmod>2016-02-20</lastmod>
+    </url>
+
+    <url>
+    	<loc>https://pvidasoftware.github.io/blogblog/2016/twitterpeople_1_2.html</loc>
+    	<lastmod>2016-02-19</lastmod>
+    </url>
+
+    <url>
+    	<loc>https://pvidasoftware.github.io/blogblog/2016/add-jmpress-jbake.html</loc>
+    	<lastmod>2016-02-16</lastmod>
+    </url>
+
+    <url>
+    	<loc>https://pvidasoftware.github.io/blogblog/2016/queryDSL-post.html</loc>
+    	<lastmod>2016-02-11</lastmod>
+    </url>
+
+    <url>
+    	<loc>https://pvidasoftware.github.io/blogblog/2016/first-post.html</loc>
+    	<lastmod>2016-02-04</lastmod>
+    </url>
+
+    <url>
+    	<loc>https://pvidasoftware.github.io/blogslides/puravida-software.html</loc>
+    	<lastmod>2016-02-16</lastmod>
+    </url>
+
+</urlset>
