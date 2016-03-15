@@ -315,6 +315,64 @@ class TwitterProxyService {
     </div>
 </section>
 
+<section class="slide" id="deep-sprint-restdocs">
+    <h2>Spring REST docs:</h2>
+    <table><tr>
+        <td>
+        <ul>
+            <li>curl-request.adoc</li>
+            <li>http-request.adoc</li>
+            <li>http-response.adoc</li>
+            <li>request-headers.adoc</li>
+            <li>response-headers.adoc</li>
+            <li>links.adoc</li>
+            <li>request-parameters.adoc</li>
+            <li>path-parameters.adoc</li>
+            <li>...</li>
+        </ul>
+        </td>
+        <td>
+            <ul>
+                <li>document("apelo")</li>
+                <li>document("${a_groovy_logic}")</li>
+                <li>document("{class-name}/{method-name}")</li>
+            </ul>
+        </td>
+        <td>
+            <ul>
+                <li>personalizar los templates</li>
+                <li>...</li>
+            </ul>
+        </td>
+    </tr></table>
+</section>
+
+<section class="slide" id="deep-rest-assured">
+    <h2>Rest assured DSL</h2>
+    <div class="listingblock groovy fullwidth">
+        <div class="content">
+        <pre class="prettyprint highlight">
+            <code>
+get("/lotto").then().assertThat().body("lotto.lottoId", equalTo(5));
+
+get("/lotto").then().assertThat().body("lotto.winners.winnerId", hasItems(23, 54));
+
+given().
+    param("key1", "value1").
+    param("key2", "value2").
+when().
+    post("/somewhere").
+then().
+    body(containsString("OK"));
+
+String json = get("/lotto").asString()
+List&lt;String&gt; winnderIds = from(json).get("lotto.winners.winnerId");
+            </code>
+        </pre>
+        </div>
+    </div>
+</section>
+
 <section class="slide" id="links">
     <h2>Links e Info</h2>
     <dl>
