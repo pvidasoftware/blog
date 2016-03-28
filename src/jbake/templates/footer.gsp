@@ -14,27 +14,6 @@
     <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>js/bootstrap.min.js"></script>
     <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>js/prettify.js"></script>
 
-    <%if( content.type == 'presentation') {%>
-    <!-- Required Modernizr file -->
-    <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/modernizr.custom.js"></script>
-
-    <!-- Required JS files. -->
-    <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/core/deck.core.js"></script>
-
-    <!-- Extension JS files. Add or remove as needed. -->
-    <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/extensions/menu/deck.menu.js"></script>
-    <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/extensions/goto/deck.goto.js"></script>
-    <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/extensions/status/deck.status.js"></script>
-    <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/extensions/navigation/deck.navigation.js"></script>
-    <script src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>deck/extensions/scale/deck.scale.js"></script>
-
-    <script>
-        \$(function() {
-            \$.deck('.slide');
-        });
-    </script>
-    <%}%>
-
   </body>
 
 <!-- google -->

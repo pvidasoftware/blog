@@ -30,15 +30,6 @@ code {
 }
 
 
-/* deck */
-.deck-frame {
-  display: block;
-  width: 80%;
-  margin: 16px auto 24px auto;
-  height: 80%;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-}
-
 ul.share-buttons{
   list-style: none;
   padding: 0;
@@ -46,4 +37,12 @@ ul.share-buttons{
 
 ul.share-buttons li{
   display: inline;
+}
+
+.deck-frame {
+    display: block;
+    width: 90%;
+    margin: 16px auto 24px auto;
+    min-height: 800px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
 }

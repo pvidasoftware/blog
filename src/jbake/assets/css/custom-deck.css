@@ -1,0 +1,6 @@
+
+/* deck */
+
+.deck-status-current::before {
+    content: "\00a9 PuraVida Software.";
+}

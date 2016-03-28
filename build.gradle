@@ -7,11 +7,24 @@ buildscript {
         classpath 'me.champeau.gradle:jbake-gradle-plugin:0.2'
         classpath 'org.jbake:jbake-core:2.4.0'
         classpath 'org.pegdown:pegdown:1.4.2'
-        classpath 'org.asciidoctor:asciidoctorj:1.5.2'
+        classpath 'org.asciidoctor:asciidoctorj:1.5.4'
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
     }
 }
 
+apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 apply plugin: 'me.champeau.jbake'
+
+
+asciidoctor{
+    outputs.upToDateWhen { false }
+    dependsOn 'jbake'
+    sourceDir 'src/asciidoc'
+    outputDir "${buildDir}/jbake/"
+    separateOutputDirs false
+    options  template_dirs : [new File('src/templates','haml').absolutePath ]
+}
+
 
 task publish(type: GradleBuild) {           
     buildFile = 'publish.gradle'
