@@ -25,25 +25,6 @@
     <link href="../css/prettify.css" rel="stylesheet" type="text/css">
 
 
-    <link href="../deck/core/deck.core.css" rel="stylesheet" type="text/css">
-
-      <link rel="stylesheet" media="screen" href="../deck/extensions/goto/deck.goto.css">
-      <link rel="stylesheet" media="screen" href="../deck/extensions/menu/deck.menu.css">
-      <link rel="stylesheet" media="screen" href="../deck/extensions/navigation/deck.navigation.css">
-      <link rel="stylesheet" media="screen" href="../deck/extensions/status/deck.status.css">
-      <link rel="stylesheet" media="screen" href="../deck/extensions/scale/deck.scale.css">
-
-      <!-- Style theme. More available in /themes/style/ or create your own. -->
-      <link rel="stylesheet" media="screen" href="../deck/themes/style/web-2.0.css">
-
-      <!-- Transition theme. More available in /themes/transition/ or create your own. -->
-      <link rel="stylesheet" media="screen" href="../deck/themes/transition/horizontal-slide.css">
-
-      <!-- Basic black and white print styles -->
-      <link rel="stylesheet" media="print" href="../deck/core/print.css">
-
-
-
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="../js/html5shiv.min.js"></script>
@@ -108,57 +89,7 @@
     </nav>
 
 
-<div class="deck-frame">
-<div class="deck-container">
-
-    <!-- Begin slides. Just make elements with a class of slide. -->
-        
-<section class="slide">
-    <center>
-        <p><img src="pvlogo.png"/></p>
-    </center>
-</section>
-
-<section class="slide" id="mantra">
-    <h2>Nuestro mantra</h2>
-    <p>Our job is to give the client on time and on cost ...<p>
-    <ul>
-        <li class="slide">not what he wants but</li>
-        <li class="slide">what he never dreamed he wanted and,</li>
-        <li class="slide">when he gets it, he recognises it ...</li>
-        <li class="slide">“as something he wanted all the time”</li>
-    </ul>
-    <p class="slide" class="slide"><cite>D.Lasdum</cite></p>
-</section>
-
-
-    <!-- End slides. -->
-
-    <!-- Begin extension snippets. Add or remove as needed. -->
-    <!-- deck.navigation snippet -->
-    <div aria-role="navigation">
-      <a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
-      <a href="#" class="deck-next-link" title="Next">&#8594;</a>
-    </div>
-
-    <!-- deck.status snippet -->
-    <p class="deck-status" aria-role="status">
-      <span class="deck-status-current"></span>
-      /
-      <span class="deck-status-total"></span>
-    </p>
-
-    <!-- deck.goto snippet -->
-    <form action="." method="get" class="goto-form">
-      <label for="goto-slide">Go to slide:</label>
-      <input type="text" name="slidenum" id="goto-slide" list="goto-datalist">
-      <datalist id="goto-datalist"></datalist>
-      <input type="submit" value="Go">
-    </form>
-
-    <!-- End extension snippets. -->
-</div>
-</div>
+<iframe src="../slides/null" frameborder="0" class="deck-frame"></iframe>
 
 
     <footer class="footer">
@@ -175,27 +106,6 @@
     <script src="../js/jquery-1.11.1.min.js"></script>
     <script src="../js/bootstrap.min.js"></script>
     <script src="../js/prettify.js"></script>
-
-    
-    <!-- Required Modernizr file -->
-    <script src="../deck/modernizr.custom.js"></script>
-
-    <!-- Required JS files. -->
-    <script src="../deck/core/deck.core.js"></script>
-
-    <!-- Extension JS files. Add or remove as needed. -->
-    <script src="../deck/extensions/menu/deck.menu.js"></script>
-    <script src="../deck/extensions/goto/deck.goto.js"></script>
-    <script src="../deck/extensions/status/deck.status.js"></script>
-    <script src="../deck/extensions/navigation/deck.navigation.js"></script>
-    <script src="../deck/extensions/scale/deck.scale.js"></script>
-
-    <script>
-        $(function() {
-            $.deck('.slide');
-        });
-    </script>
-    
 
   </body>
 
