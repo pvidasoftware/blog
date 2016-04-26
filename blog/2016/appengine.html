@@ -267,11 +267,9 @@ proyecto Grails 3.1 base para poder crear y subir una aplicación a AppEngine de
 </div>
 <div class="listingblock console">
 <div class="content">
-<pre class="prettyprint highlight"><code>---
-$git clone https://github.com/jagedn/grails-profiles
+<pre class="prettyprint highlight"><code>$git clone https://github.com/jagedn/grails-profiles
 $cd grails-profiles/appengine
-$gradle install
----</code></pre>
+$gradle install</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -279,16 +277,20 @@ $gradle install
 </div>
 <div class="listingblock console">
 <div class="content">
-<pre class="prettyprint highlight"><code>---
-$mkdir test-appengine
+<pre class="prettyprint highlight"><code>$mkdir test-appengine
 $cd test-appengine
 $grails create-app -inplace -profile appengine <b class="conum">(1)</b>
 $gradle assemble
 $cd buid/libs
-$gcloud preview app deploy
----
-&lt;1&gt; deberemos editar el fichero src/main/appengine/app.yaml indicando el nombre de proyecto Google</code></pre>
+$gcloud preview app deploy</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>deberemos editar el fichero src/main/appengine/app.yaml indicando el nombre de proyecto Google</p>
+</li>
+</ol>
 </div>
 <div class="paragraph">
 <p>El profile se basa en el de <strong>angularjs</strong> junto con <strong>rest-api</strong>, incluidos en Grails, de tal forma que

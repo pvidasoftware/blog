@@ -6,8 +6,8 @@
     <atom:link href="https://pvidasoftware.github.io/blog/feed.xml" rel="self" type="application/rss+xml" />
     <description>JBake Bootstrap Template</description>
     <language>en-gb</language>
-    <pubDate>mar, 26 abr 2016 22:50:43 +0200</pubDate>
-    <lastBuildDate>mar, 26 abr 2016 22:50:43 +0200</lastBuildDate>
+    <pubDate>mar, 26 abr 2016 22:53:55 +0200</pubDate>
+    <lastBuildDate>mar, 26 abr 2016 22:53:55 +0200</lastBuildDate>
 
     
     <item>
@@ -187,11 +187,9 @@ proyecto Grails 3.1 base para poder crear y subir una aplicación a AppEngine de
 &lt;/div&gt;
 &lt;div class=&quot;listingblock console&quot;&gt;
 &lt;div class=&quot;content&quot;&gt;
-&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;---
-$git clone https://github.com/jagedn/grails-profiles
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;$git clone https://github.com/jagedn/grails-profiles
 $cd grails-profiles/appengine
-$gradle install
----&lt;/code&gt;&lt;/pre&gt;
+$gradle install&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
@@ -199,16 +197,20 @@ $gradle install
 &lt;/div&gt;
 &lt;div class=&quot;listingblock console&quot;&gt;
 &lt;div class=&quot;content&quot;&gt;
-&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;---
-$mkdir test-appengine
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;$mkdir test-appengine
 $cd test-appengine
 $grails create-app -inplace -profile appengine &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
 $gradle assemble
 $cd buid/libs
-$gcloud preview app deploy
----
-&amp;lt;1&amp;gt; deberemos editar el fichero src/main/appengine/app.yaml indicando el nombre de proyecto Google&lt;/code&gt;&lt;/pre&gt;
+$gcloud preview app deploy&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;colist arabic&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;deberemos editar el fichero src/main/appengine/app.yaml indicando el nombre de proyecto Google&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;El profile se basa en el de &lt;strong&gt;angularjs&lt;/strong&gt; junto con &lt;strong&gt;rest-api&lt;/strong&gt;, incluidos en Grails, de tal forma que
