@@ -238,6 +238,7 @@ https://github.com/jayway/rest-assured
 
 [%step]
 * link:../../../blog/2016/twitterpeople_2_2.html#configurando_dependencias[Preparar entorno, window="_blank"]
+* link:../../../blog/2016/twitterpeople_2_2.html#preparando_nuestra_documentación[Preparando documentación, window="_blank"]
 * link:../../../blog/2016/twitterpeople_2_2.html#creando_un_spec[PeopleSpec, window="_blank"]
 * link:../../../blog/2016/twitterpeople_2_2.html#build[Compilar, empaquetar y ejecutar, window="_blank"]
 * link:http://localhost:8080/people/jagedn[Vive!!!, window="_blank"]

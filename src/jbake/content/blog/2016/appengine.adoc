@@ -1,0 +1,145 @@
+= AppEngine profile para Grails 3.1
+Jorge Aguilera
+2016-4-25
+:jbake-type: post
+:jbake-status: published
+:jbake-tags: blog, grails, google, appengine, profile
+:idprefix:
+:hide-uri-scheme:
+
+== AppEngine
+
+AppEngine es un entorno de alojamiento de aplicaciones web de Google que permite diferentes lenguajes de programación
+ como pueden ser python, java, php y go.
+
+Hasta hace poco era prácticamente imposible alojar una aplicación Grails en AppEngine debido a numerosos problemas,
+como por ejemplo el tiempo de arranque que necesitaba Grails, incompatibilidades de librerías, etc. Existe un plugin
+https://grails.org/plugin/app-engine casi olvidado que intenta integrar ambos entornos sin mucho éxito.
+
+Así pues si querías tener una aplicación Grails en Google básicamente tenías que usar la infraestructura de este en
+modo IASS y manejar los balanceadores, escalado, etc como en cualquier otra plataforma con la complejidad que ello
+conlleva, o bien, si quieres seguir usando Groovy, utilizar el framework http://gaelyk.appspot.com/[Gaelyk]
+
+== AppEngine Flexible environment
+
+Para soportar el nuevo standard Servlet 3.1 (incompatible con el AppEngine actual) y actualizar el JDK 1.7 utilizado,
+Google ha creado un nuevo entorno llamado "flexible". En dicho entorno tenemos dos posibilidades:
+
+- openjdk8: subir una aplicación Java 8 que escucha en el puerto 8080 y que se ejecuta en un entorno sin restricciones Sandbox
+como ocurría en el AppEngine tradicional. En este entorno podría correr una aplicación SpringBoot (y Grails 3.x lo es)
+sin mayores problemas.
+
+- java8/jetty9: subir una aplicación web Servlet 3.1 que correrá en un Jetty 9, (mediante el plugin 'war' Grails 3.x lo es),
+manejada por la infraestructura de Google.
+
+Entre otras cosas, la diferencia principal es que en el primer tipo tenemos la libertad de implementar nuestra aplicación
+como queramos pero nos tocará resolver temas como por ejemplo compartir la sesión entre las instancias, etc. Por el
+contrario en el entorno Jetty 9, Google nos provee de una extensión del servidor de aplicaciones que guarda la sesión
+en el Datastore así como en el Memcache.
+
+== Requisitos
+
+Para comenzar a manejar el cloud de Google, necesitaremos, a parte de tener una cuenta abierta obviamente, tener instalado
+y configurado el entorno https://cloud.google.com/sdk/gcloud
+
+De forma resumida, una vez que lo tengamos instalado dispondremos de un comando _gcloud_ que nos permitirá manejar
+nuestros recursos en el cloud de Google. Así por ejemplo podremos ejecutar
+
+[source,console]
+----
+$gcloud config list
+----
+
+para ver la configuración de nuestra máquina, etc.
+
+== OpenJdk8 + SpringBoot
+
+Subir una aplicación típica Grails 3.1, por ejemplo creada con el profile rest-api, es muy fácil. Una vez que tenemos
+creada la aplicación y generado el jar procedemos a subirlo a AppEngine. Para ello deberemos crear dos ficheros y ubicarlos
+  en el mismo directorio donde se encuentre el jar (por defecto build/libs ):
+
+[source.yaml]
+.app.yaml
+----
+runtime: java   //<1>
+vm: true
+----
+<1> indica a Google que nuestro entorno de ejecución es OpenJdk8
+
+
+[source.docker]
+.Dockerfile
+----
+FROM gcr.io/google_appengine/openjdk8
+VOLUME /tmp
+ADD MI_GRAILS_APP.jar app.jar   // <1>
+ENTRYPOINT [ "java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+----
+<1> MI_GRAILS_APP.jar deberá apuntar a nuestro jar
+
+
+[source.console]
+----
+$gcloud preview app deploy app.yaml
+----
+
+Si tenemos configurado nuestro proyecto (credenciales incluido) el comando _gcloud_ creará, provisionará y ejecutará
+nuestras instancias en AppEngine bajo un contexto _custom_
+
+== OpenJdk8/Jetty9
+
+Para poder usar este entorno nuestra aplicación deberá ser un war (lo cual se consigue añadiendo el plugin 'war' a
+nuestro _build.gradle_) y así mismo deberemos crear un app.yaml similar a:
+
+[source.yaml]
+.app.yaml
+----
+runtime: java
+vm: True
+instance_class: F1
+threadsafe: True
+auto_id_policy: default
+env_variables:
+  'serverURL': 'http://YOUR_PROJECT_.appspot.com'
+beta_settings:
+  'java_quickstart': 'true'   //<1>
+----
+<1> indica a Google que nuestro entorno de ejecución es OpenJdk8/Jetty9
+
+y para publicarlo, de igual forma a la anterior:
+[source.console]
+----
+$cd build/libs
+$gcloud preview app deploy
+----
+
+== Grails AppEngine profile
+
+Grails AppEngine profile https://github.com/jagedn/grails-profiles/appengine es un profile que genera un
+proyecto Grails 3.1 base para poder crear y subir una aplicación a AppEngine de una forma rápida.
+
+En primer lugar deberemos crear un proyecto mediante la consola de Google siguiendo los pasos oportunos.
+
+Después deberemos instalar el profile en nuesto sistema (no es parte del ecosistema oficial de Grails):
+
+[source.console]
+---
+$git clone https://github.com/jagedn/grails-profiles
+$cd grails-profiles/appengine
+$gradle install
+---
+
+y ahora podremos crear un proyecto nuevo basado en este profile
+[source.console]
+---
+$mkdir test-appengine
+$cd test-appengine
+$grails create-app -inplace -profile appengine // <1>
+$gradle assemble
+$cd buid/libs
+$gcloud preview app deploy
+---
+<1> deberemos editar el fichero src/main/appengine/app.yaml indicando el nombre de proyecto Google
+
+El profile se basa en el de *angularjs* junto con *rest-api*, incluidos en Grails, de tal forma que
+una vez subido dispondremos de instancias en http://_YOUR_PROJECT_.appspot.com escalando automáticamente.

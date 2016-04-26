@@ -26,7 +26,8 @@ asciidoctor{
 }
 
 
-task publish(type: GradleBuild) {           
+task publish(type: GradleBuild) {
+    dependsOn 'asciidoctor'
     buildFile = 'publish.gradle'
     tasks = ['publishGhPages']
 }
