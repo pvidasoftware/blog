@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>AppEngine profile para Grails 3.1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AppEngine profile para Grails 3.1">
+    <meta name="author" content="pvidasoftware">
+    <meta name="keywords" content="blog,grails,google,appengine,profile">
+    <meta name="generator" content="JBake">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@pvidasoftware">
+    <meta name="twitter:creator" content="@pvidasoftware">
+    <meta name="twitter:title" content="AppEngine profile para Grails 3.1">
+    <meta name="twitter:description" content="AppEngine profile para Grails 3.1">
+    <meta name="twitter:image" content="https://pvidasoftware.github.io/blog/slides/pvlogo.png">
+
+
+    <!-- Le styles -->
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../../css/asciidoctor.css" rel="stylesheet" type="text/css">
+    <link href="../../css/base.css" rel="stylesheet" type="text/css">
+    <link href="../../css/prettify.css" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <!--<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">-->
+    <link rel="shortcut icon" href="../../favicon.ico">
+  </head>
+
+  <body onload="prettyPrint()">
+
+
+	
+		<!-- Fixed navbar -->
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../../">@pvidasoftware</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="../../index.html">Home</a></li>
+            <li><a href="../../about.html">About</a></li>
+            <li><a href="../../feed.xml">Subscribe</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Slides <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+	
+		    <li><a href="../../slides/2016/ddr/docu-driven-rest.html">Testea y Documenta tu REST</a></li>
+  	
+		    <li><a href="../../slides/puravida-software.html">Quién es Puravida Software</a></li>
+  	
+              </ul>
+            </li>
+          </ul>
+
+          
+
+          <ul class="nav navbar-nav navbar-right share-buttons">
+            
+            <li><a href="https://twitter.com/intent/tweet?source=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/appengine.html&text=AppEngine profile para Grails 3.1%20https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/appengine.html&via=pvidasoftware" target="_blank" title="Tweet"><i class="fa fa-twitter-square fa-2x"></i></a></li>
+
+            
+            <li><a href="https://plus.google.com/share?url=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/appengine.html" target="_blank" title="AppEngine profile para Grails 3.1"><i class="fa fa-google-plus-square fa-2x"></i></a></li>
+
+            <li><a href="http://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/appengine.html&title=AppEngine profile para Grails 3.1&summary=&source=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/appengine.html" target="_blank" title="Share on LinkedIn"><i class="fa fa-linkedin-square fa-2x"></i></a></li>
+            <li><a href="mailto:?subject=PuraVidaSoftware&body=:%20https%3A%2F%2Fpvidasoftware.github.io%2Fblog" target="_blank" title="Email"><i class="fa fa-envelope-square fa-2x"></i></a></li>
+          </ul>
+
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+
+	<div class="container">
+
+	<div class="page-header">
+		<h1>AppEngine profile para Grails 3.1</h1>
+	    <p><em>25 abril 2016</em></p>
+	</div>
+
+	<p><div class="sect1">
+<h2 id="appengine">AppEngine</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>AppEngine es un entorno de alojamiento de aplicaciones web de Google que permite diferentes lenguajes de programación
+ como pueden ser python, java, php y go.</p>
+</div>
+<div class="paragraph">
+<p>Hasta hace poco era prácticamente imposible alojar una aplicación Grails en AppEngine debido a numerosos problemas,
+como por ejemplo el tiempo de arranque que necesitaba Grails, incompatibilidades de librerías, etc. Existe un plugin
+<a href="https://grails.org/plugin/app-engine" class="bare">grails.org/plugin/app-engine</a> casi olvidado que intenta integrar ambos entornos sin mucho éxito.</p>
+</div>
+<div class="paragraph">
+<p>Así pues si querías tener una aplicación Grails en Google básicamente tenías que usar la infraestructura de este en
+modo IASS y manejar los balanceadores, escalado, etc como en cualquier otra plataforma con la complejidad que ello
+conlleva, o bien, si quieres seguir usando Groovy, utilizar el framework <a href="http://gaelyk.appspot.com/">Gaelyk</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="appengine_flexible_environment">AppEngine Flexible environment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Para soportar el nuevo standard Servlet 3.1 (incompatible con el AppEngine actual) y actualizar el JDK 1.7 utilizado,
+Google ha creado un nuevo entorno llamado "flexible". En dicho entorno tenemos dos posibilidades:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>openjdk8: subir una aplicación Java 8 que escucha en el puerto 8080 y que se ejecuta en un entorno sin restricciones Sandbox
+como ocurría en el AppEngine tradicional. En este entorno podría correr una aplicación SpringBoot (y Grails 3.x lo es)
+sin mayores problemas.</p>
+</li>
+<li>
+<p>java8/jetty9: subir una aplicación web Servlet 3.1 que correrá en un Jetty 9, (mediante el plugin 'war' Grails 3.x lo es),
+manejada por la infraestructura de Google.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Entre otras cosas, la diferencia principal es que en el primer tipo tenemos la libertad de implementar nuestra aplicación
+como queramos pero nos tocará resolver temas como por ejemplo compartir la sesión entre las instancias, etc. Por el
+contrario en el entorno Jetty 9, Google nos provee de una extensión del servidor de aplicaciones que guarda la sesión
+en el Datastore así como en el Memcache.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="requisitos">Requisitos</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Para comenzar a manejar el cloud de Google, necesitaremos, a parte de tener una cuenta abierta obviamente, tener instalado
+y configurado el entorno <a href="https://cloud.google.com/sdk/gcloud" class="bare">cloud.google.com/sdk/gcloud</a></p>
+</div>
+<div class="paragraph">
+<p>De forma resumida, una vez que lo tengamos instalado dispondremos de un comando <em>gcloud</em> que nos permitirá manejar
+nuestros recursos en el cloud de Google. Así por ejemplo podremos ejecutar</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-console" data-lang="console">$gcloud config list</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>para ver la configuración de nuestra máquina, etc.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="openjdk8_springboot">OpenJdk8 + SpringBoot</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Subir una aplicación típica Grails 3.1, por ejemplo creada con el profile rest-api, es muy fácil. Una vez que tenemos
+creada la aplicación y generado el jar procedemos a subirlo a AppEngine. Para ello deberemos crear dos ficheros y ubicarlos
+  en el mismo directorio donde se encuentre el jar (por defecto build/libs ):</p>
+</div>
+<div class="listingblock yaml">
+<div class="title">app.yaml</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>runtime: java   <b class="conum">(1)</b>
+vm: true</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>indica a Google que nuestro entorno de ejecución es OpenJdk8</p>
+</li>
+</ol>
+</div>
+<div class="listingblock docker">
+<div class="title">Dockerfile</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>FROM gcr.io/google_appengine/openjdk8
+VOLUME /tmp
+ADD MI_GRAILS_APP.jar app.jar   <b class="conum">(1)</b>
+ENTRYPOINT [ "java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>MI_GRAILS_APP.jar deberá apuntar a nuestro jar</p>
+</li>
+</ol>
+</div>
+<div class="listingblock console">
+<div class="content">
+<pre class="prettyprint highlight"><code>$gcloud preview app deploy app.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Si tenemos configurado nuestro proyecto (credenciales incluido) el comando <em>gcloud</em> creará, provisionará y ejecutará
+nuestras instancias en AppEngine bajo un contexto <em>custom</em></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="openjdk8_jetty9">OpenJdk8/Jetty9</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Para poder usar este entorno nuestra aplicación deberá ser un war (lo cual se consigue añadiendo el plugin 'war' a
+nuestro <em>build.gradle</em>) y así mismo deberemos crear un app.yaml similar a:</p>
+</div>
+<div class="listingblock yaml">
+<div class="title">app.yaml</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>runtime: java
+vm: True
+instance_class: F1
+threadsafe: True
+auto_id_policy: default
+env_variables:
+  'serverURL': 'http://YOUR_PROJECT_.appspot.com'
+beta_settings:
+  'java_quickstart': 'true'   <b class="conum">(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>indica a Google que nuestro entorno de ejecución es OpenJdk8/Jetty9</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>y para publicarlo, de igual forma a la anterior:</p>
+</div>
+<div class="listingblock console">
+<div class="content">
+<pre class="prettyprint highlight"><code>$cd build/libs
+$gcloud preview app deploy</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="grails_appengine_profile">Grails AppEngine profile</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Grails AppEngine profile <a href="https://github.com/jagedn/grails-profiles/appengine" class="bare">github.com/jagedn/grails-profiles/appengine</a> es un profile que genera un
+proyecto Grails 3.1 base para poder crear y subir una aplicación a AppEngine de una forma rápida.</p>
+</div>
+<div class="paragraph">
+<p>En primer lugar deberemos crear un proyecto mediante la consola de Google siguiendo los pasos oportunos.</p>
+</div>
+<div class="paragraph">
+<p>Después deberemos instalar el profile en nuesto sistema (no es parte del ecosistema oficial de Grails):</p>
+</div>
+<div class="listingblock console">
+<div class="content">
+<pre class="prettyprint highlight"><code>---
+$git clone https://github.com/jagedn/grails-profiles
+$cd grails-profiles/appengine
+$gradle install
+---</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>y ahora podremos crear un proyecto nuevo basado en este profile</p>
+</div>
+<div class="listingblock console">
+<div class="content">
+<pre class="prettyprint highlight"><code>---
+$mkdir test-appengine
+$cd test-appengine
+$grails create-app -inplace -profile appengine <b class="conum">(1)</b>
+$gradle assemble
+$cd buid/libs
+$gcloud preview app deploy
+---
+&lt;1&gt; deberemos editar el fichero src/main/appengine/app.yaml indicando el nombre de proyecto Google</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>El profile se basa en el de <strong>angularjs</strong> junto con <strong>rest-api</strong>, incluidos en Grails, de tal forma que
+una vez subido dispondremos de instancias en http://<em>YOUR_PROJECT</em>.appspot.com escalando automáticamente.</p>
+</div>
+</div>
+</div></p>
+
+	</div>
+
+
+    <footer class="footer">
+      <div class="container">
+        <p class="text-muted">PuraVida Software,SL c/ Betancunia 1, local A, Madrid 28017, <a href="mailto:contacto@puravida-software.com">Contacto</a>
+            <span class="credit">&copy; 2016 | Mixed with <a href="http://getbootstrap.com/">Bootstrap v3.1.1</a> | Baked with <a href="http://jbake.org">JBake v2.4.0</a></span>
+        </p>
+      </div>
+    </footer>
+    
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../../js/jquery-1.11.1.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/prettify.js"></script>
+
+  </body>
+
+<!-- google -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-687332-8', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<!-- twitter -->
+  <script>window.twttr = (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0],
+      t = window.twttr || {};
+    if (d.getElementById(id)) return t;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "https://platform.twitter.com/widgets.js";
+    fjs.parentNode.insertBefore(js, fjs);
+
+    t._e = [];
+    t.ready = function(f) {
+      t._e.push(f);
+    };
+
+    return t;
+  }(document, "script", "twitter-wjs"));</script>
+<!-- twitter -->
+
+</html>
