@@ -123,22 +123,22 @@ En primer lugar deberemos crear un proyecto mediante la consola de Google siguie
 Después deberemos instalar el profile en nuesto sistema (no es parte del ecosistema oficial de Grails):
 
 [source.console]
----
+----
 $git clone https://github.com/jagedn/grails-profiles
 $cd grails-profiles/appengine
 $gradle install
----
+----
 
 y ahora podremos crear un proyecto nuevo basado en este profile
 [source.console]
----
+----
 $mkdir test-appengine
 $cd test-appengine
 $grails create-app -inplace -profile appengine // <1>
 $gradle assemble
 $cd buid/libs
 $gcloud preview app deploy
----
+----
 <1> deberemos editar el fichero src/main/appengine/app.yaml indicando el nombre de proyecto Google
 
 El profile se basa en el de *angularjs* junto con *rest-api*, incluidos en Grails, de tal forma que
