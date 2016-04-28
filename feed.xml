@@ -6,8 +6,8 @@
     <atom:link href="https://pvidasoftware.github.io/blog/feed.xml" rel="self" type="application/rss+xml" />
     <description>JBake Bootstrap Template</description>
     <language>en-gb</language>
-    <pubDate>mar, 26 abr 2016 22:53:55 +0200</pubDate>
-    <lastBuildDate>mar, 26 abr 2016 22:53:55 +0200</lastBuildDate>
+    <pubDate>jue, 28 abr 2016 12:27:36 +0200</pubDate>
+    <lastBuildDate>jue, 28 abr 2016 12:27:36 +0200</lastBuildDate>
 
     
     <item>
@@ -215,6 +215,28 @@ $gcloud preview app deploy&lt;/code&gt;&lt;/pre&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;El profile se basa en el de &lt;strong&gt;angularjs&lt;/strong&gt; junto con &lt;strong&gt;rest-api&lt;/strong&gt;, incluidos en Grails, de tal forma que
 una vez subido dispondremos de instancias en http://&lt;em&gt;YOUR_PROJECT&lt;/em&gt;.appspot.com escalando automáticamente.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;oauth_feature&quot;&gt;Oauth feature&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Por defecto el profile instala una feature que permite utilizar autentificación de usuarios mediante el Oauth2
+de Google. Así mismo genera un Rest simple que permite conocer el Id del usuario y que se encuentra protegido.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Deberemos pues crear una clave Web en la consola de Google, y con el client key + secret generados configurar
+ nuestra aplicación editando el fichero:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock yaml&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;src/main/appengine/app.yaml&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;env_variables:
+  &apos;serverURL&apos;: &apos;http://YOUR_PROJECT_.appspot.com&apos;
+  &apos;googleKey&apos;: &apos;xxxxxxxxxxxxxxxxxx.apps.googleusercontent.com&apos;
+  &apos;googleSecret&apos;: &apos;xxxxxxxxxxxxxxxxxx&apos;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;

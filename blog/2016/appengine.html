@@ -297,6 +297,28 @@ $gcloud preview app deploy</code></pre>
 una vez subido dispondremos de instancias en http://<em>YOUR_PROJECT</em>.appspot.com escalando automáticamente.</p>
 </div>
 </div>
+</div>
+<div class="sect1">
+<h2 id="oauth_feature">Oauth feature</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Por defecto el profile instala una feature que permite utilizar autentificación de usuarios mediante el Oauth2
+de Google. Así mismo genera un Rest simple que permite conocer el Id del usuario y que se encuentra protegido.</p>
+</div>
+<div class="paragraph">
+<p>Deberemos pues crear una clave Web en la consola de Google, y con el client key + secret generados configurar
+ nuestra aplicación editando el fichero:</p>
+</div>
+<div class="listingblock yaml">
+<div class="title">src/main/appengine/app.yaml</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>env_variables:
+  'serverURL': 'http://YOUR_PROJECT_.appspot.com'
+  'googleKey': 'xxxxxxxxxxxxxxxxxx.apps.googleusercontent.com'
+  'googleSecret': 'xxxxxxxxxxxxxxxxxx'</code></pre>
+</div>
+</div>
+</div>
 </div></p>
 
 	</div>
