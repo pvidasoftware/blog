@@ -143,3 +143,22 @@ $gcloud preview app deploy
 
 El profile se basa en el de *angularjs* junto con *rest-api*, incluidos en Grails, de tal forma que
 una vez subido dispondremos de instancias en http://_YOUR_PROJECT_.appspot.com escalando automáticamente.
+
+== Oauth feature
+
+Por defecto el profile instala una feature que permite utilizar autentificación de usuarios mediante el Oauth2
+de Google. Así mismo genera un Rest simple que permite conocer el Id del usuario y que se encuentra protegido.
+
+Deberemos pues crear una clave Web en la consola de Google, y con el client key + secret generados configurar
+ nuestra aplicación editando el fichero:
+
+[source.yaml]
+.src/main/appengine/app.yaml
+----
+env_variables:
+  'serverURL': 'http://YOUR_PROJECT_.appspot.com'
+  'googleKey': 'xxxxxxxxxxxxxxxxxx.apps.googleusercontent.com'
+  'googleSecret': 'xxxxxxxxxxxxxxxxxx'
+----
+
+
