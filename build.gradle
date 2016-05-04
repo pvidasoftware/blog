@@ -22,7 +22,7 @@ asciidoctor{
     sourceDir 'src/asciidoc'
     outputDir "${buildDir}/jbake/"
     separateOutputDirs false
-    options  template_dirs : [new File('src/templates','haml').absolutePath ]
+    options  template_dirs : [new File('src/templates','haml').absolutePath ], safe: 0
 }
 
 

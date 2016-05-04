@@ -37,7 +37,7 @@ plugins {
 
 ext {
 ...
-    springRestdocsVersion = '1.1.0.M1'              // <1>
+    springRestdocsVersion = '1.1.0.RC1'              // <1>
     snippetsDir = file('build/generated-snippets')  // <2>
 }
 
@@ -46,7 +46,10 @@ test {
 }
 
 asciidoctor {
-    attributes 'snippets': snippetsDir  // <2>
+    attributes 'snippets': snippetsDir,  // <2>
+            'source-highlighter':'prettify',
+            'toc':'left',
+            'setanchors':'true'
     inputs.dir snippetsDir
     dependsOn integrationTest           // <3>
 }
@@ -58,7 +61,7 @@ jar {
     }
 }
 ----
-<1> A día de hoy la versión última que funciona se encuentra en estado M1
+<1> A día de hoy la versión última que funciona se encuentra en estado RC1
 <2> Usaremos este directorio para alojar los "snippets" generados automáticamente por los test
 <3> La tarea asciidoctor generará la documentación únicamente si todos los test han sido correctos
 <4> Tenemos la posibilidad de incluir la documentación dentro del propio jar para que sea accesible vía web
@@ -87,90 +90,116 @@ más completos (un apidoc, getting-started, ..).
 <1> nuestra documentación incluye documentos que serán generados por los test
 <2> cada test generará en el directorio oportuno un curl, un request y un response
 
+== BaseSpec
+
+Para facilitar la reutilización de nuestros test, vamos a crear un Specification base donde
+ ubicar el código común.
+
+[source.groovy]
+./src/integration-test/groovy/twitterpeople/BaseSpec
+----
+class BaseSpec extends Specification{
+
+    protected final String HOST = 'www.twitterpeope.com'    // <1>
+
+    protected final ManualRestDocumentation restDocumentation = new ManualRestDocumentation('build/generated-snippets') //<2>
+
+    protected RequestSpecification documentationSpec
+
+    void setup() {      // <3>
+        this.documentationSpec = new RequestSpecBuilder()
+                .addFilter(documentationConfiguration(restDocumentation)).build()
+        this.restDocumentation.beforeTest(getClass(), specificationContext.currentSpec.name)
+    }
+
+    void cleanup() {
+        this.restDocumentation.afterTest()
+    }
+
+}
+----
+<1> En lugar de "localhost" podremos hacer que nuestra documentación especifique la URL que queramos
+<2> Recuerdas el build.gradle ?
+<3> Donde Spock, RestAssured y Spring MVC Test se juntan
 
 == Creando un Spec
 
-Para nuestro ejemplo vamos a crear un Spec que testee los recursos /people/ y /people/${username}
+Para nuestro ejemplo vamos a crear un Spec que testee /people
+
+[source.groovy]
+./src/integration-test/groovy/twitterpeople/IndexSpec
+----
+class IndexSpec extends BaseSpec {
+
+        void "test index"() {
+
+            given:
+            def request = given(documentationSpec)
+                    .accept("application/json")
+                    .filter(document("people",      // <1>
+                        preprocessRequest(prettyPrint(),modifyUris().scheme("http").host(HOST).removePort()), //<2>
+                        preprocessResponse(prettyPrint()) // <3>
+            ))
+            when:
+            def then = request
+                    .when()
+                    .port(8080)
+                    .get("/people")
+                    .then()
+
+            then:
+            then.assertThat().statusCode(is(200));
+
+        }
+
+}
+----
+<1> document("people") generará el snippet en "people" el cual se refencia en el include de index.adoc
+<2> podemos sustituir el host en la documentacion, e incluso suprimir el puerto
+<3> queremos que nuestra docu sea legible
+
+
+== Creando otro Spec
 
 [source.groovy]
 ./src/integration-test/groovy/twitterpeople/PeopleSpec
 ----
 
-    ...
-    final ManualRestDocumentation restDocumentation = new ManualRestDocumentation('build/generated-snippets')
-    private RequestSpecification documentationSpec
-    ...
-
-  void "test index"() {
+void "test person #username with #description"() {
 
         given:
+        FieldDescriptor[] fields = [
+                fieldWithPath('id').description('user name'),
+                fieldWithPath('description').description(''),
+                fieldWithPath('followersCount').description('how many followers'),
+                fieldWithPath('friendsCount').description('how many friends'),
+                fieldWithPath('location').description(''),
+                //fieldWithPath('dateCreated').description('when was created in our system'),
+        ]
+
         def request = given(documentationSpec)
                 .accept("application/json")
-                .filter(document("people",      // <1>
-                preprocessRequest(modifyUris()
-                        .scheme("http")
-                        .host("localhost")
-                        .removePort())))
+                .filter(document("people/${document}",      // <1>
+                preprocessRequest(modifyUris().scheme("http").host(HOST).removePort()),
+                preprocessResponse(prettyPrint()),
+                responseFields(fields))
+        )
         when:
         def then = request
                 .when()
                 .port(8080)
-                .get("/people")                 // <2>
+                .get("/people/${username}")  //<2>
                 .then()
 
         then:
-        then.assertThat().statusCode(is(200));
+        then.assertThat().statusCode(is(200))
+                .and().content('id', equalTo(username))
+                .and().content('description', equalTo(description));
 
+        where:
+        document    | username | description
+        "example1"  | 'jagedn' | 'Dev As Service'       //<1>
     }
-
-----
-<1> document("people") generará el snippet en "people" el cual se refencia en el include de index.adoc
-<2> get("/people") realizará una petición REST sobre people
-
-Como se puede observar podemos indicar a cada test a relizar dónde queremos que genere los snippets así
-como mantener el código al estilo de un test Spock incluso mediante el uso de "where":
-
-[source.groovy]
-./src/integration-test/groovy/twitterpeople/PeopleSpec
-----
-
- void "test person #username"() {
-
-         given:
-             def fields = [
-                     fieldWithPath('id').description('user name'),
-                     fieldWithPath('description').description(''),
-                     fieldWithPath('followersCount').description('how many followers'),
-                     fieldWithPath('friendsCount').description('how many friends'),
-                     fieldWithPath('location').description(''),
-                     //fieldWithPath('dateCreated').description('when was created in our system'),
-             ]
-
-             def request = given(documentationSpec)
-                     .accept("application/json")
-                     .filter(document("people/${document}",
-                     preprocessRequest(modifyUris()
-                             .scheme("http")
-                             .host("localhost")
-                             .removePort()),
-                     preprocessResponse(prettyPrint()),
-                     new ResponseFieldsSnippet(fields))
-             )
-         when:
-         def then = request
-                 .when()
-                 .port(8080)
-                 .get("/people/${username}")    // <2>
-                 .then()
-
-         then:
-         then.assertThat().statusCode(is(200));
-         then.assertThat().content('id', equalTo(username));
-
-         where:
-         username | document
-         'jagedn' | "person1"   // <1>
-     }
 
 ----
 <1> Podemos hacer que para cada caso del test el snippet se genere en un directorio diferente

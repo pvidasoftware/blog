@@ -5,7 +5,7 @@ import org.eclipse.jetty.servlet.*
 import groovy.servlet.*
 
 def startJetty() {
-    def server = new Server(args ? args[0] as int : 8080)
+    def server = new Server(args ? args[0] as int : 8081)
 
     def handler = new ServletContextHandler(ServletContextHandler.SESSIONS)
     handler.contextPath = '/blog'
