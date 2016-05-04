@@ -6,8 +6,8 @@
     <atom:link href="https://pvidasoftware.github.io/blog/feed.xml" rel="self" type="application/rss+xml" />
     <description>JBake Bootstrap Template</description>
     <language>en-gb</language>
-    <pubDate>jue, 28 abr 2016 12:27:36 +0200</pubDate>
-    <lastBuildDate>jue, 28 abr 2016 12:27:36 +0200</lastBuildDate>
+    <pubDate>mié, 4 may 2016 15:50:52 +0200</pubDate>
+    <lastBuildDate>mié, 4 may 2016 15:50:52 +0200</lastBuildDate>
 
     
     <item>
@@ -372,7 +372,7 @@ plugins {
 
 ext {
 ...
-    springRestdocsVersion = &apos;1.1.0.M1&apos;              &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+    springRestdocsVersion = &apos;1.1.0.RC1&apos;              &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
     snippetsDir = file(&apos;build/generated-snippets&apos;)  &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
 }
 
@@ -381,7 +381,10 @@ test {
 }
 
 asciidoctor {
-    attributes &apos;snippets&apos;: snippetsDir  &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+    attributes &apos;snippets&apos;: snippetsDir,  &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+            &apos;source-highlighter&apos;:&apos;prettify&apos;,
+            &apos;toc&apos;:&apos;left&apos;,
+            &apos;setanchors&apos;:&apos;true&apos;
     inputs.dir snippetsDir
     dependsOn integrationTest           &lt;b class=&quot;conum&quot;&gt;(3)&lt;/b&gt;
 }
@@ -397,7 +400,7 @@ jar {
 &lt;div class=&quot;colist arabic&quot;&gt;
 &lt;ol&gt;
 &lt;li&gt;
-&lt;p&gt;A día de hoy la versión última que funciona se encuentra en estado M1&lt;/p&gt;
+&lt;p&gt;A día de hoy la versión última que funciona se encuentra en estado RC1&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;Usaremos este directorio para alojar los &quot;snippets&quot; generados automáticamente por los test&lt;/p&gt;
@@ -447,40 +450,84 @@ más completos (un apidoc, getting-started, ..).&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;basespec&quot;&gt;BaseSpec&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Para facilitar la reutilización de nuestros test, vamos a crear un Specification base donde
+ ubicar el código común.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock groovy&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;/src/integration-test/groovy/twitterpeople/BaseSpec&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;class BaseSpec extends Specification{
+
+    protected final String HOST = &apos;www.twitterpeope.com&apos;    &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+
+    protected final ManualRestDocumentation restDocumentation = new ManualRestDocumentation(&apos;build/generated-snippets&apos;) &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+
+    protected RequestSpecification documentationSpec
+
+    void setup() {      &lt;b class=&quot;conum&quot;&gt;(3)&lt;/b&gt;
+        this.documentationSpec = new RequestSpecBuilder()
+                .addFilter(documentationConfiguration(restDocumentation)).build()
+        this.restDocumentation.beforeTest(getClass(), specificationContext.currentSpec.name)
+    }
+
+    void cleanup() {
+        this.restDocumentation.afterTest()
+    }
+
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;colist arabic&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;En lugar de &quot;localhost&quot; podremos hacer que nuestra documentación especifique la URL que queramos&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Recuerdas el build.gradle ?&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Donde Spock, RestAssured y Spring MVC Test se juntan&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
 &lt;h2 id=&quot;creando_un_spec&quot;&gt;Creando un Spec&lt;/h2&gt;
 &lt;div class=&quot;sectionbody&quot;&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;Para nuestro ejemplo vamos a crear un Spec que testee los recursos /people/ y /people/${username}&lt;/p&gt;
+&lt;p&gt;Para nuestro ejemplo vamos a crear un Spec que testee /people&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;listingblock groovy&quot;&gt;
-&lt;div class=&quot;title&quot;&gt;/src/integration-test/groovy/twitterpeople/PeopleSpec&lt;/div&gt;
+&lt;div class=&quot;title&quot;&gt;/src/integration-test/groovy/twitterpeople/IndexSpec&lt;/div&gt;
 &lt;div class=&quot;content&quot;&gt;
-&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;    ...
-    final ManualRestDocumentation restDocumentation = new ManualRestDocumentation(&apos;build/generated-snippets&apos;)
-    private RequestSpecification documentationSpec
-    ...
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;class IndexSpec extends BaseSpec {
 
-  void &quot;test index&quot;() {
+        void &quot;test index&quot;() {
 
-        given:
-        def request = given(documentationSpec)
-                .accept(&quot;application/json&quot;)
-                .filter(document(&quot;people&quot;,      &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
-                preprocessRequest(modifyUris()
-                        .scheme(&quot;http&quot;)
-                        .host(&quot;localhost&quot;)
-                        .removePort())))
-        when:
-        def then = request
-                .when()
-                .port(8080)
-                .get(&quot;/people&quot;)                 &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
-                .then()
+            given:
+            def request = given(documentationSpec)
+                    .accept(&quot;application/json&quot;)
+                    .filter(document(&quot;people&quot;,      &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+                        preprocessRequest(prettyPrint(),modifyUris().scheme(&quot;http&quot;).host(HOST).removePort()), &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+                        preprocessResponse(prettyPrint()) &lt;b class=&quot;conum&quot;&gt;(3)&lt;/b&gt;
+            ))
+            when:
+            def then = request
+                    .when()
+                    .port(8080)
+                    .get(&quot;/people&quot;)
+                    .then()
 
-        then:
-        then.assertThat().statusCode(is(200));
+            then:
+            then.assertThat().statusCode(is(200));
 
-    }&lt;/code&gt;&lt;/pre&gt;
+        }
+
+}&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;colist arabic&quot;&gt;
@@ -489,54 +536,56 @@ más completos (un apidoc, getting-started, ..).&lt;/p&gt;
 &lt;p&gt;document(&quot;people&quot;) generará el snippet en &quot;people&quot; el cual se refencia en el include de index.adoc&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;get(&quot;/people&quot;) realizará una petición REST sobre people&lt;/p&gt;
+&lt;p&gt;podemos sustituir el host en la documentacion, e incluso suprimir el puerto&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;queremos que nuestra docu sea legible&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
-&lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;Como se puede observar podemos indicar a cada test a relizar dónde queremos que genere los snippets así
-como mantener el código al estilo de un test Spock incluso mediante el uso de &quot;where&quot;:&lt;/p&gt;
 &lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;creando_otro_spec&quot;&gt;Creando otro Spec&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
 &lt;div class=&quot;listingblock groovy&quot;&gt;
 &lt;div class=&quot;title&quot;&gt;/src/integration-test/groovy/twitterpeople/PeopleSpec&lt;/div&gt;
 &lt;div class=&quot;content&quot;&gt;
-&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt; void &quot;test person #username&quot;() {
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;void &quot;test person #username with #description&quot;() {
 
-         given:
-             def fields = [
-                     fieldWithPath(&apos;id&apos;).description(&apos;user name&apos;),
-                     fieldWithPath(&apos;description&apos;).description(&apos;&apos;),
-                     fieldWithPath(&apos;followersCount&apos;).description(&apos;how many followers&apos;),
-                     fieldWithPath(&apos;friendsCount&apos;).description(&apos;how many friends&apos;),
-                     fieldWithPath(&apos;location&apos;).description(&apos;&apos;),
-                     //fieldWithPath(&apos;dateCreated&apos;).description(&apos;when was created in our system&apos;),
-             ]
+        given:
+        FieldDescriptor[] fields = [
+                fieldWithPath(&apos;id&apos;).description(&apos;user name&apos;),
+                fieldWithPath(&apos;description&apos;).description(&apos;&apos;),
+                fieldWithPath(&apos;followersCount&apos;).description(&apos;how many followers&apos;),
+                fieldWithPath(&apos;friendsCount&apos;).description(&apos;how many friends&apos;),
+                fieldWithPath(&apos;location&apos;).description(&apos;&apos;),
+                //fieldWithPath(&apos;dateCreated&apos;).description(&apos;when was created in our system&apos;),
+        ]
 
-             def request = given(documentationSpec)
-                     .accept(&quot;application/json&quot;)
-                     .filter(document(&quot;people/${document}&quot;,
-                     preprocessRequest(modifyUris()
-                             .scheme(&quot;http&quot;)
-                             .host(&quot;localhost&quot;)
-                             .removePort()),
-                     preprocessResponse(prettyPrint()),
-                     new ResponseFieldsSnippet(fields))
-             )
-         when:
-         def then = request
-                 .when()
-                 .port(8080)
-                 .get(&quot;/people/${username}&quot;)    &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
-                 .then()
+        def request = given(documentationSpec)
+                .accept(&quot;application/json&quot;)
+                .filter(document(&quot;people/${document}&quot;,      &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+                preprocessRequest(modifyUris().scheme(&quot;http&quot;).host(HOST).removePort()),
+                preprocessResponse(prettyPrint()),
+                responseFields(fields))
+        )
+        when:
+        def then = request
+                .when()
+                .port(8080)
+                .get(&quot;/people/${username}&quot;)  &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+                .then()
 
-         then:
-         then.assertThat().statusCode(is(200));
-         then.assertThat().content(&apos;id&apos;, equalTo(username));
+        then:
+        then.assertThat().statusCode(is(200))
+                .and().content(&apos;id&apos;, equalTo(username))
+                .and().content(&apos;description&apos;, equalTo(description));
 
-         where:
-         username | document
-         &apos;jagedn&apos; | &quot;person1&quot;   &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
-     }&lt;/code&gt;&lt;/pre&gt;
+        where:
+        document    | username | description
+        &quot;example1&quot;  | &apos;jagedn&apos; | &apos;Dev As Service&apos;       &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+    }&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;colist arabic&quot;&gt;
