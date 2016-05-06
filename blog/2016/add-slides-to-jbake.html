@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Añadir presentaciones con DeckJs a Jbake</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Añadir presentaciones con DeckJs a Jbake">
+    <meta name="author" content="pvidasoftware">
+    <meta name="keywords" content="blog,DeckJs,jbake">
+    <meta name="generator" content="JBake">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@pvidasoftware">
+    <meta name="twitter:creator" content="@pvidasoftware">
+    <meta name="twitter:title" content="Añadir presentaciones con DeckJs a Jbake">
+    <meta name="twitter:description" content="Añadir presentaciones con DeckJs a Jbake">
+    <meta name="twitter:image" content="https://pvidasoftware.github.io/blog/slides/pvlogo.png">
+
+
+    <!-- Le styles -->
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../../css/asciidoctor.css" rel="stylesheet" type="text/css">
+    <link href="../../css/base.css" rel="stylesheet" type="text/css">
+    <link href="../../css/prettify.css" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <!--<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">-->
+    <link rel="shortcut icon" href="../../favicon.ico">
+  </head>
+
+  <body onload="prettyPrint()">
+
+
+	
+		<!-- Fixed navbar -->
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../../">@pvidasoftware</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="../../index.html">Home</a></li>
+            <li><a href="../../about.html">About</a></li>
+            <li><a href="../../feed.xml">Subscribe</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Slides <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+	
+		    <li><a href="../../slides/2016/ddr/docu-driven-rest.html">Testea y Documenta tu REST</a></li>
+  	
+		    <li><a href="../../slides/puravida-software.html">Quién es Puravida Software</a></li>
+  	
+              </ul>
+            </li>
+          </ul>
+
+          
+
+          <ul class="nav navbar-nav navbar-right share-buttons">
+            
+            <li><a href="https://twitter.com/intent/tweet?source=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/add-slides-to-jbake.html&text=Añadir presentaciones con DeckJs a Jbake%20https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/add-slides-to-jbake.html&via=pvidasoftware" target="_blank" title="Tweet"><i class="fa fa-twitter-square fa-2x"></i></a></li>
+
+            
+            <li><a href="https://plus.google.com/share?url=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/add-slides-to-jbake.html" target="_blank" title="Añadir presentaciones con DeckJs a Jbake"><i class="fa fa-google-plus-square fa-2x"></i></a></li>
+
+            <li><a href="http://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/add-slides-to-jbake.html&title=Añadir presentaciones con DeckJs a Jbake&summary=&source=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/add-slides-to-jbake.html" target="_blank" title="Share on LinkedIn"><i class="fa fa-linkedin-square fa-2x"></i></a></li>
+            <li><a href="mailto:?subject=PuraVidaSoftware&body=:%20https%3A%2F%2Fpvidasoftware.github.io%2Fblog" target="_blank" title="Email"><i class="fa fa-envelope-square fa-2x"></i></a></li>
+          </ul>
+
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+
+	<div class="container">
+
+	<div class="page-header">
+		<h1>Añadir presentaciones con DeckJs a Jbake</h1>
+	    <p><em>06 mayo 2016</em></p>
+	</div>
+
+	<p><div class="sect1">
+<h2 id="jbake">JBake</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>JBake es un generador de blog estático, es decir, dados unos ficheros de entrada genera un sitio estático en HTML
+sin necesitar bases de datos, lenguaje en el servidor, etc, estando orientado al entorno de la publicación de post
+aunque puede ser usado para generar otros tipos de sitios.</p>
+</div>
+<div class="paragraph">
+<p>Al estilo de Jenkins, JBake está desarrollado en Java y además de otros admite Groovy como engine para la generación
+de las páginas y Asciidoctor como lenguaje de marcado.</p>
+</div>
+<div class="paragraph">
+<p>Cuenta con los plugins necesarios de Gradle para que se pueda crear un proyecto tal cual, o para ser integrado
+en tu proyecto de tal forma que parte del pipeline sea generar un sitio estático, por ejemplo.</p>
+</div>
+<div class="paragraph">
+<p>Puesto que Sdk.man lo contempla es realmente muy fácil crear un primer site con una estructura clara donde
+comenzar a escribir las primeras entradas de un blog (como este que estás leyendo).</p>
+</div>
+<div class="paragraph">
+<p>JBake no sólo permite crear contenidos predefinidos sino que incorpora un sistema sencillo para añadir nuestros
+propios generadores. Así en esta entrada vamos a ver cómo añadir presentaciones DeckJs a nuestro blog.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="preparando_jbake">Preparando JBake</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="configuracion">Configuracion</h3>
+<div class="paragraph">
+<p>Lo primero que haremos será configurar a JBake para que contemple otros tipos de contenidos además de los
+predefinidos. Para ello añadiremos en el fichero de properties:</p>
+</div>
+<div class="listingblock">
+<div class="title">jbake.properties</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-properties" data-lang="properties">template.presentation.file=presentation.gsp</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="plantilla">Plantilla</h3>
+<div class="paragraph">
+<p>y crearemos nuestra nueva plantilla:</p>
+</div>
+<div class="listingblock">
+<div class="title">templates/presentation.gsp</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">&lt;%include "header.gsp"%&gt;
+
+&lt;%include "menu.gsp"%&gt;
+&lt;%
+def f = new File(content.uri)
+def url = "${content.uri - f.name}/slide-${f.name}"
+%&gt;
+&lt;iframe src="&lt;%if (content.rootpath) {%&gt;${content.rootpath}&lt;% } else { %&gt;&lt;% }%&gt;${url}" frameborder="0" class="deck-frame"&gt;&lt;/iframe&gt;
+
+&lt;p&gt;&lt;a href="&lt;%if (content.rootpath) {%&gt;${content.rootpath}&lt;% } else { %&gt;&lt;% }%&gt;${url}" target="_blank"&gt;Abrir slide&lt;/a&gt;
+&lt;%include "footer.gsp"%&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ahora, cuando JBake esté generando nuestro site y detecte un contenido del tipo "presentation" sabrá qué generar.
+Básicamente la generación de un presentation es:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>header</p>
+</li>
+<li>
+<p>menu</p>
+</li>
+<li>
+<p>iframe donde irá nuestra presentación</p>
+</li>
+<li>
+<p>footer</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="menú">Menú</h3>
+<div class="paragraph">
+<p>Así mismo añadiremos una nueva entrada en el menú principal para que nos permita navegar a nuestras presentaciones:</p>
+</div>
+<div class="listingblock">
+<div class="title">templates/menu.gsp</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">            &lt;li class="dropdown"&gt;
+              &lt;a href="#" class="dropdown-toggle" data-toggle="dropdown"&gt;Slides &lt;b class="caret"&gt;&lt;/b&gt;&lt;/a&gt;
+              &lt;ul class="dropdown-menu"&gt;
+	&lt;%presentations.each {ppt -&gt;%&gt;
+		    &lt;li&gt;&lt;a href="&lt;%if (content.rootpath) {%&gt;${content.rootpath}&lt;% } else { %&gt;&lt;% }%&gt;${ppt.uri}"&gt;${ppt.title}&lt;/a&gt;&lt;/li&gt;
+  	&lt;%}%&gt;
+              &lt;/ul&gt;
+            &lt;/li&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Lo que hemos conseguido es que al generar la parte del menú, JBake nos devuelva todas las "presentations" y
+ para cada una generamos un enlace (al estilo de cómo lo hace en la página principal para mostrar las últimas
+ entradas de nuestro blog) a cada presentation.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="la_presentation">La presentation</h3>
+<div class="paragraph">
+<p>Para separa el contenido del blog de las presentaciones crearemos un directorio "slides" dentro de content al
+estilo de blog. Así mismo, en este directorio podemos organizar nuestras presentaciones por subdirectorios.</p>
+</div>
+<div class="paragraph">
+<p>Vamos a crear la primera presentation:</p>
+</div>
+<div class="listingblock">
+<div class="title">jbake/content/slides/puravida-software.html</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-asciidoc" data-lang="asciidoc">title=Quién es Puravida Software  <b class="conum">(1)</b>
+date=2016-02-16
+type=presentation           <b class="conum">(2)</b>
+tags=blog, asciidoc, deck, jbake
+status=published
+~~~~~~</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>El titulo para el menú principal</p>
+</li>
+<li>
+<p>type=presentation le indica a Jbake que utilice nuestra plantilla</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Cuando JBake genere nuestro site y detecte un contenido del tipo "presentation" creará una página
+html estática siguiendo la plantilla que creamos anteriormente así como una entrada en el menú
+principal. Siguiendo dicha plantilla se creará una página donde se incrustará un elemento iframe
+que apunte a "slide-${f.name}"</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="asciidoctor_y_deckjs">Asciidoctor y DeckJs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Por último "simplemente" nos resta crear la presentación propiamente dicha para lo que vamos a usar
+Asciidoctor y su backend "DeckJs".</p>
+</div>
+<div class="paragraph">
+<p>Para más info consulta <a href="http://asciidoctor.org/docs/install-and-use-deckjs-backend/" class="bare">asciidoctor.org/docs/install-and-use-deckjs-backend/</a></p>
+</div>
+<div class="sect2">
+<h3 id="preparando_el_entorno">Preparando el entorno</h3>
+<div class="paragraph">
+<p>Lo primero que vamos a hacer es añadir en nuestro build.gradle las dependencias y configuraciones necesarias:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-gradle" data-lang="gradle">buildscript {
+    dependencies {
+    ...
+        classpath 'org.asciidoctor:asciidoctorj:1.5.4'
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
+    }
+}
+
+apply plugin: 'org.asciidoctor.gradle.asciidoctor'
+
+asciidoctor{
+    outputs.upToDateWhen { false }
+    sourceDir 'src/asciidoc'            <b class="conum">(1)</b>
+    outputDir "${buildDir}/jbake/"      <b class="conum">(2)</b>
+    separateOutputDirs false
+    options  template_dirs : [new File('src/templates','haml').absolutePath ] <b class="conum">(3)</b>
+}
+
+jbake.dependsOn  'asciidoctor'  <b class="conum">(4)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>donde ubicaremos nuestros slides</p>
+</li>
+<li>
+<p>al usar ${buildDir}/jbake conseguiremos "mezclar" ambos generadores en el mismo punto.</p>
+</li>
+<li>
+<p>si queremos personalizar el resultado es útil disponer de los templates de Asciidoctor</p>
+</li>
+<li>
+<p>creamos una dependencia con asciidoctor y así jBake también nos generará las slides</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="creando_la_slide">Creando la slide</h3>
+<div class="paragraph">
+<p>Como vimos en la sección de JBake tenemos una presentation llamada "puravida-software" en el
+directorio raiz de jbake/slides la cual al renderizarse inserta un iframe a "slide-puravida-software",
+por lo que ahora debemos crear una slide en dicha ubicación.</p>
+</div>
+<div class="paragraph">
+<p>Para ello en el directorio src/asciidoc crearemos un fichero asciidoctor</p>
+</div>
+<div class="listingblock">
+<div class="title">src/asciidoc/slide-puravida-software</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-adoc" data-lang="adoc">= PuraVida Software
+Jorge Aguilera
+:lang: es
+:backend: deckjs        <b class="conum">(1)</b>
+:deckjs_transition: horizontal-slide
+:deckjs_theme: web-2.0
+:source-highlighter: coderay
+:stylesheet: ../../../css/asciidoctor.css
+:navigation:
+:status:
+:goto:
+:linkattrs:
+
+== Quienes somos
+
+image::pvlogo.png[]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>Activates the Deck.js backend to render the document as a Deck.js presentation</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Este fichero sigue las especificaciones de Asciidoctor y en especial lo relativo al
+backend "deckjs" ( steps, imágenes, tablas, formatear código, &#8230;&#8203;)</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="publicando">Publicando</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Para generar el contenido seguiremos invocando a la tarea jBake como hasta ahora, la cual
+primero ejecutará la tarea asciidoctor y el contenido de ambas será renderizado en "${buildDir}/jbake".</p>
+</div>
+<div class="paragraph">
+<p>Asi mismo para publicar el site, seguiremos ejecutando la tarea de publish como hasta ahora.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proximos_pasos">Proximos pasos</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Una vez que tenemos una presentación DeckJs existe una app (<a href="https://github.com/melix/deck2pdf" class="bare">github.com/melix/deck2pdf</a>) de
+Cédric Champeau que puede convertirla a pdf, generando una página por cada steps, de forma automática,
+así que el siguiente paso sería encontrar la manera de incluirla en el pipeline y que se genere
+ dicho pdf dentro del contenido.</p>
+</div>
+</div>
+</div></p>
+
+	</div>
+
+
+    <footer class="footer">
+      <div class="container">
+        <p class="text-muted">PuraVida Software,SL c/ Betancunia 1, local A, Madrid 28017, <a href="mailto:contacto@puravida-software.com">Contacto</a>
+            <span class="credit">&copy; 2016 | Mixed with <a href="http://getbootstrap.com/">Bootstrap v3.1.1</a> | Baked with <a href="http://jbake.org">JBake v2.4.0</a></span>
+        </p>
+      </div>
+    </footer>
+    
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../../js/jquery-1.11.1.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/prettify.js"></script>
+
+  </body>
+
+<!-- google -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-687332-8', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<!-- twitter -->
+  <script>window.twttr = (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0],
+      t = window.twttr || {};
+    if (d.getElementById(id)) return t;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "https://platform.twitter.com/widgets.js";
+    fjs.parentNode.insertBefore(js, fjs);
+
+    t._e = [];
+    t.ready = function(f) {
+      t._e.push(f);
+    };
+
+    return t;
+  }(document, "script", "twitter-wjs"));</script>
+<!-- twitter -->
+
+</html>

@@ -6,9 +6,289 @@
     <atom:link href="https://pvidasoftware.github.io/blog/feed.xml" rel="self" type="application/rss+xml" />
     <description>JBake Bootstrap Template</description>
     <language>en-gb</language>
-    <pubDate>jue, 5 may 2016 20:40:34 +0200</pubDate>
-    <lastBuildDate>jue, 5 may 2016 20:40:34 +0200</lastBuildDate>
+    <pubDate>vie, 6 may 2016 18:40:42 +0200</pubDate>
+    <lastBuildDate>vie, 6 may 2016 18:40:42 +0200</lastBuildDate>
 
+    
+    <item>
+      <title>Añadir presentaciones con DeckJs a Jbake</title>
+      <link>https://pvidasoftware.github.io/blog/blog/2016/add-slides-to-jbake.html</link>
+      <pubDate>vie, 6 may 2016 00:00:00 +0200</pubDate>
+      <guid isPermaLink="false">blog/2016/add-slides-to-jbake.html</guid>
+      <description>
+      &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;jbake&quot;&gt;JBake&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;JBake es un generador de blog estático, es decir, dados unos ficheros de entrada genera un sitio estático en HTML
+sin necesitar bases de datos, lenguaje en el servidor, etc, estando orientado al entorno de la publicación de post
+aunque puede ser usado para generar otros tipos de sitios.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Al estilo de Jenkins, JBake está desarrollado en Java y además de otros admite Groovy como engine para la generación
+de las páginas y Asciidoctor como lenguaje de marcado.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Cuenta con los plugins necesarios de Gradle para que se pueda crear un proyecto tal cual, o para ser integrado
+en tu proyecto de tal forma que parte del pipeline sea generar un sitio estático, por ejemplo.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Puesto que Sdk.man lo contempla es realmente muy fácil crear un primer site con una estructura clara donde
+comenzar a escribir las primeras entradas de un blog (como este que estás leyendo).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;JBake no sólo permite crear contenidos predefinidos sino que incorpora un sistema sencillo para añadir nuestros
+propios generadores. Así en esta entrada vamos a ver cómo añadir presentaciones DeckJs a nuestro blog.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;preparando_jbake&quot;&gt;Preparando JBake&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;configuracion&quot;&gt;Configuracion&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Lo primero que haremos será configurar a JBake para que contemple otros tipos de contenidos además de los
+predefinidos. Para ello añadiremos en el fichero de properties:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;jbake.properties&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-properties&quot; data-lang=&quot;properties&quot;&gt;template.presentation.file=presentation.gsp&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;plantilla&quot;&gt;Plantilla&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;y crearemos nuestra nueva plantilla:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;templates/presentation.gsp&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-groovy&quot; data-lang=&quot;groovy&quot;&gt;&amp;lt;%include &quot;header.gsp&quot;%&amp;gt;
+
+&amp;lt;%include &quot;menu.gsp&quot;%&amp;gt;
+&amp;lt;%
+def f = new File(content.uri)
+def url = &quot;${content.uri - f.name}/slide-${f.name}&quot;
+%&amp;gt;
+&amp;lt;iframe src=&quot;&amp;lt;%if (content.rootpath) {%&amp;gt;${content.rootpath}&amp;lt;% } else { %&amp;gt;&amp;lt;% }%&amp;gt;${url}&quot; frameborder=&quot;0&quot; class=&quot;deck-frame&quot;&amp;gt;&amp;lt;/iframe&amp;gt;
+
+&amp;lt;p&amp;gt;&amp;lt;a href=&quot;&amp;lt;%if (content.rootpath) {%&amp;gt;${content.rootpath}&amp;lt;% } else { %&amp;gt;&amp;lt;% }%&amp;gt;${url}&quot; target=&quot;_blank&quot;&amp;gt;Abrir slide&amp;lt;/a&amp;gt;
+&amp;lt;%include &quot;footer.gsp&quot;%&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Ahora, cuando JBake esté generando nuestro site y detecte un contenido del tipo &quot;presentation&quot; sabrá qué generar.
+Básicamente la generación de un presentation es:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;header&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;menu&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;iframe donde irá nuestra presentación&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;footer&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;menú&quot;&gt;Menú&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Así mismo añadiremos una nueva entrada en el menú principal para que nos permita navegar a nuestras presentaciones:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;templates/menu.gsp&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-groovy&quot; data-lang=&quot;groovy&quot;&gt;            &amp;lt;li class=&quot;dropdown&quot;&amp;gt;
+              &amp;lt;a href=&quot;#&quot; class=&quot;dropdown-toggle&quot; data-toggle=&quot;dropdown&quot;&amp;gt;Slides &amp;lt;b class=&quot;caret&quot;&amp;gt;&amp;lt;/b&amp;gt;&amp;lt;/a&amp;gt;
+              &amp;lt;ul class=&quot;dropdown-menu&quot;&amp;gt;
+	&amp;lt;%presentations.each {ppt -&amp;gt;%&amp;gt;
+		    &amp;lt;li&amp;gt;&amp;lt;a href=&quot;&amp;lt;%if (content.rootpath) {%&amp;gt;${content.rootpath}&amp;lt;% } else { %&amp;gt;&amp;lt;% }%&amp;gt;${ppt.uri}&quot;&amp;gt;${ppt.title}&amp;lt;/a&amp;gt;&amp;lt;/li&amp;gt;
+  	&amp;lt;%}%&amp;gt;
+              &amp;lt;/ul&amp;gt;
+            &amp;lt;/li&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Lo que hemos conseguido es que al generar la parte del menú, JBake nos devuelva todas las &quot;presentations&quot; y
+ para cada una generamos un enlace (al estilo de cómo lo hace en la página principal para mostrar las últimas
+ entradas de nuestro blog) a cada presentation.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;la_presentation&quot;&gt;La presentation&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Para separa el contenido del blog de las presentaciones crearemos un directorio &quot;slides&quot; dentro de content al
+estilo de blog. Así mismo, en este directorio podemos organizar nuestras presentaciones por subdirectorios.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Vamos a crear la primera presentation:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;jbake/content/slides/puravida-software.html&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-asciidoc&quot; data-lang=&quot;asciidoc&quot;&gt;title=Quién es Puravida Software  &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+date=2016-02-16
+type=presentation           &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+tags=blog, asciidoc, deck, jbake
+status=published
+~~~~~~&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;colist arabic&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;El titulo para el menú principal&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;type=presentation le indica a Jbake que utilice nuestra plantilla&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Cuando JBake genere nuestro site y detecte un contenido del tipo &quot;presentation&quot; creará una página
+html estática siguiendo la plantilla que creamos anteriormente así como una entrada en el menú
+principal. Siguiendo dicha plantilla se creará una página donde se incrustará un elemento iframe
+que apunte a &quot;slide-${f.name}&quot;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;asciidoctor_y_deckjs&quot;&gt;Asciidoctor y DeckJs&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Por último &quot;simplemente&quot; nos resta crear la presentación propiamente dicha para lo que vamos a usar
+Asciidoctor y su backend &quot;DeckJs&quot;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Para más info consulta &lt;a href=&quot;http://asciidoctor.org/docs/install-and-use-deckjs-backend/&quot; class=&quot;bare&quot;&gt;asciidoctor.org/docs/install-and-use-deckjs-backend/&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;preparando_el_entorno&quot;&gt;Preparando el entorno&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Lo primero que vamos a hacer es añadir en nuestro build.gradle las dependencias y configuraciones necesarias:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;build.gradle&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-gradle&quot; data-lang=&quot;gradle&quot;&gt;buildscript {
+    dependencies {
+    ...
+        classpath &apos;org.asciidoctor:asciidoctorj:1.5.4&apos;
+        classpath &apos;org.asciidoctor:asciidoctor-gradle-plugin:1.5.3&apos;
+    }
+}
+
+apply plugin: &apos;org.asciidoctor.gradle.asciidoctor&apos;
+
+asciidoctor{
+    outputs.upToDateWhen { false }
+    sourceDir &apos;src/asciidoc&apos;            &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+    outputDir &quot;${buildDir}/jbake/&quot;      &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+    separateOutputDirs false
+    options  template_dirs : [new File(&apos;src/templates&apos;,&apos;haml&apos;).absolutePath ] &lt;b class=&quot;conum&quot;&gt;(3)&lt;/b&gt;
+}
+
+jbake.dependsOn  &apos;asciidoctor&apos;  &lt;b class=&quot;conum&quot;&gt;(4)&lt;/b&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;colist arabic&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;donde ubicaremos nuestros slides&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;al usar ${buildDir}/jbake conseguiremos &quot;mezclar&quot; ambos generadores en el mismo punto.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;si queremos personalizar el resultado es útil disponer de los templates de Asciidoctor&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;creamos una dependencia con asciidoctor y así jBake también nos generará las slides&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;creando_la_slide&quot;&gt;Creando la slide&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Como vimos en la sección de JBake tenemos una presentation llamada &quot;puravida-software&quot; en el
+directorio raiz de jbake/slides la cual al renderizarse inserta un iframe a &quot;slide-puravida-software&quot;,
+por lo que ahora debemos crear una slide en dicha ubicación.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Para ello en el directorio src/asciidoc crearemos un fichero asciidoctor&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;src/asciidoc/slide-puravida-software&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-adoc&quot; data-lang=&quot;adoc&quot;&gt;= PuraVida Software
+Jorge Aguilera
+:lang: es
+:backend: deckjs        &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+:deckjs_transition: horizontal-slide
+:deckjs_theme: web-2.0
+:source-highlighter: coderay
+:stylesheet: ../../../css/asciidoctor.css
+:navigation:
+:status:
+:goto:
+:linkattrs:
+
+== Quienes somos
+
+image::pvlogo.png[]&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;colist arabic&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Activates the Deck.js backend to render the document as a Deck.js presentation&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Este fichero sigue las especificaciones de Asciidoctor y en especial lo relativo al
+backend &quot;deckjs&quot; ( steps, imágenes, tablas, formatear código, &amp;#8230;&amp;#8203;)&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;publicando&quot;&gt;Publicando&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Para generar el contenido seguiremos invocando a la tarea jBake como hasta ahora, la cual
+primero ejecutará la tarea asciidoctor y el contenido de ambas será renderizado en &quot;${buildDir}/jbake&quot;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Asi mismo para publicar el site, seguiremos ejecutando la tarea de publish como hasta ahora.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;proximos_pasos&quot;&gt;Proximos pasos&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Una vez que tenemos una presentación DeckJs existe una app (&lt;a href=&quot;https://github.com/melix/deck2pdf&quot; class=&quot;bare&quot;&gt;github.com/melix/deck2pdf&lt;/a&gt;) de
+Cédric Champeau que puede convertirla a pdf, generando una página por cada steps, de forma automática,
+así que el siguiente paso sería encontrar la manera de incluirla en el pipeline y que se genere
+ dicho pdf dentro del contenido.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+	  </description>
+    </item>
     
     <item>
       <title>AppEngine profile para Grails 3.1</title>
