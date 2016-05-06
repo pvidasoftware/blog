@@ -18,16 +18,16 @@ apply plugin: 'me.champeau.jbake'
 
 asciidoctor{
     outputs.upToDateWhen { false }
-    dependsOn 'jbake'
     sourceDir 'src/asciidoc'
     outputDir "${buildDir}/jbake/"
     separateOutputDirs false
     options  template_dirs : [new File('src/templates','haml').absolutePath ], safe: 0
 }
 
+jbake.dependsOn  'asciidoctor'
 
 task publish(type: GradleBuild) {
-    dependsOn 'asciidoctor'
+    dependsOn 'jbake'
     buildFile = 'publish.gradle'
     tasks = ['publishGhPages']
 }

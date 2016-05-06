@@ -1,0 +1,16 @@
+= PuraVida Software
+Jorge Aguilera
+:lang: es
+:backend: deckjs
+:deckjs_transition: horizontal-slide
+:deckjs_theme: web-2.0
+:source-highlighter: coderay
+:stylesheet: ../../../css/asciidoctor.css
+:navigation:
+:status:
+:goto:
+:linkattrs:
+
+== Quienes somos
+
+image::pvlogo.png[]

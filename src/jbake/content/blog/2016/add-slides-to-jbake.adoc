@@ -1,0 +1,199 @@
+= Añadir presentaciones con DeckJs a Jbake
+Jorge Aguilera
+2016-5-6
+:jbake-type: post
+:jbake-status: published
+:jbake-tags: blog, DeckJs, jbake
+:idprefix:
+:hide-uri-scheme:
+
+== JBake
+
+JBake es un generador de blog estático, es decir, dados unos ficheros de entrada genera un sitio estático en HTML
+sin necesitar bases de datos, lenguaje en el servidor, etc, estando orientado al entorno de la publicación de post
+aunque puede ser usado para generar otros tipos de sitios.
+
+Al estilo de Jenkins, JBake está desarrollado en Java y además de otros admite Groovy como engine para la generación
+de las páginas y Asciidoctor como lenguaje de marcado.
+
+Cuenta con los plugins necesarios de Gradle para que se pueda crear un proyecto tal cual, o para ser integrado
+en tu proyecto de tal forma que parte del pipeline sea generar un sitio estático, por ejemplo.
+
+Puesto que Sdk.man lo contempla es realmente muy fácil crear un primer site con una estructura clara donde
+comenzar a escribir las primeras entradas de un blog (como este que estás leyendo).
+
+JBake no sólo permite crear contenidos predefinidos sino que incorpora un sistema sencillo para añadir nuestros
+propios generadores. Así en esta entrada vamos a ver cómo añadir presentaciones DeckJs a nuestro blog.
+
+== Preparando JBake
+
+=== Configuracion
+Lo primero que haremos será configurar a JBake para que contemple otros tipos de contenidos además de los
+predefinidos. Para ello añadiremos en el fichero de properties:
+
+[source,properties]
+.jbake.properties
+----
+
+template.presentation.file=presentation.gsp
+----
+
+=== Plantilla
+
+y crearemos nuestra nueva plantilla:
+[source,groovy]
+.templates/presentation.gsp
+----
+<%include "header.gsp"%>
+
+<%include "menu.gsp"%>
+<%
+def f = new File(content.uri)
+def url = "${content.uri - f.name}/slide-${f.name}"
+%>
+<iframe src="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>${url}" frameborder="0" class="deck-frame"></iframe>
+
+<p><a href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>${url}" target="_blank">Abrir slide</a>
+<%include "footer.gsp"%>
+----
+
+Ahora, cuando JBake esté generando nuestro site y detecte un contenido del tipo "presentation" sabrá qué generar.
+Básicamente la generación de un presentation es:
+
+- header
+- menu
+- iframe donde irá nuestra presentación
+- footer
+
+=== Menú
+
+Así mismo añadiremos una nueva entrada en el menú principal para que nos permita navegar a nuestras presentaciones:
+
+[source,groovy]
+.templates/menu.gsp
+----
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Slides <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+	<%presentations.each {ppt ->%>
+		    <li><a href="<%if (content.rootpath) {%>${content.rootpath}<% } else { %><% }%>${ppt.uri}">${ppt.title}</a></li>
+  	<%}%>
+              </ul>
+            </li>
+----
+
+Lo que hemos conseguido es que al generar la parte del menú, JBake nos devuelva todas las "presentations" y
+ para cada una generamos un enlace (al estilo de cómo lo hace en la página principal para mostrar las últimas
+ entradas de nuestro blog) a cada presentation.
+
+
+=== La presentation
+
+Para separa el contenido del blog de las presentaciones crearemos un directorio "slides" dentro de content al
+estilo de blog. Así mismo, en este directorio podemos organizar nuestras presentaciones por subdirectorios.
+
+Vamos a crear la primera presentation:
+[source,asciidoc]
+.jbake/content/slides/puravida-software.html
+----
+title=Quién es Puravida Software  // <1>
+date=2016-02-16
+type=presentation           // <2>
+tags=blog, asciidoc, deck, jbake
+status=published
+~~~~~~
+----
+<1> El titulo para el menú principal
+<2> type=presentation le indica a Jbake que utilice nuestra plantilla
+
+Cuando JBake genere nuestro site y detecte un contenido del tipo "presentation" creará una página
+html estática siguiendo la plantilla que creamos anteriormente así como una entrada en el menú
+principal. Siguiendo dicha plantilla se creará una página donde se incrustará un elemento iframe
+que apunte a "slide-${f.name}"
+
+== Asciidoctor y DeckJs
+
+Por último "simplemente" nos resta crear la presentación propiamente dicha para lo que vamos a usar
+Asciidoctor y su backend "DeckJs".
+
+Para más info consulta http://asciidoctor.org/docs/install-and-use-deckjs-backend/
+
+=== Preparando el entorno
+
+Lo primero que vamos a hacer es añadir en nuestro build.gradle las dependencias y configuraciones necesarias:
+
+[source,gradle]
+.build.gradle
+----
+buildscript {
+    dependencies {
+    ...
+        classpath 'org.asciidoctor:asciidoctorj:1.5.4'
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
+    }
+}
+
+apply plugin: 'org.asciidoctor.gradle.asciidoctor'
+
+asciidoctor{
+    outputs.upToDateWhen { false }
+    sourceDir 'src/asciidoc'            // <1>
+    outputDir "${buildDir}/jbake/"      // <2>
+    separateOutputDirs false
+    options  template_dirs : [new File('src/templates','haml').absolutePath ] // <3>
+}
+
+jbake.dependsOn  'asciidoctor'  // <4>
+
+----
+<1> donde ubicaremos nuestros slides
+<2> al usar ${buildDir}/jbake conseguiremos "mezclar" ambos generadores en el mismo punto.
+<3> si queremos personalizar el resultado es útil disponer de los templates de Asciidoctor
+<4> creamos una dependencia con asciidoctor y así jBake también nos generará las slides
+
+=== Creando la slide
+
+Como vimos en la sección de JBake tenemos una presentation llamada "puravida-software" en el
+directorio raiz de jbake/slides la cual al renderizarse inserta un iframe a "slide-puravida-software",
+por lo que ahora debemos crear una slide en dicha ubicación.
+
+Para ello en el directorio src/asciidoc crearemos un fichero asciidoctor
+
+[source,adoc]
+.src/asciidoc/slide-puravida-software
+----
+= PuraVida Software
+Jorge Aguilera
+:lang: es
+:backend: deckjs        // <1>
+:deckjs_transition: horizontal-slide
+:deckjs_theme: web-2.0
+:source-highlighter: coderay
+:stylesheet: ../../../css/asciidoctor.css
+:navigation:
+:status:
+:goto:
+:linkattrs:
+
+== Quienes somos
+
+image::pvlogo.png[]
+----
+<1> Activates the Deck.js backend to render the document as a Deck.js presentation
+
+Este fichero sigue las especificaciones de Asciidoctor y en especial lo relativo al
+backend "deckjs" ( steps, imágenes, tablas, formatear código, ...)
+
+
+== Publicando
+Para generar el contenido seguiremos invocando a la tarea jBake como hasta ahora, la cual
+primero ejecutará la tarea asciidoctor y el contenido de ambas será renderizado en "${buildDir}/jbake".
+
+Asi mismo para publicar el site, seguiremos ejecutando la tarea de publish como hasta ahora.
+
+
+== Proximos pasos
+Una vez que tenemos una presentación DeckJs existe una app (https://github.com/melix/deck2pdf) de
+Cédric Champeau que puede convertirla a pdf, generando una página por cada steps, de forma automática,
+así que el siguiente paso sería encontrar la manera de incluirla en el pipeline y que se genere
+ dicho pdf dentro del contenido.
