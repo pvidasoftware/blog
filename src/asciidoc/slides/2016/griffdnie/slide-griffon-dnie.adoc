@@ -1,0 +1,155 @@
+= GriffDNIe
+Jorge Aguilera
+:lang: es
+:backend: deckjs
+:deckjs_transition: horizontal-slide
+:deckjs_theme: neon
+:source-highlighter: coderay
+:stylesheet: ../../../css/asciidoctor.css
+:navigation:
+:status:
+:goto:
+:linkattrs:
+
+== $whoami
+
+[cols="1,5"]
+|===
+|image:whoami.jpg[caption='']
+|Jorge Aguilera, +20 a&ntilde;os d&aacute;ndole a la tecla
+
+|&nbsp;
+|&nbsp;
+
+|image:pvida.png[caption='',width='100px',height='100px']
+|y desde hace +9 a&ntilde;os como freelance (a.k.a. chico para todo) en Puravida Software
+|===
+
+== Desktop vs Web
+
+video::krjv8DxptQI[youtube, width=320, height=240, start=85, end=105]
+
+[%step]
+9 de cada 10 arquitectos software recomiendan una aplicaci&oacute;n web ....
+
+== Desktopqueeee
+
+[cols="5,5"]
+|===
+|image:DSC_0452.JPG[caption='']
+|image:DSC_0454.JPG[caption='']
+|===
+
+== GriffDnie
+
+Aplicaci&oacute;n de ejemplo:
+
+- Griffon Framework
+- Swing
+- Identificaci&oacute;n de usuario mediante DNIe
+- Consumo de servicio REST
+- Firma digital de documentos con certificados del DNIe
+- show me the app
+
+== Griffon Framework
+
+[%step]
+Quick Start = lazybones
+
+[%step]
+Diferentes entornos (Swing, JavaFX, Apache Pivot) y lenguajes (Java, Groovy, Kotlin)
+
+[%step]
+Inspirado en Grails Framework, presenta numerosas similitudes
+
+[%step]
+Ejecutable en consola, desde web (JNLP), instalable, firmado, ...
+
+== Griffon, estructura del proyecto
+
+* griffon-app
+** conf
+** controllers
+** models
+** views
+** services
+** i18n
+* src
+** main
+*** groovy
+*** resources
+*** test
+*** resources
+** integration-test
+*** groovy
+
+== Model
+
+* NO CORRESPONDE CON DOMAIN MODEL de Grails.
+* contiene las variables que usaran la vista y el controllador
+
+[source, groovy]
+./src/griffon-app/models/griffdni/GriffdniModel.groovy
+----
+import griffon.core.artifact.GriffonModel
+import griffon.metadata.ArtifactProviderFor
+import griffon.transform.Observable
+
+@ArtifactProviderFor(GriffonModel)
+class GriffdniModel {
+    @Observable String nif
+    @Observable String name
+}
+----
+
+== Controller
+
+* Corresponde con el controller de Grails
+
+[source, groovy]
+./src/griffon-app/controllers/griffdni/GriffdnieController.groovy
+----
+import griffon.core.artifact.GriffonController
+import griffon.metadata.ArtifactProviderFor
+import griffon.transform.Observable
+
+@ArtifactProviderFor(GriffonController)
+class GriffdniController implements ShutdownHandler{
+    GriffdniModel model
+
+    GriffdniView view
+
+    boolean canShutdown(@Nonnull GriffonApplication application){
+        return model.nif == null
+    }
+}
+----
+
+== Vista
+
+* Corresponde (en cierta medida) con el GSP de Grails
+
+[source, groovy]
+./src/griffon-app/views/griffdni/GriffdnieView.groovy
+----
+import griffon.core.artifact.GriffonView
+import griffon.metadata.ArtifactProviderFor
+import griffon.transform.Observable
+
+@ArtifactProviderFor(GriffonView)
+class GriffdniView{
+    FactoryBuilderSupport builder
+
+    GriffdniModel model
+
+    void initUI() {
+        builder.with {
+            application(size: [320, 160], id: 'mainWindow',
+                    extendedState: JFrame.MAXIMIZED_BOTH,
+                    title: application.configuration['application.title']){
+
+                    panel(){
+                        borderLayout()
+                        ...
+
+----
