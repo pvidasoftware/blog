@@ -6,12 +6,12 @@
     <atom:link href="https://pvidasoftware.github.io/blog/feed.xml" rel="self" type="application/rss+xml" />
     <description>JBake Bootstrap Template</description>
     <language>en-gb</language>
-    <pubDate>lun, 27 jun 2016 18:36:23 +0200</pubDate>
-    <lastBuildDate>lun, 27 jun 2016 18:36:23 +0200</lastBuildDate>
+    <pubDate>lun, 27 jun 2016 18:40:20 +0200</pubDate>
+    <lastBuildDate>lun, 27 jun 2016 18:40:20 +0200</lastBuildDate>
 
     
     <item>
-      <title>Restringuir el uso de AWS Cognito</title>
+      <title>Restringir el uso de AWS Cognito</title>
       <link>https://pvidasoftware.github.io/blog/blog/2016/aws-cognito-prevalidate.html</link>
       <pubDate>lun, 27 jun 2016 00:00:00 +0200</pubDate>
       <guid isPermaLink="false">blog/2016/aws-cognito-prevalidate.html</guid>
