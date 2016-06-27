@@ -153,3 +153,59 @@ class GriffdniView{
                         ...
 
 ----
+
+== MVC Group
+
+* artefacto que nos permite manejar el Modelo, la Vista y el Controlador como un todo.
+* tipicamente tendremos varios MVCGroups identificados por un nombre.
+* permite *inicializar* el conjunto
+
+[source, groovy]
+./src/griffon-app/conf/Config.groovy
+----
+mvcGroups {
+    // MVC Group for "sample"
+    'sample' {
+        model      = 'sample.SampleModel'
+        view       = 'sample.SampleView'
+        controller = 'sample.SampleController'
+    }
+}
+----
+
+
+== createMVCGroup
+
+* cualquiera puede instanciar un nuevo grupo (los controllers lo tienen muy facil)
+* Griffon gestiona las dependencias e injecciones
+* se pueden pasar parámetros en la creación de un grupo MVC
+* el grupo hijo tiene una referencia al padre
+
+[source, groovy]
+./src/griffon-app/controllers/sample/SampleController.groovy
+----
+void showMemberInfo(){
+
+    createMVCGroup( 'memberInfo', [ member: model.member ] )
+
+}
+----
+
+== mvcGroupInit
+
+* cualquiera de los 3 componentes puede implementar el metodo mvcGroupInit
+* permite inicializar al componente accediendo a los parámetros y al padre
+
+[source, groovy]
+./src/griffon-app/controllers/sample/SampleModel.groovy
+----
+void mvcGroupInit(Map<String, Object> args) {
+    this.name = "$args.member.surname, $args.member.name"
+}
+----
+
+
+== Application
+
+
+
