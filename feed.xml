@@ -6,9 +6,181 @@
     <atom:link href="https://pvidasoftware.github.io/blog/feed.xml" rel="self" type="application/rss+xml" />
     <description>JBake Bootstrap Template</description>
     <language>en-gb</language>
-    <pubDate>lun, 9 may 2016 18:45:28 +0200</pubDate>
-    <lastBuildDate>lun, 9 may 2016 18:45:28 +0200</lastBuildDate>
+    <pubDate>lun, 27 jun 2016 18:36:23 +0200</pubDate>
+    <lastBuildDate>lun, 27 jun 2016 18:36:23 +0200</lastBuildDate>
 
+    
+    <item>
+      <title>Restringuir el uso de AWS Cognito</title>
+      <link>https://pvidasoftware.github.io/blog/blog/2016/aws-cognito-prevalidate.html</link>
+      <pubDate>lun, 27 jun 2016 00:00:00 +0200</pubDate>
+      <guid isPermaLink="false">blog/2016/aws-cognito-prevalidate.html</guid>
+      <description>
+      &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;aws_cognito&quot;&gt;AWS Cognito&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;AWS Cognito es un servicio de Amazon Web Services que permite la gestión de identidades, sincronizar datos del usuario
+entre el escritorio, y dispositivos móviles, etc.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Mediante este servicio tendremos un pool de identidades de usuarios que se han logeado con el proveedor que queramos
+(por ejemplo Google+, Facebook, etc) y nuestra aplicación podrá leer y escribir en un área reservada para este usuario
+que se sincroniza de forma automática entre los dispositivos que utilice.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;aws_cognito_google&quot;&gt;AWS Cognito + Google&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Es relativamente sencillo configurar a Google como proveedor de identificación y linkarlo a nuestro pool de AWS Cognito,
+de tal forma que para cualquier usuario que tenga cuenta en Google podremos mantener un estado (por ejemplo, ultimo
+ acceso y desde qué dispositivo, máximo record alcanzado, e incluso algún dato que nuestro backend quiera comunicarle).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Sin embargo, si seguimos el tutorial de AWS no encontramos ninguna manera de poder prevalidar a estos usuarios para que
+únicamente sean los de nuestro interés los que puedan usar el servicio.
+Para solventar este problema podremos crear un EndPoint al cual, una vez validado el usuario, podamos invocar para que
+nos lo valide y si es correcto recupere las credenciales correspondientes a aquel.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Por seguir usando los servicios de AWS, la solución propuesta se basará en una función Lambda junto con su Endpoint.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;cliente&quot;&gt;Cliente&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Una vez que el lado del cliente ha realizado la autentificación del usuario mediante el uso de Google, se encuentra con
+un token el cual enviará a nuestro EndPoint para su validación (en lugar de intentar obtener credenciales de AWS).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;app.js&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;function signinCallback(authResult) {
+  if (authResult[&apos;status&apos;][&apos;signed_in&apos;]) {
+     var token = authResult[&apos;id_token&apos;];
+
+     // Ajax call ( puede ser con JQuery, iron-ajax, Angular...
+     $.ajax({
+       type: &quot;POST&quot;,
+       url: url,
+       data: { token : token},
+       success: success,
+       dataType: dataType
+     });
+  }
+}
+
+function success(e){
+    var token = e.response.token;
+    var userId = e.response.userId;
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: identityPoolId,
+        IdentityId: userId,
+        Logins:{
+            &apos;cognito-identity.amazonaws.com&apos;: token
+        }
+    });
+    AWS.config.credentials.get(function(err){
+        if( err ){
+            return;
+        }
+        var cognitoSyncClient = new AWS.CognitoSyncManager();
+        ....
+    });
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Básicamente el cliente enviará el token y recibirá a su vez un userId y otro token que deberá utilizar para la
+acreditación. Lo realmente importante aqui es fijarse que &lt;strong&gt;debemos&lt;/strong&gt; usar el Logins &lt;strong&gt;cognito-identity.amazonws.com&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;endpoint_lambda&quot;&gt;EndPoint + Lambda&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Por el lado del servidor crearemos una función Lambda y su correspondiente EndPoint el cual estará configurado para
+ recibir un token como parámetro (en este ejemplo en el body de la petición).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;La función Lambda recibirá en última instancia este token y lo primero que hará será validarlo:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;login.js&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;module.exports.resolveUser = function( query, context) {
+
+    var finalurl = &quot;https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=&quot; + query.token;
+
+    request({
+        url: finalurl,
+        json: true,
+    }, function (error, response, body) {
+
+        if (!error &amp;amp;&amp;amp; response.statusCode === 200) {
+
+            if (!body.email.endsWith(&apos;@puravida-software.com&apos;)) {
+                context.fail(&apos;domain not valid&apos;, {
+                    reason: &apos;domain not valid&apos;
+                })
+            }
+
+            .......
+
+        }
+
+    })&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;De esta forma obtendremos la información básica del token como es el email el cual podríamos constrastar contra una
+query de DynamoDB para asegurarnos que el usuario está en nuestro sistema dado de alta y si no es así devolver un error.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Una vez validado realizaremos una inicializacion del pool del usuario:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;login.js&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;            if (!body.email.endsWith(&apos;@puravida-software.com&apos;)) {
+                context.fail(&apos;domain not valid&apos;, {
+                    reason: &apos;domain not valid&apos;
+                })
+            }
+
+            var params = {
+                IdentityPoolId: identityPoolId,
+                Logins: {
+                    &apos;accounts.google.com&apos;: query.token
+                }
+            };
+            cognitoidentity.getOpenIdTokenForDeveloperIdentity(params, function (err, data) {
+                if (err) {
+                    context.fail(err,err);
+                    return;
+                }
+                var ret = {
+                    token: data.Token,
+                    id: data.IdentityId
+                };
+                context.succeed(ret);
+            });&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;De esta forma estamos delegando al backend que realice una inicialización en nombre del usuario pero una vez que ha
+sido validado. Podríamos incluso utilizar este momento para realizar una carga de datos iniciales que el cliente javascript
+sincronizará una vez que obtenga los tokens.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+	  </description>
+    </item>
     
     <item>
       <title>Añadir presentaciones con DeckJs a Jbake</title>

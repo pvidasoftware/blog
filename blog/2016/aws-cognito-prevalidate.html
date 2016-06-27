@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Restringuir el uso de AWS Cognito</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Restringuir el uso de AWS Cognito">
+    <meta name="author" content="pvidasoftware">
+    <meta name="keywords" content="blog,aws,google,cognito">
+    <meta name="generator" content="JBake">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@pvidasoftware">
+    <meta name="twitter:creator" content="@pvidasoftware">
+    <meta name="twitter:title" content="Restringuir el uso de AWS Cognito">
+    <meta name="twitter:description" content="Restringuir el uso de AWS Cognito">
+    <meta name="twitter:image" content="https://pvidasoftware.github.io/blog/slides/pvlogo.png">
+
+
+    <!-- Le styles -->
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../../css/asciidoctor.css" rel="stylesheet" type="text/css">
+    <link href="../../css/base.css" rel="stylesheet" type="text/css">
+    <link href="../../css/prettify.css" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <!--<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">-->
+    <link rel="shortcut icon" href="../../favicon.ico">
+  </head>
+
+  <body onload="prettyPrint()">
+
+
+	
+		<!-- Fixed navbar -->
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../../">@pvidasoftware</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="../../index.html">Home</a></li>
+            <li><a href="../../about.html">About</a></li>
+            <li><a href="../../feed.xml">Subscribe</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Slides <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+	
+		    <li><a href="../../slides/2016/griffdnie/griffon-dnie.html">Griffon Framework y DNIe</a></li>
+  	
+		    <li><a href="../../slides/2016/ddr/docu-driven-rest.html">Testea y Documenta tu REST</a></li>
+  	
+		    <li><a href="../../slides/puravida-software.html">Quién es Puravida Software</a></li>
+  	
+              </ul>
+            </li>
+          </ul>
+
+          
+
+          <ul class="nav navbar-nav navbar-right share-buttons">
+            
+            <li><a href="https://twitter.com/intent/tweet?source=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/aws-cognito-prevalidate.html&text=Restringuir el uso de AWS Cognito%20https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/aws-cognito-prevalidate.html&via=pvidasoftware" target="_blank" title="Tweet"><i class="fa fa-twitter-square fa-2x"></i></a></li>
+
+            
+            <li><a href="https://plus.google.com/share?url=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/aws-cognito-prevalidate.html" target="_blank" title="Restringuir el uso de AWS Cognito"><i class="fa fa-google-plus-square fa-2x"></i></a></li>
+
+            <li><a href="http://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/aws-cognito-prevalidate.html&title=Restringuir el uso de AWS Cognito&summary=&source=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/aws-cognito-prevalidate.html" target="_blank" title="Share on LinkedIn"><i class="fa fa-linkedin-square fa-2x"></i></a></li>
+            <li><a href="mailto:?subject=PuraVidaSoftware&body=:%20https%3A%2F%2Fpvidasoftware.github.io%2Fblog" target="_blank" title="Email"><i class="fa fa-envelope-square fa-2x"></i></a></li>
+          </ul>
+
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+
+	<div class="container">
+
+	<div class="page-header">
+		<h1>Restringuir el uso de AWS Cognito</h1>
+	    <p><em>27 junio 2016</em></p>
+	</div>
+
+	<p><div class="sect1">
+<h2 id="aws_cognito">AWS Cognito</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>AWS Cognito es un servicio de Amazon Web Services que permite la gestión de identidades, sincronizar datos del usuario
+entre el escritorio, y dispositivos móviles, etc.</p>
+</div>
+<div class="paragraph">
+<p>Mediante este servicio tendremos un pool de identidades de usuarios que se han logeado con el proveedor que queramos
+(por ejemplo Google+, Facebook, etc) y nuestra aplicación podrá leer y escribir en un área reservada para este usuario
+que se sincroniza de forma automática entre los dispositivos que utilice.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="aws_cognito_google">AWS Cognito + Google</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Es relativamente sencillo configurar a Google como proveedor de identificación y linkarlo a nuestro pool de AWS Cognito,
+de tal forma que para cualquier usuario que tenga cuenta en Google podremos mantener un estado (por ejemplo, ultimo
+ acceso y desde qué dispositivo, máximo record alcanzado, e incluso algún dato que nuestro backend quiera comunicarle).</p>
+</div>
+<div class="paragraph">
+<p>Sin embargo, si seguimos el tutorial de AWS no encontramos ninguna manera de poder prevalidar a estos usuarios para que
+únicamente sean los de nuestro interés los que puedan usar el servicio.
+Para solventar este problema podremos crear un EndPoint al cual, una vez validado el usuario, podamos invocar para que
+nos lo valide y si es correcto recupere las credenciales correspondientes a aquel.</p>
+</div>
+<div class="paragraph">
+<p>Por seguir usando los servicios de AWS, la solución propuesta se basará en una función Lambda junto con su Endpoint.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="cliente">Cliente</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Una vez que el lado del cliente ha realizado la autentificación del usuario mediante el uso de Google, se encuentra con
+un token el cual enviará a nuestro EndPoint para su validación (en lugar de intentar obtener credenciales de AWS).</p>
+</div>
+<div class="listingblock">
+<div class="title">app.js</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-javascript" data-lang="javascript">function signinCallback(authResult) {
+  if (authResult['status']['signed_in']) {
+     var token = authResult['id_token'];
+
+     // Ajax call ( puede ser con JQuery, iron-ajax, Angular...
+     $.ajax({
+       type: "POST",
+       url: url,
+       data: { token : token},
+       success: success,
+       dataType: dataType
+     });
+  }
+}
+
+function success(e){
+    var token = e.response.token;
+    var userId = e.response.userId;
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: identityPoolId,
+        IdentityId: userId,
+        Logins:{
+            'cognito-identity.amazonaws.com': token
+        }
+    });
+    AWS.config.credentials.get(function(err){
+        if( err ){
+            return;
+        }
+        var cognitoSyncClient = new AWS.CognitoSyncManager();
+        ....
+    });
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Básicamente el cliente enviará el token y recibirá a su vez un userId y otro token que deberá utilizar para la
+acreditación. Lo realmente importante aqui es fijarse que <strong>debemos</strong> usar el Logins <strong>cognito-identity.amazonws.com</strong></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="endpoint_lambda">EndPoint + Lambda</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Por el lado del servidor crearemos una función Lambda y su correspondiente EndPoint el cual estará configurado para
+ recibir un token como parámetro (en este ejemplo en el body de la petición).</p>
+</div>
+<div class="paragraph">
+<p>La función Lambda recibirá en última instancia este token y lo primero que hará será validarlo:</p>
+</div>
+<div class="listingblock">
+<div class="title">login.js</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-javascript" data-lang="javascript">module.exports.resolveUser = function( query, context) {
+
+    var finalurl = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + query.token;
+
+    request({
+        url: finalurl,
+        json: true,
+    }, function (error, response, body) {
+
+        if (!error &amp;&amp; response.statusCode === 200) {
+
+            if (!body.email.endsWith('@puravida-software.com')) {
+                context.fail('domain not valid', {
+                    reason: 'domain not valid'
+                })
+            }
+
+            .......
+
+        }
+
+    })</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>De esta forma obtendremos la información básica del token como es el email el cual podríamos constrastar contra una
+query de DynamoDB para asegurarnos que el usuario está en nuestro sistema dado de alta y si no es así devolver un error.</p>
+</div>
+<div class="paragraph">
+<p>Una vez validado realizaremos una inicializacion del pool del usuario:</p>
+</div>
+<div class="listingblock">
+<div class="title">login.js</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-javascript" data-lang="javascript">            if (!body.email.endsWith('@puravida-software.com')) {
+                context.fail('domain not valid', {
+                    reason: 'domain not valid'
+                })
+            }
+
+            var params = {
+                IdentityPoolId: identityPoolId,
+                Logins: {
+                    'accounts.google.com': query.token
+                }
+            };
+            cognitoidentity.getOpenIdTokenForDeveloperIdentity(params, function (err, data) {
+                if (err) {
+                    context.fail(err,err);
+                    return;
+                }
+                var ret = {
+                    token: data.Token,
+                    id: data.IdentityId
+                };
+                context.succeed(ret);
+            });</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>De esta forma estamos delegando al backend que realice una inicialización en nombre del usuario pero una vez que ha
+sido validado. Podríamos incluso utilizar este momento para realizar una carga de datos iniciales que el cliente javascript
+sincronizará una vez que obtenga los tokens.</p>
+</div>
+</div>
+</div></p>
+
+	</div>
+
+
+    <footer class="footer">
+      <div class="container">
+        <p class="text-muted">PuraVida Software,SL c/ Betancunia 1, local A, Madrid 28017, <a href="mailto:contacto@puravida-software.com">Contacto</a>
+            <span class="credit">&copy; 2016 | Mixed with <a href="http://getbootstrap.com/">Bootstrap v3.1.1</a> | Baked with <a href="http://jbake.org">JBake v2.4.0</a></span>
+        </p>
+      </div>
+    </footer>
+    
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../../js/jquery-1.11.1.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/prettify.js"></script>
+
+  </body>
+
+<!-- google -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-687332-8', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<!-- twitter -->
+  <script>window.twttr = (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0],
+      t = window.twttr || {};
+    if (d.getElementById(id)) return t;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "https://platform.twitter.com/widgets.js";
+    fjs.parentNode.insertBefore(js, fjs);
+
+    t._e = [];
+    t.ready = function(f) {
+      t._e.push(f);
+    };
+
+    return t;
+  }(document, "script", "twitter-wjs"));</script>
+<!-- twitter -->
+
+</html>
