@@ -1,0 +1,133 @@
+= Protege tu AWS API Gateway con AWS Cognito
+Jorge Aguilera
+2016-6-30
+:jbake-type: post
+:jbake-status: published
+:jbake-tags: blog, aws, api gateway, cognito
+:idprefix:
+:hide-uri-scheme:
+
+== Intro
+
+En el post link:./aws-cognito-prevalidate.html vimos cómo podemos restringir el acceso al pool de Cognito a aquellos
+ usuarios que nos interese mediante el uso de una función Lambda que nos va a hacer de "proxy". Básicamente el usuario
+ se identifica en Google, y enviamos a la función Lambda el token generado para que esta lo valide y si es un usuario
+ permitido (según la lógica de negocio que queramos) se comunica con Cognito para crearle su Identity y obtener
+ las credenciales correspondientes.
+
+En este post lo que vamos a proteger es el resto de las funciones de nuestra aplicación para que sólo los
+usuarios que tienen el token puedan invocar a nuestras funciones.
+
+== Serverless
+
+Digamos que has ido siguiendo el tutorial de http://serverless.com/ y ya dispones de una función Lambda junto con su
+Api Gateway para que pueda ser ejecutado desde Internet (AWS te genera un SDK ajustado a tus recursos para que sea
+fácil crear la parte cliente en Android, iOS y/o Javascript).
+
+Para proteger nuestra api deberemos configurar los endpoints de la siguiente forma en el *s-function.json* correspondiente
+
+[source, json]
+.s-function.json
+----
+
+  "endpoints": [
+    {
+      "path": "graphql",    <1>
+      "method": "POST",     <2>
+      "type": "AWS",
+      "authorizationType": "AWS_IAM",   <3>
+      "authorizerFunction": false,
+      "apiKeyRequired": false,
+      "requestParameters": {
+      },
+      "requestTemplates": {
+        "application/json": "{\"query\" : $input.json(\"$\")}"
+      },
+      "responses": {
+        "400": {
+          "statusCode": "400"
+        },
+        "default": {
+          "statusCode": "200",
+          "responseParameters": {       <4>
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+            "method.response.header.Access-Control-Allow-Methods": "'*'",
+            "method.response.header.Access-Control-Allow-Origin": "'*'"  <5>
+          },
+          "responseModels": {},
+          "responseTemplates": {
+            "application/json": ""
+          },
+          "responseTemplates": {
+            "application/json;charset=UTF-8": ""
+          }
+        }
+      }
+    },
+    {
+      "path": "graphql",
+      "method": "OPTIONS",      <6>
+      "authorizationType": "none",
+      "apiKeyRequired": false,
+      "requestParameters": {},
+      "requestTemplates": {
+        "application/json": "\"statusCode\": 200"
+      },
+      "responses": {
+        "default": {
+          "statusCode": "200",
+          "responseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+            "method.response.header.Access-Control-Allow-Methods": "'*'",
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          },
+          "responseModels": {},
+          "responseTemplates": {
+            "application/json": ""
+          }
+        }
+      }
+    }
+
+----
+<1> El nombre de nuestro EndPoint
+<2> En este caso estamos configurando un POST
+<3> Por defecto Serverless configura "none". Nosotros activaremos la seguridad IAM de AWS que validará las credenciales
+<4> Incluiremos las cabeceras que nos deberá enviar el cliente para la validacion
+<5> Allow-Origin debería ajustarse a los origenes que permitas. En este caso permitimos cualquier origen
+<6> Creamos una configuración idéntica para el método OPTIONS que será necesaria para que el cliente sepa qué necesitamos
+
+
+== Cliente JavaScript
+
+Por el lado del cliente, una vez que le hemos identificado y generado sus credenciales (ver el post anterior link:./aws-cognito-prevalidate.html
+) podremos utilizar el SDK personalizado que nos genera la consola AWS. Sin embargo, al estar ahora nuestros recursos
+protegidos, deberemos indicarle al cliente Javascript que debe usar las credenciales obtenidas anteriormente:
+
+[source, javascript]
+.app.js
+----
+    handleUserSynchronized: function(e) {
+        var me = this;
+
+        me.apigClient = apigClientFactory.newClient({
+          accessKey: AWS.config.credentials.accessKeyId,
+          secretKey: AWS.config.credentials.secretAccessKey,
+          sessionToken: AWS.config.credentials.sessionToken,
+          region: app.region
+        });
+
+        me.apigClient.graphqlPost({}, { query : '{ question(id:"1") { name } }' })
+          .then(function(result){
+            console.log( result.data.data.question );
+          }).catch( function(result){
+            console.log( result );
+        });
+    }
+
+----
+
+De esta forma el cliente Javascript antes de ejecutar la llamada, firmará la petición y añadirá los headers correspondientes
+para que el frontend de AWS pueda validarlo, ahorrandonos la llamada a nuestra función (con el consiguiente ahorro económico
+pues AWS nos cobra por cada ejecución de nuestro código).
+

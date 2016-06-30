@@ -1,4 +1,4 @@
-= Restringuir el uso de AWS Cognito
+= Restringir el uso de AWS Cognito
 Jorge Aguilera
 2016-6-27
 :jbake-type: post
