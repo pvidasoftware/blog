@@ -9,7 +9,7 @@ Jorge Aguilera
 
 == Intro
 
-En el post link:./aws-cognito-prevalidate.html vimos cómo podemos restringir el acceso al pool de Cognito a aquellos
+En el post link:aws-cognito-prevalidate.html[] vimos cómo podemos restringir el acceso al pool de Cognito a aquellos
  usuarios que nos interese mediante el uso de una función Lambda que nos va a hacer de "proxy". Básicamente el usuario
  se identifica en Google, y enviamos a la función Lambda el token generado para que esta lo valide y si es un usuario
  permitido (según la lógica de negocio que queramos) se comunica con Cognito para crearle su Identity y obtener
@@ -100,9 +100,10 @@ Para proteger nuestra api deberemos configurar los endpoints de la siguiente for
 
 == Cliente JavaScript
 
-Por el lado del cliente, una vez que le hemos identificado y generado sus credenciales (ver el post anterior link:./aws-cognito-prevalidate.html
-) podremos utilizar el SDK personalizado que nos genera la consola AWS. Sin embargo, al estar ahora nuestros recursos
-protegidos, deberemos indicarle al cliente Javascript que debe usar las credenciales obtenidas anteriormente:
+Por el lado del cliente, una vez que le hemos identificado y generado sus credenciales (ver el post anterior
+link:aws-cognito-prevalidate.html[]) podremos utilizar el SDK personalizado que nos genera la consola AWS.
+Sin embargo, al estar ahora nuestros recursos protegidos, deberemos indicarle al cliente Javascript que debe usar las
+credenciales obtenidas anteriormente:
 
 [source, javascript]
 .app.js
