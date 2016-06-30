@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Protege tu AWS API Gateway con AWS Cognito</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Protege tu AWS API Gateway con AWS Cognito">
+    <meta name="author" content="pvidasoftware">
+    <meta name="keywords" content="blog,aws,api gateway,cognito">
+    <meta name="generator" content="JBake">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@pvidasoftware">
+    <meta name="twitter:creator" content="@pvidasoftware">
+    <meta name="twitter:title" content="Protege tu AWS API Gateway con AWS Cognito">
+    <meta name="twitter:description" content="Protege tu AWS API Gateway con AWS Cognito">
+    <meta name="twitter:image" content="https://pvidasoftware.github.io/blog/slides/pvlogo.png">
+
+
+    <!-- Le styles -->
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../../css/asciidoctor.css" rel="stylesheet" type="text/css">
+    <link href="../../css/base.css" rel="stylesheet" type="text/css">
+    <link href="../../css/prettify.css" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <!--<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">-->
+    <link rel="shortcut icon" href="../../favicon.ico">
+  </head>
+
+  <body onload="prettyPrint()">
+
+
+	
+		<!-- Fixed navbar -->
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../../">@pvidasoftware</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="../../index.html">Home</a></li>
+            <li><a href="../../about.html">About</a></li>
+            <li><a href="../../feed.xml">Subscribe</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Slides <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+	
+		    <li><a href="../../slides/2016/griffdnie/griffon-dnie.html">Griffon Framework y DNIe</a></li>
+  	
+		    <li><a href="../../slides/2016/ddr/docu-driven-rest.html">Testea y Documenta tu REST</a></li>
+  	
+		    <li><a href="../../slides/puravida-software.html">Quién es Puravida Software</a></li>
+  	
+              </ul>
+            </li>
+          </ul>
+
+          
+
+          <ul class="nav navbar-nav navbar-right share-buttons">
+            
+            <li><a href="https://twitter.com/intent/tweet?source=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/aws-protect-apigateway.html&text=Protege tu AWS API Gateway con AWS Cognito%20https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/aws-protect-apigateway.html&via=pvidasoftware" target="_blank" title="Tweet"><i class="fa fa-twitter-square fa-2x"></i></a></li>
+
+            
+            <li><a href="https://plus.google.com/share?url=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/aws-protect-apigateway.html" target="_blank" title="Protege tu AWS API Gateway con AWS Cognito"><i class="fa fa-google-plus-square fa-2x"></i></a></li>
+
+            <li><a href="http://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/aws-protect-apigateway.html&title=Protege tu AWS API Gateway con AWS Cognito&summary=&source=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/aws-protect-apigateway.html" target="_blank" title="Share on LinkedIn"><i class="fa fa-linkedin-square fa-2x"></i></a></li>
+            <li><a href="mailto:?subject=PuraVidaSoftware&body=:%20https%3A%2F%2Fpvidasoftware.github.io%2Fblog" target="_blank" title="Email"><i class="fa fa-envelope-square fa-2x"></i></a></li>
+          </ul>
+
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+
+	<div class="container">
+
+	<div class="page-header">
+		<h1>Protege tu AWS API Gateway con AWS Cognito</h1>
+	    <p><em>30 junio 2016</em></p>
+	</div>
+
+	<p><div class="sect1">
+<h2 id="intro">Intro</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>En el post link:./aws-cognito-prevalidate.html vimos cómo podemos restringir el acceso al pool de Cognito a aquellos
+ usuarios que nos interese mediante el uso de una función Lambda que nos va a hacer de "proxy". Básicamente el usuario
+ se identifica en Google, y enviamos a la función Lambda el token generado para que esta lo valide y si es un usuario
+ permitido (según la lógica de negocio que queramos) se comunica con Cognito para crearle su Identity y obtener
+ las credenciales correspondientes.</p>
+</div>
+<div class="paragraph">
+<p>En este post lo que vamos a proteger es el resto de las funciones de nuestra aplicación para que sólo los
+usuarios que tienen el token puedan invocar a nuestras funciones.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="serverless">Serverless</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Digamos que has ido siguiendo el tutorial de <a href="http://serverless.com/" class="bare">serverless.com/</a> y ya dispones de una función Lambda junto con su
+Api Gateway para que pueda ser ejecutado desde Internet (AWS te genera un SDK ajustado a tus recursos para que sea
+fácil crear la parte cliente en Android, iOS y/o Javascript).</p>
+</div>
+<div class="paragraph">
+<p>Para proteger nuestra api deberemos configurar los endpoints de la siguiente forma en el <strong>s-function.json</strong> correspondiente</p>
+</div>
+<div class="listingblock">
+<div class="title">s-function.json</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-json" data-lang="json">  "endpoints": [
+    {
+      "path": "graphql",    <b class="conum">(1)</b>
+      "method": "POST",     <b class="conum">(2)</b>
+      "type": "AWS",
+      "authorizationType": "AWS_IAM",   <b class="conum">(3)</b>
+      "authorizerFunction": false,
+      "apiKeyRequired": false,
+      "requestParameters": {
+      },
+      "requestTemplates": {
+        "application/json": "{\"query\" : $input.json(\"$\")}"
+      },
+      "responses": {
+        "400": {
+          "statusCode": "400"
+        },
+        "default": {
+          "statusCode": "200",
+          "responseParameters": {       <b class="conum">(4)</b>
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+            "method.response.header.Access-Control-Allow-Methods": "'*'",
+            "method.response.header.Access-Control-Allow-Origin": "'*'"  <b class="conum">(5)</b>
+          },
+          "responseModels": {},
+          "responseTemplates": {
+            "application/json": ""
+          },
+          "responseTemplates": {
+            "application/json;charset=UTF-8": ""
+          }
+        }
+      }
+    },
+    {
+      "path": "graphql",
+      "method": "OPTIONS",      <b class="conum">(6)</b>
+      "authorizationType": "none",
+      "apiKeyRequired": false,
+      "requestParameters": {},
+      "requestTemplates": {
+        "application/json": "\"statusCode\": 200"
+      },
+      "responses": {
+        "default": {
+          "statusCode": "200",
+          "responseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+            "method.response.header.Access-Control-Allow-Methods": "'*'",
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          },
+          "responseModels": {},
+          "responseTemplates": {
+            "application/json": ""
+          }
+        }
+      }
+    }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>El nombre de nuestro EndPoint</p>
+</li>
+<li>
+<p>En este caso estamos configurando un POST</p>
+</li>
+<li>
+<p>Por defecto Serverless configura "none". Nosotros activaremos la seguridad IAM de AWS que validará las credenciales</p>
+</li>
+<li>
+<p>Incluiremos las cabeceras que nos deberá enviar el cliente para la validacion</p>
+</li>
+<li>
+<p>Allow-Origin debería ajustarse a los origenes que permitas. En este caso permitimos cualquier origen</p>
+</li>
+<li>
+<p>Creamos una configuración idéntica para el método OPTIONS que será necesaria para que el cliente sepa qué necesitamos</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="cliente_javascript">Cliente JavaScript</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Por el lado del cliente, una vez que le hemos identificado y generado sus credenciales (ver el post anterior link:./aws-cognito-prevalidate.html
+) podremos utilizar el SDK personalizado que nos genera la consola AWS. Sin embargo, al estar ahora nuestros recursos
+protegidos, deberemos indicarle al cliente Javascript que debe usar las credenciales obtenidas anteriormente:</p>
+</div>
+<div class="listingblock">
+<div class="title">app.js</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-javascript" data-lang="javascript">    handleUserSynchronized: function(e) {
+        var me = this;
+
+        me.apigClient = apigClientFactory.newClient({
+          accessKey: AWS.config.credentials.accessKeyId,
+          secretKey: AWS.config.credentials.secretAccessKey,
+          sessionToken: AWS.config.credentials.sessionToken,
+          region: app.region
+        });
+
+        me.apigClient.graphqlPost({}, { query : '{ question(id:"1") { name } }' })
+          .then(function(result){
+            console.log( result.data.data.question );
+          }).catch( function(result){
+            console.log( result );
+        });
+    }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>De esta forma el cliente Javascript antes de ejecutar la llamada, firmará la petición y añadirá los headers correspondientes
+para que el frontend de AWS pueda validarlo, ahorrandonos la llamada a nuestra función (con el consiguiente ahorro económico
+pues AWS nos cobra por cada ejecución de nuestro código).</p>
+</div>
+</div>
+</div></p>
+
+	</div>
+
+
+    <footer class="footer">
+      <div class="container">
+        <p class="text-muted">PuraVida Software,SL c/ Betancunia 1, local A, Madrid 28017, <a href="mailto:contacto@puravida-software.com">Contacto</a>
+            <span class="credit">&copy; 2016 | Mixed with <a href="http://getbootstrap.com/">Bootstrap v3.1.1</a> | Baked with <a href="http://jbake.org">JBake v2.4.0</a></span>
+        </p>
+      </div>
+    </footer>
+    
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../../js/jquery-1.11.1.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/prettify.js"></script>
+
+  </body>
+
+<!-- google -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-687332-8', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<!-- twitter -->
+  <script>window.twttr = (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0],
+      t = window.twttr || {};
+    if (d.getElementById(id)) return t;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "https://platform.twitter.com/widgets.js";
+    fjs.parentNode.insertBefore(js, fjs);
+
+    t._e = [];
+    t.ready = function(f) {
+      t._e.push(f);
+    };
+
+    return t;
+  }(document, "script", "twitter-wjs"));</script>
+<!-- twitter -->
+
+</html>
