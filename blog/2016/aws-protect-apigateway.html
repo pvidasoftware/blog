@@ -102,7 +102,7 @@
 <h2 id="intro">Intro</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>En el post link:./aws-cognito-prevalidate.html vimos cómo podemos restringir el acceso al pool de Cognito a aquellos
+<p>En el post <a href="aws-cognito-prevalidate.html" class="bare">aws-cognito-prevalidate.html</a> vimos cómo podemos restringir el acceso al pool de Cognito a aquellos
  usuarios que nos interese mediante el uso de una función Lambda que nos va a hacer de "proxy". Básicamente el usuario
  se identifica en Google, y enviamos a la función Lambda el token generado para que esta lo valide y si es un usuario
  permitido (según la lógica de negocio que queramos) se comunica con Cognito para crearle su Identity y obtener
@@ -216,9 +216,10 @@ fácil crear la parte cliente en Android, iOS y/o Javascript).</p>
 <h2 id="cliente_javascript">Cliente JavaScript</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Por el lado del cliente, una vez que le hemos identificado y generado sus credenciales (ver el post anterior link:./aws-cognito-prevalidate.html
-) podremos utilizar el SDK personalizado que nos genera la consola AWS. Sin embargo, al estar ahora nuestros recursos
-protegidos, deberemos indicarle al cliente Javascript que debe usar las credenciales obtenidas anteriormente:</p>
+<p>Por el lado del cliente, una vez que le hemos identificado y generado sus credenciales (ver el post anterior
+<a href="aws-cognito-prevalidate.html" class="bare">aws-cognito-prevalidate.html</a>) podremos utilizar el SDK personalizado que nos genera la consola AWS.
+Sin embargo, al estar ahora nuestros recursos protegidos, deberemos indicarle al cliente Javascript que debe usar las
+credenciales obtenidas anteriormente:</p>
 </div>
 <div class="listingblock">
 <div class="title">app.js</div>

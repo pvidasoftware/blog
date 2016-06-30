@@ -6,8 +6,8 @@
     <atom:link href="https://pvidasoftware.github.io/blog/feed.xml" rel="self" type="application/rss+xml" />
     <description>JBake Bootstrap Template</description>
     <language>en-gb</language>
-    <pubDate>jue, 30 jun 2016 17:11:34 +0200</pubDate>
-    <lastBuildDate>jue, 30 jun 2016 17:11:34 +0200</lastBuildDate>
+    <pubDate>jue, 30 jun 2016 17:13:49 +0200</pubDate>
+    <lastBuildDate>jue, 30 jun 2016 17:13:49 +0200</lastBuildDate>
 
     
     <item>
@@ -20,7 +20,7 @@
 &lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
 &lt;div class=&quot;sectionbody&quot;&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;En el post link:./aws-cognito-prevalidate.html vimos cómo podemos restringir el acceso al pool de Cognito a aquellos
+&lt;p&gt;En el post &lt;a href=&quot;aws-cognito-prevalidate.html&quot; class=&quot;bare&quot;&gt;aws-cognito-prevalidate.html&lt;/a&gt; vimos cómo podemos restringir el acceso al pool de Cognito a aquellos
  usuarios que nos interese mediante el uso de una función Lambda que nos va a hacer de &quot;proxy&quot;. Básicamente el usuario
  se identifica en Google, y enviamos a la función Lambda el token generado para que esta lo valide y si es un usuario
  permitido (según la lógica de negocio que queramos) se comunica con Cognito para crearle su Identity y obtener
@@ -134,9 +134,10 @@ fácil crear la parte cliente en Android, iOS y/o Javascript).&lt;/p&gt;
 &lt;h2 id=&quot;cliente_javascript&quot;&gt;Cliente JavaScript&lt;/h2&gt;
 &lt;div class=&quot;sectionbody&quot;&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;Por el lado del cliente, una vez que le hemos identificado y generado sus credenciales (ver el post anterior link:./aws-cognito-prevalidate.html
-) podremos utilizar el SDK personalizado que nos genera la consola AWS. Sin embargo, al estar ahora nuestros recursos
-protegidos, deberemos indicarle al cliente Javascript que debe usar las credenciales obtenidas anteriormente:&lt;/p&gt;
+&lt;p&gt;Por el lado del cliente, una vez que le hemos identificado y generado sus credenciales (ver el post anterior
+&lt;a href=&quot;aws-cognito-prevalidate.html&quot; class=&quot;bare&quot;&gt;aws-cognito-prevalidate.html&lt;/a&gt;) podremos utilizar el SDK personalizado que nos genera la consola AWS.
+Sin embargo, al estar ahora nuestros recursos protegidos, deberemos indicarle al cliente Javascript que debe usar las
+credenciales obtenidas anteriormente:&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;listingblock&quot;&gt;
 &lt;div class=&quot;title&quot;&gt;app.js&lt;/div&gt;
