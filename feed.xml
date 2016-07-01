@@ -6,8 +6,8 @@
     <atom:link href="https://pvidasoftware.github.io/blog/feed.xml" rel="self" type="application/rss+xml" />
     <description>JBake Bootstrap Template</description>
     <language>en-gb</language>
-    <pubDate>jue, 30 jun 2016 17:13:49 +0200</pubDate>
-    <lastBuildDate>jue, 30 jun 2016 17:13:49 +0200</lastBuildDate>
+    <pubDate>vie, 1 jul 2016 09:45:06 +0200</pubDate>
+    <lastBuildDate>vie, 1 jul 2016 09:45:06 +0200</lastBuildDate>
 
     
     <item>
@@ -29,6 +29,58 @@
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;En este post lo que vamos a proteger es el resto de las funciones de nuestra aplicación para que sólo los
 usuarios que tienen el token puedan invocar a nuestras funciones.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;cognito_policy&quot;&gt;Cognito policy&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Lo primero que vamos a configurar es el role que nos ha generado AWS al crear el IdentityPool de Cognito, en concreto
+el role para usuarios autentificados con el identificativo Cognito_XXXXXXAuth_Role, de tal forma que deberemos añadir
+permisos para invocar nuestra API.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code&gt;{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [
+        {
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: [
+                &quot;mobileanalytics:PutEvents&quot;,
+                &quot;cognito-sync:*&quot;,
+                &quot;cognito-identity:*&quot;
+            ],
+            &quot;Resource&quot;: [
+                &quot;*&quot;
+            ]
+        },
+        {
+            &quot;Effect&quot;: &quot;Allow&quot;,      &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+            &quot;Action&quot;: [
+                &quot;execute-api:Invoke&quot;  &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+            ],
+            &quot;Resource&quot;: [
+                &quot;arn:aws:execute-api:TU-REGION:TU-CUENTA:*/*&quot;    &lt;b class=&quot;conum&quot;&gt;(3)&lt;/b&gt;
+            ]
+        }
+    ]
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;colist arabic&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Creamos un Statement nuevo&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;utilizamos la accion de invocar API&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;podemos afinar qué EndPoints permitimos a este Role, en este caso lo dejamos para cualquiera&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;

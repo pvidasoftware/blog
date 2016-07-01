@@ -115,6 +115,58 @@ usuarios que tienen el token puedan invocar a nuestras funciones.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="cognito_policy">Cognito policy</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Lo primero que vamos a configurar es el role que nos ha generado AWS al crear el IdentityPool de Cognito, en concreto
+el role para usuarios autentificados con el identificativo Cognito_XXXXXXAuth_Role, de tal forma que deberemos añadir
+permisos para invocar nuestra API.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "mobileanalytics:PutEvents",
+                "cognito-sync:*",
+                "cognito-identity:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Effect": "Allow",      <b class="conum">(1)</b>
+            "Action": [
+                "execute-api:Invoke"  <b class="conum">(2)</b>
+            ],
+            "Resource": [
+                "arn:aws:execute-api:TU-REGION:TU-CUENTA:*/*"    <b class="conum">(3)</b>
+            ]
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>Creamos un Statement nuevo</p>
+</li>
+<li>
+<p>utilizamos la accion de invocar API</p>
+</li>
+<li>
+<p>podemos afinar qué EndPoints permitimos a este Role, en este caso lo dejamos para cualquiera</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="serverless">Serverless</h2>
 <div class="sectionbody">
 <div class="paragraph">
