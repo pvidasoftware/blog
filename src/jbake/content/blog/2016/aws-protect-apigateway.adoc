@@ -18,6 +18,44 @@ En el post link:aws-cognito-prevalidate.html[] vimos cómo podemos restringir el
 En este post lo que vamos a proteger es el resto de las funciones de nuestra aplicación para que sólo los
 usuarios que tienen el token puedan invocar a nuestras funciones.
 
+== Cognito policy
+
+Lo primero que vamos a configurar es el role que nos ha generado AWS al crear el IdentityPool de Cognito, en concreto
+el role para usuarios autentificados con el identificativo Cognito_XXXXXXAuth_Role, de tal forma que deberemos añadir
+permisos para invocar nuestra API.
+
+[source]
+----
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "mobileanalytics:PutEvents",
+                "cognito-sync:*",
+                "cognito-identity:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Effect": "Allow",      <1>
+            "Action": [
+                "execute-api:Invoke"  <2>
+            ],
+            "Resource": [
+                "arn:aws:execute-api:TU-REGION:TU-CUENTA:*/*"    <3>
+            ]
+        }
+    ]
+}
+----
+<1> Creamos un Statement nuevo
+<2> utilizamos la accion de invocar API
+<3> podemos afinar qué EndPoints permitimos a este Role, en este caso lo dejamos para cualquiera
+
 == Serverless
 
 Digamos que has ido siguiendo el tutorial de http://serverless.com/ y ya dispones de una función Lambda junto con su
