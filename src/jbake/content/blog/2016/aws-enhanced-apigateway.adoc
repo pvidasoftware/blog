@@ -1,4 +1,4 @@
-= Mejora tu AWS API Gateway con JWT
+= Aumenta tu AWS API Gateway con JWT
 Jorge Aguilera
 2016-7-4
 :jbake-type: post
@@ -233,3 +233,9 @@ module.exports.handler = function(event, context, cb) {
 };
 
 ----
+
+Como se puede ver, simplemente descodificamos el jwt y de él podemos extraer aquella información que guardamos en la
+validación. De esta forma las funciones Lambda de negocio pueden evitar tener que acceder a información del usuario,
+como el rol, el email o cualquier otro dato que necesitemos.
+
+Obviamente, la parte JWT debería incluir validaciones sobre la experiración del token, etc.
