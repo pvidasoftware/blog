@@ -6,9 +6,317 @@
     <atom:link href="https://pvidasoftware.github.io/blog/feed.xml" rel="self" type="application/rss+xml" />
     <description>JBake Bootstrap Template</description>
     <language>en-gb</language>
-    <pubDate>vie, 1 jul 2016 09:45:06 +0200</pubDate>
-    <lastBuildDate>vie, 1 jul 2016 09:45:06 +0200</lastBuildDate>
+    <pubDate>lun, 4 jul 2016 13:09:03 +0200</pubDate>
+    <lastBuildDate>lun, 4 jul 2016 13:09:03 +0200</lastBuildDate>
 
+    
+    <item>
+      <title>Aumenta tu AWS API Gateway con JWT</title>
+      <link>https://pvidasoftware.github.io/blog/blog/2016/aws-enhanced-apigateway.html</link>
+      <pubDate>lun, 4 jul 2016 00:00:00 +0200</pubDate>
+      <guid isPermaLink="false">blog/2016/aws-enhanced-apigateway.html</guid>
+      <description>
+      &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;En el post &lt;a href=&quot;aws-cognito-prevalidate.html&quot; class=&quot;bare&quot;&gt;aws-cognito-prevalidate.html&lt;/a&gt; y &lt;a href=&quot;aws-protect-apigateway.html&quot; class=&quot;bare&quot;&gt;aws-protect-apigateway.html&lt;/a&gt; vimos cómo podemos restringir el
+acceso al pool de Cognito a aquellos
+ usuarios que nos interese mediante el uso de una función Lambda que nos va a hacer de &quot;proxy&quot; y cómo podemos usar las
+ credenciales de este pool para que AWS nos filtre quién llama a las lambda de necogio para ahorrar tiempos de ejecución
+ (si la llamada no viene acompañada con unas credenciales, AWS la rechaza y no llega a invocar a nuestra API).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;En este post lo que vamos a ver es, cómo una vez que hemos conseguido autentificar un usuario y este nos invoca a la API
+de negocio, poder saber quién es, qué ROLE tiene o cualquier otra información que consideremos necesaria sin tener que
+recurrir a nuevos accesos a nuestra base de datos.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;jwt&quot;&gt;JWT&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://jwt.io/&quot;&gt;JSON Web Tokens&lt;/a&gt; nos permite intercambiar tokens entre aplicaciones en formato JSON de una forma fácil
+y segura.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;flujo_de_llamadas&quot;&gt;Flujo de llamadas.&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Para nuestro caso el Lambda encargado de, además de validar al usuario y devolverle las credenciales de Cognito,
+ crear un JWT con la información que consideremos necesaria (email, role, &amp;#8230;&amp;#8203;).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Este JWT será guardado por el cliente
+ y nos lo deverá adjuntar en cada petición que realice a nuestro API (en las que consideres oportunas, claro).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Por su parte el API protegido validará que se incorpora un JWT en la petición y podrá validarlo y recuperar la información
+que se guardó en el primero paso.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;validar_usuario&quot;&gt;Validar Usuario&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Lo primero que hay que incorporar en nuestra Lamda es la dependencia a &lt;a href=&quot;https://github.com/auth0/node-jsonwebtoken&quot; class=&quot;bare&quot;&gt;github.com/auth0/node-jsonwebtoken&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-console&quot; data-lang=&quot;console&quot;&gt;$cd functions
+npm install --save jsonwebtoken&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Crearemos una variable nueva en nuestro proyecto serverless para poder externalizar la palabra de paso:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;/functions/validateUser/s-function.json&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;    ...
+  &quot;environment&quot;: {
+    &quot;SERVERLESS_PROJECT&quot;: &quot;${project}&quot;,
+    &quot;SERVERLESS_STAGE&quot;: &quot;${stage}&quot;,
+    &quot;SERVERLESS_REGION&quot;: &quot;${region}&quot;,
+    &quot;IDENTITY_POOL_ID&quot;: &quot;${identityPoolId}&quot;,
+    &quot;JWT_SECRET&quot; : &quot;${jwt_secret}&quot;
+  },
+    ...&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;y la inicializamos&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-console&quot; data-lang=&quot;console&quot;&gt;$sls functions set -k jwt_secret -v not_so_secret&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Sólo resta que una vez obtenido el pool del usuario le adjuntemos un token JWT que nos tiene que enviar en cada petición:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;/functions/lib/login.js&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;    ...
+  cognitoidentity.getOpenIdTokenForDeveloperIdentity(params, function (err, data) {
+      var role = &apos;ROLE_ADMIN&apos;;      &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+      var ret = {
+          token: data.Token,
+          id: data.IdentityId,
+          role: role
+      };
+      jwt.sign( {                   &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+          email : body.email,
+          id: data.IdentityId,
+          role: role
+      }, process.env.JWT_SECRET, {}, function(err, token){
+          if( err ){
+              context.fail(err,err);
+              return;
+          }
+          ret.jwt = token;          &lt;b class=&quot;conum&quot;&gt;(3)&lt;/b&gt;
+          context.succeed(ret);
+      });
+  });
+    ...&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;colist arabic&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;una vez validado el usuario, buscamos datos de interés como p.e. el role que tiene en la aplicación&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;generamos un JWT con el email, el id y el role&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;la respuesta contendrá el token, el id, el role y el jwt(email, id, role), los primeros para usar por el cliente y el jwt
+para la invocación del cliente&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Notar que el cliente no conoce nada sobre el contenido del JWT.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;invocar_el_api&quot;&gt;Invocar el API&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;La parte del cliente es tan sencilla como que si la validación del usuario ha sido satisfactoria tendremos un JWT que
+habrá que incluir en las llamadas posteriores, por ejemplo incluyendolo en el body, en el requestString, cabeceras, &amp;#8230;&amp;#8203;
+(según diseñemos la parte siguiente)&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;configurar_el_jwt_en_apigateway&quot;&gt;Configurar el JWT en APIGateway&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;El envío del JWT puede ser tanto en el body, junto con otros parámetros, en el query string o en las cabeceras. Para este
+post vamos a usar las cabeceras.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Para ello vamos a configurar lo primero que permitimos un nuevo campo en las cabeceras mediante OPTIONS:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;functions/graphql/s-function.json&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;{
+  &quot;path&quot;: &quot;graphql&quot;,
+  &quot;method&quot;: &quot;OPTIONS&quot;,          &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+  &quot;authorizationType&quot;: &quot;none&quot;,
+  &quot;apiKeyRequired&quot;: false,
+  &quot;requestParameters&quot;: {
+  },
+  &quot;requestTemplates&quot;: {
+    &quot;application/json&quot;: &quot;\&quot;statusCode\&quot;: 200&quot;
+  },
+  &quot;responses&quot;: {
+    &quot;default&quot;: {
+      &quot;statusCode&quot;: &quot;200&quot;,
+      &quot;responseParameters&quot;: {
+        &quot;method.response.header.Access-Control-Allow-Headers&quot;: &quot;&apos;Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,jwt&apos;&quot;, &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+        &quot;method.response.header.Access-Control-Allow-Methods&quot;: &quot;&apos;*&apos;&quot;,
+        &quot;method.response.header.Access-Control-Allow-Origin&quot;: &quot;&apos;*&apos;&quot;
+      },
+      &quot;responseModels&quot;: {},
+      &quot;responseTemplates&quot;: {
+        &quot;application/json&quot;: &quot;&quot;
+      }
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;colist arabic&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Configuramos el OPTIONS del API&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Hemos añadido jwt al final de la lista de cabeceras permitidas&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;y después vamos a configurar el API propiamente dicho&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;functions/graphql/s-function.json&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;{
+  &quot;path&quot;: &quot;graphql&quot;,
+  &quot;method&quot;: &quot;POST&quot;,     &lt;b class=&quot;conum&quot;&gt;(1)&lt;/b&gt;
+  &quot;type&quot;: &quot;AWS&quot;,
+  &quot;authorizationType&quot;: &quot;AWS_IAM&quot;,  &lt;b class=&quot;conum&quot;&gt;(2)&lt;/b&gt;
+  &quot;authorizerFunction&quot;: false,
+  &quot;apiKeyRequired&quot;: false,
+  &quot;requestParameters&quot;: {
+    &quot;integration.request.header.jwt&quot;:&quot;method.request.header.jwt&quot;   &lt;b class=&quot;conum&quot;&gt;(3)&lt;/b&gt;
+  },
+  &quot;requestTemplates&quot;: {
+    &quot;application/json&quot;: {
+      &quot;path&quot; : &quot;$input.params().path&quot;,
+      &quot;query&quot; : &quot;$input.json(&apos;$.query&apos;)&quot;,
+      &quot;jwt&quot; : &quot;$input.params(&apos;jwt&apos;)&quot;,       &lt;b class=&quot;conum&quot;&gt;(4)&lt;/b&gt;
+      &quot;headers&quot;: &quot;$input.params().header&quot;,
+      &quot;authorizedUser&quot;: &quot;$context.authorizer.principalId&quot;
+    }
+  },
+  &quot;responses&quot;: {
+    &quot;400&quot;: {
+      &quot;statusCode&quot;: &quot;400&quot;
+    },
+    &quot;default&quot;: {
+      &quot;statusCode&quot;: &quot;200&quot;,
+      &quot;responseParameters&quot;: {
+        &quot;method.response.header.Access-Control-Allow-Headers&quot;: &quot;&apos;Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,jwt&apos;&quot;, &lt;b class=&quot;conum&quot;&gt;(5)&lt;/b&gt;
+        &quot;method.response.header.Access-Control-Allow-Methods&quot;: &quot;&apos;*&apos;&quot;,
+        &quot;method.response.header.Access-Control-Allow-Origin&quot;: &quot;&apos;*&apos;&quot;
+      },
+      &quot;responseModels&quot;: {},
+      &quot;responseTemplates&quot;: {
+        &quot;application/json&quot;: &quot;&quot;
+      },
+      &quot;responseTemplates&quot;: {
+        &quot;application/json;charset=UTF-8&quot;: &quot;&quot;
+      }
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;colist arabic&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Configuramos el POST del API&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Seguimos protegiendo la llamada mediante credenciales&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Preparamos los parametros de nuestro interés, en este caso &apos;jwt&apos; en las cabeceras&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Hacemos que AWS nos parsee los parámetros y así tendremos en el lamda el &apos;jwt&apos; directamente&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;incluimos el envio de &apos;jwt&apos; como parametro de cabecera&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Por último sólo resta validar el jwt y actuar en consecuencia según los valores que incluyeramos en la validación:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;title&quot;&gt;/functions/graphql/handle.js&lt;/div&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;var jwt = require(&apos;jsonwebtoken&apos;);
+var lib = require(&apos;../lib/business&apos;);
+
+module.exports.handler = function(event, context, cb) {
+
+    if( event.jwt === undefined ){
+        context.fail(&apos;JWT required&apos;, &apos;JWT required&apos;);
+        return;
+    }
+
+    jwt.verify(event.jwt, process.env.JWT_SECRET, function(err, decoded){
+        if( err ){
+            context.fail(err,err);
+            return;
+        }
+
+        var superuser = false;
+        if( decoded.email === &apos;jorge.aguilera@puravida-software.com&apos; ){
+            superuser = true;
+        }
+        lib.executeMyApi( superuser, event.query, function(err, response){
+            return context.done(error, response);
+        });
+    });
+};&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Como se puede ver, simplemente descodificamos el jwt y de él podemos extraer aquella información que guardamos en la
+validación. De esta forma las funciones Lambda de negocio pueden evitar tener que acceder a información del usuario,
+como el rol, el email o cualquier otro dato que necesitemos.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Obviamente, la parte JWT debería incluir validaciones sobre la experiración del token, etc.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+	  </description>
+    </item>
     
     <item>
       <title>Protege tu AWS API Gateway con AWS Cognito</title>

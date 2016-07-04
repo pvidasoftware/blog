@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Aumenta tu AWS API Gateway con JWT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aumenta tu AWS API Gateway con JWT">
+    <meta name="author" content="pvidasoftware">
+    <meta name="keywords" content="blog,aws,api gateway,cognito,jwt">
+    <meta name="generator" content="JBake">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@pvidasoftware">
+    <meta name="twitter:creator" content="@pvidasoftware">
+    <meta name="twitter:title" content="Aumenta tu AWS API Gateway con JWT">
+    <meta name="twitter:description" content="Aumenta tu AWS API Gateway con JWT">
+    <meta name="twitter:image" content="https://pvidasoftware.github.io/blog/slides/pvlogo.png">
+
+
+    <!-- Le styles -->
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../../css/asciidoctor.css" rel="stylesheet" type="text/css">
+    <link href="../../css/base.css" rel="stylesheet" type="text/css">
+    <link href="../../css/prettify.css" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <!--<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">-->
+    <link rel="shortcut icon" href="../../favicon.ico">
+  </head>
+
+  <body onload="prettyPrint()">
+
+
+	
+		<!-- Fixed navbar -->
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../../">@pvidasoftware</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="../../index.html">Home</a></li>
+            <li><a href="../../about.html">About</a></li>
+            <li><a href="../../feed.xml">Subscribe</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Slides <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+	
+		    <li><a href="../../slides/2016/griffdnie/griffon-dnie.html">Griffon Framework y DNIe</a></li>
+  	
+		    <li><a href="../../slides/2016/ddr/docu-driven-rest.html">Testea y Documenta tu REST</a></li>
+  	
+		    <li><a href="../../slides/puravida-software.html">Quién es Puravida Software</a></li>
+  	
+              </ul>
+            </li>
+          </ul>
+
+          
+
+          <ul class="nav navbar-nav navbar-right share-buttons">
+            
+            <li><a href="https://twitter.com/intent/tweet?source=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/aws-enhanced-apigateway.html&text=Aumenta tu AWS API Gateway con JWT%20https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/aws-enhanced-apigateway.html&via=pvidasoftware" target="_blank" title="Tweet"><i class="fa fa-twitter-square fa-2x"></i></a></li>
+
+            
+            <li><a href="https://plus.google.com/share?url=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/aws-enhanced-apigateway.html" target="_blank" title="Aumenta tu AWS API Gateway con JWT"><i class="fa fa-google-plus-square fa-2x"></i></a></li>
+
+            <li><a href="http://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/aws-enhanced-apigateway.html&title=Aumenta tu AWS API Gateway con JWT&summary=&source=https%3A%2F%2Fpvidasoftware.github.io/blog/blog/2016/aws-enhanced-apigateway.html" target="_blank" title="Share on LinkedIn"><i class="fa fa-linkedin-square fa-2x"></i></a></li>
+            <li><a href="mailto:?subject=PuraVidaSoftware&body=:%20https%3A%2F%2Fpvidasoftware.github.io%2Fblog" target="_blank" title="Email"><i class="fa fa-envelope-square fa-2x"></i></a></li>
+          </ul>
+
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+
+	<div class="container">
+
+	<div class="page-header">
+		<h1>Aumenta tu AWS API Gateway con JWT</h1>
+	    <p><em>04 julio 2016</em></p>
+	</div>
+
+	<p><div class="sect1">
+<h2 id="intro">Intro</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>En el post <a href="aws-cognito-prevalidate.html" class="bare">aws-cognito-prevalidate.html</a> y <a href="aws-protect-apigateway.html" class="bare">aws-protect-apigateway.html</a> vimos cómo podemos restringir el
+acceso al pool de Cognito a aquellos
+ usuarios que nos interese mediante el uso de una función Lambda que nos va a hacer de "proxy" y cómo podemos usar las
+ credenciales de este pool para que AWS nos filtre quién llama a las lambda de necogio para ahorrar tiempos de ejecución
+ (si la llamada no viene acompañada con unas credenciales, AWS la rechaza y no llega a invocar a nuestra API).</p>
+</div>
+<div class="paragraph">
+<p>En este post lo que vamos a ver es, cómo una vez que hemos conseguido autentificar un usuario y este nos invoca a la API
+de negocio, poder saber quién es, qué ROLE tiene o cualquier otra información que consideremos necesaria sin tener que
+recurrir a nuevos accesos a nuestra base de datos.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="jwt">JWT</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://jwt.io/">JSON Web Tokens</a> nos permite intercambiar tokens entre aplicaciones en formato JSON de una forma fácil
+y segura.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="flujo_de_llamadas">Flujo de llamadas.</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Para nuestro caso el Lambda encargado de, además de validar al usuario y devolverle las credenciales de Cognito,
+ crear un JWT con la información que consideremos necesaria (email, role, &#8230;&#8203;).</p>
+</div>
+<div class="paragraph">
+<p>Este JWT será guardado por el cliente
+ y nos lo deverá adjuntar en cada petición que realice a nuestro API (en las que consideres oportunas, claro).</p>
+</div>
+<div class="paragraph">
+<p>Por su parte el API protegido validará que se incorpora un JWT en la petición y podrá validarlo y recuperar la información
+que se guardó en el primero paso.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="validar_usuario">Validar Usuario</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Lo primero que hay que incorporar en nuestra Lamda es la dependencia a <a href="https://github.com/auth0/node-jsonwebtoken" class="bare">github.com/auth0/node-jsonwebtoken</a></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-console" data-lang="console">$cd functions
+npm install --save jsonwebtoken</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Crearemos una variable nueva en nuestro proyecto serverless para poder externalizar la palabra de paso:</p>
+</div>
+<div class="listingblock">
+<div class="title">/functions/validateUser/s-function.json</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-javascript" data-lang="javascript">    ...
+  "environment": {
+    "SERVERLESS_PROJECT": "${project}",
+    "SERVERLESS_STAGE": "${stage}",
+    "SERVERLESS_REGION": "${region}",
+    "IDENTITY_POOL_ID": "${identityPoolId}",
+    "JWT_SECRET" : "${jwt_secret}"
+  },
+    ...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>y la inicializamos</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-console" data-lang="console">$sls functions set -k jwt_secret -v not_so_secret</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Sólo resta que una vez obtenido el pool del usuario le adjuntemos un token JWT que nos tiene que enviar en cada petición:</p>
+</div>
+<div class="listingblock">
+<div class="title">/functions/lib/login.js</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-javascript" data-lang="javascript">    ...
+  cognitoidentity.getOpenIdTokenForDeveloperIdentity(params, function (err, data) {
+      var role = 'ROLE_ADMIN';      <b class="conum">(1)</b>
+      var ret = {
+          token: data.Token,
+          id: data.IdentityId,
+          role: role
+      };
+      jwt.sign( {                   <b class="conum">(2)</b>
+          email : body.email,
+          id: data.IdentityId,
+          role: role
+      }, process.env.JWT_SECRET, {}, function(err, token){
+          if( err ){
+              context.fail(err,err);
+              return;
+          }
+          ret.jwt = token;          <b class="conum">(3)</b>
+          context.succeed(ret);
+      });
+  });
+    ...</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>una vez validado el usuario, buscamos datos de interés como p.e. el role que tiene en la aplicación</p>
+</li>
+<li>
+<p>generamos un JWT con el email, el id y el role</p>
+</li>
+<li>
+<p>la respuesta contendrá el token, el id, el role y el jwt(email, id, role), los primeros para usar por el cliente y el jwt
+para la invocación del cliente</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Notar que el cliente no conoce nada sobre el contenido del JWT.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="invocar_el_api">Invocar el API</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>La parte del cliente es tan sencilla como que si la validación del usuario ha sido satisfactoria tendremos un JWT que
+habrá que incluir en las llamadas posteriores, por ejemplo incluyendolo en el body, en el requestString, cabeceras, &#8230;&#8203;
+(según diseñemos la parte siguiente)</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configurar_el_jwt_en_apigateway">Configurar el JWT en APIGateway</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>El envío del JWT puede ser tanto en el body, junto con otros parámetros, en el query string o en las cabeceras. Para este
+post vamos a usar las cabeceras.</p>
+</div>
+<div class="paragraph">
+<p>Para ello vamos a configurar lo primero que permitimos un nuevo campo en las cabeceras mediante OPTIONS:</p>
+</div>
+<div class="listingblock">
+<div class="title">functions/graphql/s-function.json</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-json" data-lang="json">{
+  "path": "graphql",
+  "method": "OPTIONS",          <b class="conum">(1)</b>
+  "authorizationType": "none",
+  "apiKeyRequired": false,
+  "requestParameters": {
+  },
+  "requestTemplates": {
+    "application/json": "\"statusCode\": 200"
+  },
+  "responses": {
+    "default": {
+      "statusCode": "200",
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,jwt'", <b class="conum">(2)</b>
+        "method.response.header.Access-Control-Allow-Methods": "'*'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+      },
+      "responseModels": {},
+      "responseTemplates": {
+        "application/json": ""
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>Configuramos el OPTIONS del API</p>
+</li>
+<li>
+<p>Hemos añadido jwt al final de la lista de cabeceras permitidas</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>y después vamos a configurar el API propiamente dicho</p>
+</div>
+<div class="listingblock">
+<div class="title">functions/graphql/s-function.json</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-json" data-lang="json">{
+  "path": "graphql",
+  "method": "POST",     <b class="conum">(1)</b>
+  "type": "AWS",
+  "authorizationType": "AWS_IAM",  <b class="conum">(2)</b>
+  "authorizerFunction": false,
+  "apiKeyRequired": false,
+  "requestParameters": {
+    "integration.request.header.jwt":"method.request.header.jwt"   <b class="conum">(3)</b>
+  },
+  "requestTemplates": {
+    "application/json": {
+      "path" : "$input.params().path",
+      "query" : "$input.json('$.query')",
+      "jwt" : "$input.params('jwt')",       <b class="conum">(4)</b>
+      "headers": "$input.params().header",
+      "authorizedUser": "$context.authorizer.principalId"
+    }
+  },
+  "responses": {
+    "400": {
+      "statusCode": "400"
+    },
+    "default": {
+      "statusCode": "200",
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,jwt'", <b class="conum">(5)</b>
+        "method.response.header.Access-Control-Allow-Methods": "'*'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+      },
+      "responseModels": {},
+      "responseTemplates": {
+        "application/json": ""
+      },
+      "responseTemplates": {
+        "application/json;charset=UTF-8": ""
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>Configuramos el POST del API</p>
+</li>
+<li>
+<p>Seguimos protegiendo la llamada mediante credenciales</p>
+</li>
+<li>
+<p>Preparamos los parametros de nuestro interés, en este caso 'jwt' en las cabeceras</p>
+</li>
+<li>
+<p>Hacemos que AWS nos parsee los parámetros y así tendremos en el lamda el 'jwt' directamente</p>
+</li>
+<li>
+<p>incluimos el envio de 'jwt' como parametro de cabecera</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Por último sólo resta validar el jwt y actuar en consecuencia según los valores que incluyeramos en la validación:</p>
+</div>
+<div class="listingblock">
+<div class="title">/functions/graphql/handle.js</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-javascript" data-lang="javascript">var jwt = require('jsonwebtoken');
+var lib = require('../lib/business');
+
+module.exports.handler = function(event, context, cb) {
+
+    if( event.jwt === undefined ){
+        context.fail('JWT required', 'JWT required');
+        return;
+    }
+
+    jwt.verify(event.jwt, process.env.JWT_SECRET, function(err, decoded){
+        if( err ){
+            context.fail(err,err);
+            return;
+        }
+
+        var superuser = false;
+        if( decoded.email === 'jorge.aguilera@puravida-software.com' ){
+            superuser = true;
+        }
+        lib.executeMyApi( superuser, event.query, function(err, response){
+            return context.done(error, response);
+        });
+    });
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Como se puede ver, simplemente descodificamos el jwt y de él podemos extraer aquella información que guardamos en la
+validación. De esta forma las funciones Lambda de negocio pueden evitar tener que acceder a información del usuario,
+como el rol, el email o cualquier otro dato que necesitemos.</p>
+</div>
+<div class="paragraph">
+<p>Obviamente, la parte JWT debería incluir validaciones sobre la experiración del token, etc.</p>
+</div>
+</div>
+</div></p>
+
+	</div>
+
+
+    <footer class="footer">
+      <div class="container">
+        <p class="text-muted">PuraVida Software,SL c/ Betancunia 1, local A, Madrid 28017, <a href="mailto:contacto@puravida-software.com">Contacto</a>
+            <span class="credit">&copy; 2016 | Mixed with <a href="http://getbootstrap.com/">Bootstrap v3.1.1</a> | Baked with <a href="http://jbake.org">JBake v2.4.0</a></span>
+        </p>
+      </div>
+    </footer>
+    
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../../js/jquery-1.11.1.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/prettify.js"></script>
+
+  </body>
+
+<!-- google -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-687332-8', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<!-- twitter -->
+  <script>window.twttr = (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0],
+      t = window.twttr || {};
+    if (d.getElementById(id)) return t;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "https://platform.twitter.com/widgets.js";
+    fjs.parentNode.insertBefore(js, fjs);
+
+    t._e = [];
+    t.ready = function(f) {
+      t._e.push(f);
+    };
+
+    return t;
+  }(document, "script", "twitter-wjs"));</script>
+<!-- twitter -->
+
+</html>
