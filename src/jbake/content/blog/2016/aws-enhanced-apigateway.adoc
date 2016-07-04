@@ -1,0 +1,235 @@
+= Mejora tu AWS API Gateway con JWT
+Jorge Aguilera
+2016-7-4
+:jbake-type: post
+:jbake-status: published
+:jbake-tags: blog, aws, api gateway, cognito, jwt
+:idprefix:
+:hide-uri-scheme:
+
+== Intro
+
+En el post link:aws-cognito-prevalidate.html[] y link:aws-protect-apigateway.html[] vimos cómo podemos restringir el
+acceso al pool de Cognito a aquellos
+ usuarios que nos interese mediante el uso de una función Lambda que nos va a hacer de "proxy" y cómo podemos usar las
+ credenciales de este pool para que AWS nos filtre quién llama a las lambda de necogio para ahorrar tiempos de ejecución
+ (si la llamada no viene acompañada con unas credenciales, AWS la rechaza y no llega a invocar a nuestra API).
+
+En este post lo que vamos a ver es, cómo una vez que hemos conseguido autentificar un usuario y este nos invoca a la API
+de negocio, poder saber quién es, qué ROLE tiene o cualquier otra información que consideremos necesaria sin tener que
+recurrir a nuevos accesos a nuestra base de datos.
+
+== JWT
+
+https://jwt.io/[JSON Web Tokens] nos permite intercambiar tokens entre aplicaciones en formato JSON de una forma fácil
+y segura.
+
+== Flujo de llamadas.
+
+Para nuestro caso el Lambda encargado de, además de validar al usuario y devolverle las credenciales de Cognito,
+ crear un JWT con la información que consideremos necesaria (email, role, ...).
+
+Este JWT será guardado por el cliente
+ y nos lo deverá adjuntar en cada petición que realice a nuestro API (en las que consideres oportunas, claro).
+
+Por su parte el API protegido validará que se incorpora un JWT en la petición y podrá validarlo y recuperar la información
+que se guardó en el primero paso.
+
+== Validar Usuario
+
+Lo primero que hay que incorporar en nuestra Lamda es la dependencia a https://github.com/auth0/node-jsonwebtoken
+
+[source,console]
+----
+$cd functions
+npm install --save jsonwebtoken
+----
+
+Crearemos una variable nueva en nuestro proyecto serverless para poder externalizar la palabra de paso:
+
+[source,javascript]
+./functions/validateUser/s-function.json
+----
+    ...
+  "environment": {
+    "SERVERLESS_PROJECT": "${project}",
+    "SERVERLESS_STAGE": "${stage}",
+    "SERVERLESS_REGION": "${region}",
+    "IDENTITY_POOL_ID": "${identityPoolId}",
+    "JWT_SECRET" : "${jwt_secret}"
+  },
+    ...
+----
+
+y la inicializamos
+
+[source,console]
+----
+$sls functions set -k jwt_secret -v not_so_secret
+----
+
+Sólo resta que una vez obtenido el pool del usuario le adjuntemos un token JWT que nos tiene que enviar en cada petición:
+
+[source,javascript]
+./functions/lib/login.js
+----
+    ...
+  cognitoidentity.getOpenIdTokenForDeveloperIdentity(params, function (err, data) {
+      var role = 'ROLE_ADMIN';      <1>
+      var ret = {
+          token: data.Token,
+          id: data.IdentityId,
+          role: role
+      };
+      jwt.sign( {                   <2>
+          email : body.email,
+          id: data.IdentityId,
+          role: role
+      }, process.env.JWT_SECRET, {}, function(err, token){
+          if( err ){
+              context.fail(err,err);
+              return;
+          }
+          ret.jwt = token;          <3>
+          context.succeed(ret);
+      });
+  });
+    ...
+----
+<1> una vez validado el usuario, buscamos datos de interés como p.e. el role que tiene en la aplicación
+<2> generamos un JWT con el email, el id y el role
+<3> la respuesta contendrá el token, el id, el role y el jwt(email, id, role), los primeros para usar por el cliente y el jwt
+ para la invocación del cliente
+
+Notar que el cliente no conoce nada sobre el contenido del JWT.
+
+== Invocar el API
+
+La parte del cliente es tan sencilla como que si la validación del usuario ha sido satisfactoria tendremos un JWT que
+habrá que incluir en las llamadas posteriores, por ejemplo incluyendolo en el body, en el requestString, cabeceras, ...
+(según diseñemos la parte siguiente)
+
+== Configurar el JWT en APIGateway
+
+El envío del JWT puede ser tanto en el body, junto con otros parámetros, en el query string o en las cabeceras. Para este
+post vamos a usar las cabeceras.
+
+Para ello vamos a configurar lo primero que permitimos un nuevo campo en las cabeceras mediante OPTIONS:
+
+[source,json]
+.functions/graphql/s-function.json
+----
+{
+  "path": "graphql",
+  "method": "OPTIONS",          <1>
+  "authorizationType": "none",
+  "apiKeyRequired": false,
+  "requestParameters": {
+  },
+  "requestTemplates": {
+    "application/json": "\"statusCode\": 200"
+  },
+  "responses": {
+    "default": {
+      "statusCode": "200",
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,jwt'", <2>
+        "method.response.header.Access-Control-Allow-Methods": "'*'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+      },
+      "responseModels": {},
+      "responseTemplates": {
+        "application/json": ""
+      }
+    }
+  }
+}
+----
+<1> Configuramos el OPTIONS del API
+<2> Hemos añadido jwt al final de la lista de cabeceras permitidas
+
+y después vamos a configurar el API propiamente dicho
+
+[source,json]
+.functions/graphql/s-function.json
+----
+{
+  "path": "graphql",
+  "method": "POST",     <1>
+  "type": "AWS",
+  "authorizationType": "AWS_IAM",  <2>
+  "authorizerFunction": false,
+  "apiKeyRequired": false,
+  "requestParameters": {
+    "integration.request.header.jwt":"method.request.header.jwt"   <3>
+  },
+  "requestTemplates": {
+    "application/json": {
+      "path" : "$input.params().path",
+      "query" : "$input.json('$.query')",
+      "jwt" : "$input.params('jwt')",       <4>
+      "headers": "$input.params().header",
+      "authorizedUser": "$context.authorizer.principalId"
+    }
+  },
+  "responses": {
+    "400": {
+      "statusCode": "400"
+    },
+    "default": {
+      "statusCode": "200",
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,jwt'", <5>
+        "method.response.header.Access-Control-Allow-Methods": "'*'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+      },
+      "responseModels": {},
+      "responseTemplates": {
+        "application/json": ""
+      },
+      "responseTemplates": {
+        "application/json;charset=UTF-8": ""
+      }
+    }
+  }
+}
+----
+<1> Configuramos el POST del API
+<2> Seguimos protegiendo la llamada mediante credenciales
+<3> Preparamos los parametros de nuestro interés, en este caso 'jwt' en las cabeceras
+<4> Hacemos que AWS nos parsee los parámetros y así tendremos en el lamda el 'jwt' directamente
+<5> incluimos el envio de 'jwt' como parametro de cabecera
+
+
+Por último sólo resta validar el jwt y actuar en consecuencia según los valores que incluyeramos en la validación:
+
+[source,javascript]
+./functions/graphql/handle.js
+----
+var jwt = require('jsonwebtoken');
+var lib = require('../lib/business');
+
+module.exports.handler = function(event, context, cb) {
+
+    if( event.jwt === undefined ){
+        context.fail('JWT required', 'JWT required');
+        return;
+    }
+
+    jwt.verify(event.jwt, process.env.JWT_SECRET, function(err, decoded){
+        if( err ){
+            context.fail(err,err);
+            return;
+        }
+
+        var superuser = false;
+        if( decoded.email === 'jorge.aguilera@puravida-software.com' ){
+            superuser = true;
+        }
+        lib.executeMyApi( superuser, event.query, function(err, response){
+            return context.done(error, response);
+        });
+    });
+};
+
+----
