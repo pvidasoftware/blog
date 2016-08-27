@@ -398,12 +398,12 @@ class SampleController{
 <div class="paragraph"><p>La gestión de hilos en cualquier aplicación es crucial, y en una aplicación gráfica aún más si cabe.
 No podemos dejar "congelada" la aplicación mientras realizamos cálculos en el hilo gráfico.</p></div>
 <div class="paragraph"><p>Griffon nos permite ejecutar código en el hilo correspondiente de una forma realmente fácil.</p></div>
-<div class="paragraph slide"><p>Ejecución síncrona en el hilo gráfico</p></div>
-<div class="paragraph"><p>runInsideUISync o @Threading(Threading.Policy.INSIDE_UITHREAD_SYNC)</p></div>
-<div class="paragraph slide"><p>Ejecución asíncrona en el hilo gráfico</p></div>
-<div class="paragraph"><p>runInsideUIAsync o @Threading(Threading.Policy.INSIDE_UITHREAD_ASYNC)</p></div>
-<div class="paragraph slide"><p>Ejecución fuera del hilo gráfico</p></div>
-<div class="paragraph"><p>runOutsideUI o @Threading(Threading.Policy.OUTSIDE_UITHREAD)</p></div>
+<div class="paragraph slide"><p>Ejecución síncrona en el hilo gráfico
+runInsideUISync o @Threading(Threading.Policy.INSIDE_UITHREAD_SYNC)</p></div>
+<div class="paragraph slide"><p>Ejecución asíncrona en el hilo gráfico
+runInsideUIAsync o @Threading(Threading.Policy.INSIDE_UITHREAD_ASYNC)</p></div>
+<div class="paragraph slide"><p>Ejecución fuera del hilo gráfico
+runOutsideUI o @Threading(Threading.Policy.OUTSIDE_UITHREAD)</p></div>
 </section>
 <section class="slide" id="_events">
 <h2>Events</h2>
@@ -411,11 +411,15 @@ No podemos dejar "congelada" la aplicación mientras realizamos cálculos en el 
 <div class="paragraph"><p>application.eventRouter.publishEvent('MyEventName', ['arg0', 'arg1'])</p></div>
 <div class="paragraph"><p>application.eventRouter.publishEventOutsideUI('MyEventName', ['arg0', 'arg1'])</p></div>
 <div class="paragraph"><p>application.eventRouter.publishEventAsync('MyEventName', ['arg0', 'arg1'])</p></div>
-<div class="paragraph"><p>class MyController {
-    void on*MyEventName*( args )
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay"><code class="groovy language-groovy"><span class="type">class</span> <span class="class">MyController</span> {
+    <span class="type">void</span> onMyEventName( args )
         println args
     }
-}</p></div>
+}</code></pre>
+</div>
+</div>
 </section>
 <section class="slide" id="_internalizacion">
 <h2>Internalizacion</h2>
