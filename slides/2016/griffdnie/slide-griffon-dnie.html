@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta content="text/html; charset=" http-equiv="Content-Type">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
 <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
 <meta content="Asciidoctor 1.5.4" name="generator">
 <meta content="Jorge Aguilera" name="author">
@@ -141,10 +141,10 @@ table.CodeRay td.code>pre{padding:0}
 </section>
 <section class="slide" id="_desktop_vs_web">
 <h2>Desktop vs Web</h2>
-<div class="videoblock">
-<iframe allowfullscreen height="240" src="//www.youtube.com/embed/krjv8DxptQI?rel=0&amp;start=85&amp;end=105" width="320"></iframe>
+<div class="paragraph"><p>9 de cada 10 arquitectos software recomiendan una aplicaci&oacute;n web &#8230;&#8203;.</p></div>
+<div class="videoblock slide">
+<iframe allowfullscreen height="480" src="//www.youtube.com/embed/krjv8DxptQI?rel=0&amp;start=85&amp;end=105" width="640"></iframe>
 </div>
-<div class="paragraph slide"><p>9 de cada 10 arquitectos software recomiendan una aplicaci&oacute;n web &#8230;&#8203;.</p></div>
 </section>
 <section class="slide" id="_desktopqueeee">
 <h2>Desktopqueeee</h2>
@@ -161,29 +161,33 @@ table.CodeRay td.code>pre{padding:0}
 </tbody>
 </table>
 </section>
-<section class="slide" id="_griffdnie">
-<h2>GriffDnie</h2>
-<div class="paragraph"><p>Aplicaci&oacute;n de ejemplo:</p></div>
-<div class="ulist">
-<ul>
-<li>Griffon Framework</li>
-<li>Swing</li>
-<li>Identificaci&oacute;n de usuario mediante DNIe</li>
-<li>Consumo de servicio REST</li>
-<li>Firma digital de documentos con certificados del DNIe</li>
-<li>show me the app</li>
-</ul>
-</div>
+<section class="slide" id="_alternativas_rcp">
+<h2>Alternativas RCP</h2>
+<div class="paragraph"><p>RCP = Rich Client Platform</p></div>
+<div class="paragraph slide"><p>NetBeans RCP</p></div>
+<div class="paragraph slide"><p>Eclipse RCP</p></div>
+<div class="paragraph slide"><p>Usando directamente Swing, JavaFX, &#8230;&#8203;</p></div>
+<div class="paragraph slide"><p>Griffon</p></div>
 </section>
 <section class="slide" id="_griffon_framework">
 <h2>Griffon Framework</h2>
+<div class="paragraph"><p>Entorno de desarrollo de aplicaciones de escritorio inspirado en Grails.</p></div>
 <div class="paragraph slide"><p>Quick Start = lazybones</p></div>
 <div class="paragraph slide"><p>Diferentes entornos (Swing, JavaFX, Apache Pivot) y lenguajes (Java, Groovy, Kotlin)</p></div>
-<div class="paragraph slide"><p>Inspirado en Grails Framework, presenta numerosas similitudes</p></div>
-<div class="paragraph slide"><p>Ejecutable en consola, desde web (JNLP), instalable, firmado, &#8230;&#8203;</p></div>
+<div class="paragraph slide"><p>Inspirado en Grails Framework, presenta numerosas similitudes (Controller, View, Services, DI, &#8230;&#8203;)</p></div>
+<div class="paragraph slide"><p>Ejecutable en consola, desde web (JNLP), instalable (IzPack, RPM, zip, tar), firmado, &#8230;&#8203;</p></div>
+<div class="paragraph slide"><p>Groovy, Gradle, JUnit, Spock, AsciiDoctor &#8230;&#8203; en la punta de tus dedos</p></div>
 </section>
 <section class="slide" id="_griffon_estructura_del_proyecto">
 <h2>Griffon, estructura del proyecto</h2>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay"><code class="console language-console">lazybones create griffon-javafx-java sample-javax-java
+gradle build
+gradle test
+gradle run</code></pre>
+</div>
+</div>
 <div class="ulist">
 <ul>
 <li><p>
@@ -229,16 +233,14 @@ integration-test<div class="ulist">
 </ul>
 </div>
 <div class="listingblock">
-<div class="title">/src/griffon-app/models/griffdni/GriffdniModel.groovy</div>
+<div class="title">/src/griffon-app/models/griffdnifx/ChartModel.groovy</div>
 <div class="content">
-<pre class="CodeRay"><code class="groovy language-groovy"><span class="keyword">import</span> <span class="include">griffon.core.artifact.GriffonModel</span>
-<span class="keyword">import</span> <span class="include">griffon.metadata.ArtifactProviderFor</span>
-<span class="keyword">import</span> <span class="include">griffon.transform.Observable</span>
+<pre class="CodeRay"><code class="groovy language-groovy"><span class="annotation">@ArtifactProviderFor</span>(GriffonModel)
+<span class="type">class</span> <span class="class">ChartModel</span> {
+    <span class="annotation">@Observable</span> <span class="predefined-type">Integer</span> clickCount = <span class="integer">0</span>
 
-<span class="annotation">@ArtifactProviderFor</span>(GriffonModel)
-<span class="type">class</span> <span class="class">GriffdniModel</span> {
-    <span class="annotation">@Observable</span> <span class="predefined-type">String</span> nif
-    <span class="annotation">@Observable</span> <span class="predefined-type">String</span> name
+    <span class="annotation">@Observable</span>
+    ObservableList&lt;PieChart.Data&gt; pieChartData = FXCollections.observableArrayList()
 }</code></pre>
 </div>
 </div>
@@ -251,20 +253,21 @@ integration-test<div class="ulist">
 </ul>
 </div>
 <div class="listingblock">
-<div class="title">/src/griffon-app/controllers/griffdni/GriffdnieController.groovy</div>
+<div class="title">/src/griffon-app/controllers/griffdnifx/ChartController.groovy</div>
 <div class="content">
-<pre class="CodeRay"><code class="groovy language-groovy"><span class="keyword">import</span> <span class="include">griffon.core.artifact.GriffonController</span>
-<span class="keyword">import</span> <span class="include">griffon.metadata.ArtifactProviderFor</span>
-<span class="keyword">import</span> <span class="include">griffon.transform.Observable</span>
+<pre class="CodeRay"><code class="groovy language-groovy"><span class="annotation">@ArtifactProviderFor</span>(GriffonController)
+<span class="type">class</span> <span class="class">ChartController</span> {
 
-<span class="annotation">@ArtifactProviderFor</span>(GriffonController)
-<span class="type">class</span> <span class="class">GriffdniController</span> <span class="directive">implements</span> ShutdownHandler{
-    GriffdniModel model
+    ChartModel model
 
-    GriffdniView view
-
-    <span class="type">boolean</span> canShutdown(<span class="annotation">@Nonnull</span> GriffonApplication application){
-        <span class="keyword">return</span> model.nif == <span class="predefined-constant">null</span>
+    <span class="annotation">@Threading</span>(Threading.Policy.OUTSIDE_UITHREAD)
+    <span class="type">void</span> recalculateAction() {
+        <span class="comment">// Long operation</span>
+        <span class="comment">// ...</span>
+        runInsideUIsync{
+            model.pieChartData.clear()
+            model.pieChartData.addAll(datas)
+        }
     }
 }</code></pre>
 </div>
@@ -278,27 +281,20 @@ integration-test<div class="ulist">
 </ul>
 </div>
 <div class="listingblock">
-<div class="title">/src/griffon-app/views/griffdni/GriffdnieView.groovy</div>
+<div class="title">/src/griffon-app/views/griffdnifx/ChartView.groovy</div>
 <div class="content">
-<pre class="CodeRay"><code class="groovy language-groovy"><span class="keyword">import</span> <span class="include">griffon.core.artifact.GriffonView</span>
-<span class="keyword">import</span> <span class="include">griffon.metadata.ArtifactProviderFor</span>
-<span class="keyword">import</span> <span class="include">griffon.transform.Observable</span>
-
-<span class="annotation">@ArtifactProviderFor</span>(GriffonView)
-<span class="type">class</span> <span class="class">GriffdniView</span>{
+<pre class="CodeRay"><code class="groovy language-groovy"><span class="annotation">@ArtifactProviderFor</span>(GriffonView)
+<span class="type">class</span> <span class="class">ChartView</span> <span class="directive">extends</span> AbstractJavaFXGriffonView{
     FactoryBuilderSupport builder
-
-    GriffdniModel model
+    ChartModel model
+    ChartController controller
 
     <span class="type">void</span> initUI() {
-        builder.with {
-            application(<span class="key">size</span>: [<span class="integer">320</span>, <span class="integer">160</span>], <span class="key">id</span>: <span class="string"><span class="delimiter">'</span><span class="content">mainWindow</span><span class="delimiter">'</span></span>,
-                    <span class="key">extendedState</span>: <span class="predefined-type">JFrame</span>.MAXIMIZED_BOTH,
-                    <span class="key">title</span>: application.configuration[<span class="string"><span class="delimiter">'</span><span class="content">application.title</span><span class="delimiter">'</span></span>]){
-
-                    panel(){
-                        borderLayout()
-                        ...</code></pre>
+        builder.with{
+            content = fxml(resource(<span class="string"><span class="delimiter">'</span><span class="content">/com/puravida/chart.fxml</span><span class="delimiter">'</span></span>))
+        }
+    }
+}</code></pre>
 </div>
 </div>
 </section>
@@ -306,6 +302,7 @@ integration-test<div class="ulist">
 <h2>MVC Group</h2>
 <div class="ulist">
 <ul>
+<li>$lazybones generate artifact::mvcgroup</li>
 <li>artefacto que nos permite manejar el Modelo, la Vista y el Controlador como un todo.</li>
 <li>tipicamente tendremos varios MVCGroups identificados por un nombre.</li>
 <li>permite <strong>inicializar</strong> el conjunto</li>
@@ -323,6 +320,11 @@ integration-test<div class="ulist">
     }
 }</code></pre>
 </div>
+</div>
+<div class="ulist">
+<ul>
+<li><strong>A día de hoy esta configuración la tienes que hacer tú a mano</strong></li>
+</ul>
 </div>
 </section>
 <section class="slide" id="_createmvcgroup">
@@ -358,13 +360,386 @@ integration-test<div class="ulist">
 <div class="title">/src/griffon-app/controllers/sample/SampleModel.groovy</div>
 <div class="content">
 <pre class="CodeRay"><code class="groovy language-groovy"><span class="type">void</span> mvcGroupInit(<span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Object</span>&gt; args) {
-    <span class="local-variable">this</span>.name = <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">$</span>args</span><span class="content">.member.surname, </span><span class="inline"><span class="inline-delimiter">$</span>args</span><span class="content">.member.name</span><span class="delimiter">&quot;</span></span>
+    <span class="local-variable">this</span>.name = args.member.surname+<span class="string"><span class="delimiter">&quot;</span><span class="content">,</span><span class="delimiter">&quot;</span></span>+args.member.name
 }</code></pre>
 </div>
 </div>
 </section>
-<section class="slide" id="_application">
-<h2>Application</h2>
+<section class="slide" id="_service">
+<h2>Service</h2>
+<div class="paragraph"><p>Al estilo de Grails podemos definir Servicios:</p></div>
+<div class="listingblock">
+<div class="title">/src/griffon-app/services/sample/SampleService.groovy</div>
+<div class="content">
+<pre class="CodeRay"><code class="groovy language-groovy"><span class="annotation">@javax</span>.inject.Singleton
+<span class="annotation">@ArtifactProviderFor</span>(GriffonService)
+<span class="type">class</span> <span class="class">SampleService</span> {
+    <span class="type">int</span> calculate(){
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph"><p>e inyectarlo en el controller que lo necesite</p></div>
+<div class="listingblock">
+<div class="title">/src/griffon-app/controllers/sample/SampleController.groovy</div>
+<div class="content">
+<pre class="CodeRay"><code class="groovy language-groovy">...
+class SampleController{
+    <span class="annotation">@Inject</span>
+    SampleService
+    ...
+}</code></pre>
+</div>
+</div>
+</section>
+<section class="slide" id="_threading">
+<h2>Threading</h2>
+<div class="paragraph"><p>La gestión de hilos en cualquier aplicación es crucial, y en una aplicación gráfica aún más si cabe.
+No podemos dejar "congelada" la aplicación mientras realizamos cálculos en el hilo gráfico.</p></div>
+<div class="paragraph"><p>Griffon nos permite ejecutar código en el hilo correspondiente de una forma realmente fácil.</p></div>
+<div class="paragraph slide"><p>Ejecución síncrona en el hilo gráfico</p></div>
+<div class="paragraph"><p>runInsideUISync o @Threading(Threading.Policy.INSIDE_UITHREAD_SYNC)</p></div>
+<div class="paragraph slide"><p>Ejecución asíncrona en el hilo gráfico</p></div>
+<div class="paragraph"><p>runInsideUIAsync o @Threading(Threading.Policy.INSIDE_UITHREAD_ASYNC)</p></div>
+<div class="paragraph slide"><p>Ejecución fuera del hilo gráfico</p></div>
+<div class="paragraph"><p>runOutsideUI o @Threading(Threading.Policy.OUTSIDE_UITHREAD)</p></div>
+</section>
+<section class="slide" id="_events">
+<h2>Events</h2>
+<div class="paragraph"><p>Griffon nos permite la comunicación entre componentes mediante eventos:</p></div>
+<div class="paragraph"><p>application.eventRouter.publishEvent('MyEventName', ['arg0', 'arg1'])</p></div>
+<div class="paragraph"><p>application.eventRouter.publishEventOutsideUI('MyEventName', ['arg0', 'arg1'])</p></div>
+<div class="paragraph"><p>application.eventRouter.publishEventAsync('MyEventName', ['arg0', 'arg1'])</p></div>
+<div class="paragraph"><p>class MyController {
+    void on*MyEventName*( args )
+        println args
+    }
+}</p></div>
+</section>
+<section class="slide" id="_internalizacion">
+<h2>Internalizacion</h2>
+<div class="paragraph"><p>Griffon nos proporciona un sistema de internalización típico mediante:</p></div>
+<div class="paragraph"><p>application.messageSource.getMessage('groovy.message', ['apples', 'bananas'])</p></div>
+<div class="paragraph"><p>e incluso nos permite usar scripts de Groovy:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay"><code class="groovy language-groovy"><span class="keyword">import</span> <span class="include">griffon.util.Environment</span>
+warning.label = { args -&gt;
+    <span class="keyword">if</span> (Environment.current == Environment.PRODUCTION) {
+        <span class="string"><span class="delimiter">&quot;</span><span class="content">The application has encountered an error: </span><span class="inline"><span class="inline-delimiter">$</span>args</span><span class="delimiter">&quot;</span></span>
+    } <span class="keyword">else</span> {
+        <span class="string"><span class="delimiter">&quot;</span><span class="content">Somebody sent us a bomb! </span><span class="inline"><span class="inline-delimiter">$</span>args</span><span class="delimiter">&quot;</span></span>
+    }
+}</code></pre>
+</div>
+</div>
+</section>
+<section class="slide" id="_pruebas_unitarias">
+<h2>Pruebas Unitarias</h2>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay"><code class="groovy language-groovy"><span class="annotation">@TestFor</span>(SampleController.class)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">SampleControllerTest</span> {
+    <span class="annotation">@Rule</span>
+    <span class="directive">public</span> <span class="directive">final</span> GriffonUnitRule griffon = <span class="keyword">new</span> GriffonUnitRule();
+
+    <span class="annotation">@Test</span>
+    <span class="directive">public</span> <span class="type">void</span> executeSayHelloActionWithNoInput() {
+    ...
+    }
+}</code></pre>
+</div>
+</div>
+</section>
+<section class="slide" id="_pruebas_integracion">
+<h2>Pruebas Integracion</h2>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay"><code class="groovy language-groovy"><span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">SampleIntegrationSpec</span> <span class="directive">extends</span> Specification{
+    <span class="annotation">@Rule</span>
+    <span class="directive">public</span> <span class="directive">final</span> GriffonFestRule fest = <span class="keyword">new</span> GriffonFestRule()
+
+    <span class="type">void</span> <span class="string"><span class="delimiter">'</span><span class="content">Get default message if no input is given</span><span class="delimiter">'</span></span>() {
+        <span class="key">given</span>:
+        window.textBox(<span class="string"><span class="delimiter">'</span><span class="content">inputField</span><span class="delimiter">'</span></span>).enterText(<span class="string"><span class="delimiter">'</span><span class="content">Griffon</span><span class="delimiter">'</span></span>)
+
+        <span class="key">when</span>:
+        window.button(<span class="string"><span class="delimiter">'</span><span class="content">sayHelloButton</span><span class="delimiter">'</span></span>).click()
+
+        <span class="key">then</span>:
+        window.label(<span class="string"><span class="delimiter">'</span><span class="content">outputLabel</span><span class="delimiter">'</span></span>).requireText(<span class="string"><span class="delimiter">'</span><span class="content">Hello Griffon</span><span class="delimiter">'</span></span>)
+    }
+}</code></pre>
+</div>
+</div>
+</section>
+<section class="slide" id="_plugins">
+<h2>Plugins</h2>
+<div class="paragraph"><p>Griffon cuenta con un extenso ecosistemas de plugins:</p></div>
+<div class="ulist">
+<ul>
+<li>griffon-datasource-plugin (o hibernate, jpa, ibatis, &#8230;&#8203; )</li>
+<li>griffon-fontawesome-plugin (o flagicons, fatcowicons, ..)</li>
+<li>griffon-glazedlists-plugin</li>
+<li>griffon-wslite-plugin</li>
+<li>etc</li>
+</ul>
+</div>
+</section>
+<section class="slide" id="_otros_patrones">
+<h2>Otros patrones</h2>
+<div class="paragraph"><p>Además del típico MVC Griffon permite utilizar otros patrones como son:</p></div>
+<div class="ulist">
+<ul>
+<li>MVP (Model-View-Presenter)</li>
+<li>MVVM (Model-View-ViewModel)</li>
+<li>PVC (Presentation-View-Controller)</li>
+</ul>
+</div>
+</section>
+<section class="slide" id="_griffdniefx">
+<h2>GriffDnieFx</h2>
+<div class="paragraph"><p><span class="image"><img alt="GriffDniFx" src="GriffDniFx.png"></span></p></div>
+</section>
+<section class="slide" id="_griffdniefx_2">
+<h2>GriffDnieFx</h2>
+<div class="paragraph"><p>Aplicaci&oacute;n de ejemplo:</p></div>
+<div class="ulist">
+<ul>
+<li>Griffon Framework (JavaFx + Groovy)</li>
+<li>Identificaci&oacute;n de usuario mediante DNIe</li>
+<li>Controller controlando ControllerS</li>
+<li>View embebiendo ViewS</li>
+<li>Diferentes formas de construir vistas</li>
+<li>Consumo de servicio REST</li>
+<li>Firma digital de documentos con certificados del DNIe</li>
+<li>Control de la navegación del usuario</li>
+<li>show me the app</li>
+</ul>
+</div>
+</section>
+<section class="slide" id="_config">
+<h2>Config</h2>
+<div class="listingblock">
+<div class="title">/src/griffon-app/conf/Config.groovy</div>
+<div class="content">
+<pre class="CodeRay"><code class="groovy language-groovy">mvcGroups {
+    <span class="comment">// MVC Group for &quot;griffdnifx&quot;</span>
+    <span class="string"><span class="delimiter">'</span><span class="content">griffdnifx</span><span class="delimiter">'</span></span> {
+        model      = <span class="string"><span class="delimiter">'</span><span class="content">com.puravida.GriffdnifxModel</span><span class="delimiter">'</span></span>
+        view       = <span class="string"><span class="delimiter">'</span><span class="content">com.puravida.GriffdnifxView</span><span class="delimiter">'</span></span>
+        controller = <span class="string"><span class="delimiter">'</span><span class="content">com.puravida.GriffdnifxController</span><span class="delimiter">'</span></span>
+    }
+
+    <span class="string"><span class="delimiter">'</span><span class="content">login</span><span class="delimiter">'</span></span>{
+        model      = <span class="string"><span class="delimiter">'</span><span class="content">com.puravida.LoginModel</span><span class="delimiter">'</span></span>
+        view       = <span class="string"><span class="delimiter">'</span><span class="content">com.puravida.LoginView</span><span class="delimiter">'</span></span>
+        controller = <span class="string"><span class="delimiter">'</span><span class="content">com.puravida.LoginController</span><span class="delimiter">'</span></span>
+    }
+
+    <span class="string"><span class="delimiter">'</span><span class="content">rest</span><span class="delimiter">'</span></span>{
+        model      = <span class="string"><span class="delimiter">'</span><span class="content">com.puravida.RestModel</span><span class="delimiter">'</span></span>
+        view       = <span class="string"><span class="delimiter">'</span><span class="content">com.puravida.RestView</span><span class="delimiter">'</span></span>
+        controller = <span class="string"><span class="delimiter">'</span><span class="content">com.puravida.RestController</span><span class="delimiter">'</span></span>
+    }
+
+    <span class="string"><span class="delimiter">'</span><span class="content">agreement</span><span class="delimiter">'</span></span>{
+        model      = <span class="string"><span class="delimiter">'</span><span class="content">com.puravida.AgreementModel</span><span class="delimiter">'</span></span>
+        view       = <span class="string"><span class="delimiter">'</span><span class="content">com.puravida.AgreementView</span><span class="delimiter">'</span></span>
+        controller = <span class="string"><span class="delimiter">'</span><span class="content">com.puravida.AgreementController</span><span class="delimiter">'</span></span>
+    }
+
+    <span class="string"><span class="delimiter">'</span><span class="content">chart</span><span class="delimiter">'</span></span>{
+        model      = <span class="string"><span class="delimiter">'</span><span class="content">com.puravida.ChartModel</span><span class="delimiter">'</span></span>
+        view       = <span class="string"><span class="delimiter">'</span><span class="content">com.puravida.ChartView</span><span class="delimiter">'</span></span>
+        controller = <span class="string"><span class="delimiter">'</span><span class="content">com.puravida.ChartController</span><span class="delimiter">'</span></span>
+    }
+}</code></pre>
+</div>
+</div>
+</section>
+<section class="slide" id="_control_del_usuario">
+<h2>Control del usuario</h2>
+<div class="ulist">
+<ul>
+<li>No puede cerrar la aplicación cuando quiera:</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">/src/griffon-app/views/GriffdnifxView.groovy</div>
+<div class="content">
+<pre class="CodeRay"><code class="groovy language-groovy">...
+
+Stage stage = builder.application.primaryStage
+stage.maximized = <span class="predefined-constant">true</span>
+stage.onCloseRequest = { windowEvent -&gt;
+    windowEvent.consume()
+}
+
+...</code></pre>
+</div>
+</div>
+</section>
+<section class="slide" id="_controller_maestro_vs_especifico">
+<h2>Controller maestro vs especifico</h2>
+<div class="ulist">
+<ul>
+<li>GriffDnifxController gestiona el flujo de trabajo</li>
+<li>LoginController gestiona el estado del lector</li>
+<li>RestController realiza operaciones de REST</li>
+<li>AgreementController gestiona la aceptación y firma</li>
+<li>Los controllers se comunican con el padre</li>
+</ul>
+</div>
+<div class="paragraph"><p>Griffon inyecta dependencias y gestiona dependencias entre controller hijo y padre</p></div>
+</section>
+<section class="slide" id="_crear_una_vista_mediante_el_dsl">
+<h2>Crear una vista mediante el DSL</h2>
+<div class="listingblock">
+<div class="title">/src/griffon-app/views/AgreementView.groovy</div>
+<div class="content">
+<pre class="CodeRay"><code class="groovy language-groovy"><span class="type">void</span> initUI() {
+    FontAwesomeIcon icon = <span class="keyword">new</span> FontAwesomeIcon(FontAwesome.FA_FILE_PDF_O)
+    builder.with{
+        tab(<span class="key">id</span>:<span class="string"><span class="delimiter">'</span><span class="content">mainTab</span><span class="delimiter">'</span></span>, application.messageSource.getMessage(<span class="string"><span class="delimiter">'</span><span class="content">agreement</span><span class="delimiter">'</span></span>),
+                <span class="key">graphic</span>:icon, <span class="key">closable</span>:<span class="predefined-constant">false</span>){
+            borderPane{
+                top(<span class="key">align</span>: <span class="string"><span class="delimiter">'</span><span class="content">center</span><span class="delimiter">'</span></span>, <span class="key">margin</span>: [<span class="integer">0</span>, <span class="integer">20</span>, <span class="integer">20</span>, <span class="integer">20</span>]){
+                    button <span class="key">text</span>: <span class="string"><span class="delimiter">'</span><span class="content">Acepto</span><span class="delimiter">'</span></span>, userAgreeAction
+                }
+                center(){
+                    browser = webView(<span class="key">prefWidth</span>: <span class="integer">200</span>)
+                }
+            }
+        }
+    }
+    <span class="predefined-type">String</span> url = application.resourceHandler.getResourceAsURL(<span class="string"><span class="delimiter">'</span><span class="content">web/viewer.html</span><span class="delimiter">'</span></span>)
+    url += <span class="string"><span class="delimiter">'</span><span class="content">?file=MadridGUG.pdf</span><span class="delimiter">'</span></span>
+    builder.browser.engine.load(url)
+    parentView.tabPane.tabs.add(tab=builder.mainTab);
+}</code></pre>
+</div>
+</div>
+</section>
+<section class="slide" id="_crear_una_vista_mediante_recursos">
+<h2>Crear una vista mediante recursos</h2>
+<div class="paragraph"><p>(solo JavaFX)</p></div>
+<div class="listingblock">
+<div class="title">/src/griffon-app/views/RestView.groovy</div>
+<div class="content">
+<pre class="CodeRay"><code class="groovy language-groovy"><span class="type">void</span> initUI() {
+    builder.with{
+        content = fxml(resource(<span class="string"><span class="delimiter">'</span><span class="content">/com/puravida/restview.fxml</span><span class="delimiter">'</span></span>)) {
+            bean(labelNif, <span class="key">text</span>: bind(model.nifProperty))
+            ...
+        }
+    }
+    connectActions(builder.content, controller)
+    ...
+}</code></pre>
+</div>
+</div>
+</section>
+<section class="slide" id="_consumir_rest">
+<h2>Consumir REST</h2>
+<div class="listingblock">
+<div class="title">/src/griffon-app/views/RestController.groovy</div>
+<div class="content">
+<pre class="CodeRay"><code class="groovy language-groovy"><span class="annotation">@Threading</span>(Threading.Policy.OUTSIDE_UITHREAD)
+<span class="type">void</span> next(){
+    wsliteHandler.withRest([<span class="key">url</span>: url], { <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Object</span>&gt; params, RESTClient client -&gt;
+        Response response = client.get(<span class="key">path</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>,<span class="key">accept</span>: ContentType.JSON)
+        runInsideUIAsync{
+            model.list.add(RestModel.fromJson(response.json))
+        }
+    })
+}</code></pre>
+</div>
+</div>
+</section>
+<section class="slide" id="_dnie">
+<h2>DNIe</h2>
+<div class="ulist">
+<ul>
+<li><p>
+Integración del DNIe<div class="ulist">
+<ul>
+<li>compile 'es.gob:jmulticard-jse:1.4'</li>
+<li>compile 'es.gob:jmulticard-ui:1.4'</li>
+</ul>
+</div></p></li>
+</ul>
+</div>
+</section>
+<section class="slide" id="_dnie_login">
+<h2>DNIe Login</h2>
+<div class="listingblock">
+<div class="title">/src/griffon-app/services/DnieService.groovy</div>
+<div class="content">
+<pre class="CodeRay"><code class="groovy language-groovy">provider = <span class="keyword">new</span> DnieProvider(<span class="keyword">new</span> SmartcardIoConnection())
+<span class="predefined-type">Security</span>.addProvider(provider)
+
+<span class="directive">final</span> <span class="predefined-type">KeyStore</span> ks = <span class="predefined-type">KeyStore</span>.getInstance(<span class="string"><span class="delimiter">'</span><span class="content">DNI</span><span class="delimiter">'</span></span>)
+
+<span class="directive">final</span> <span class="predefined-type">CallbackHandler</span> callbackHandler = <span class="keyword">new</span> DnieCallbackHandler()
+
+<span class="directive">final</span> <span class="predefined-type">KeyStore</span>.LoadStoreParameter lsp = <span class="keyword">new</span> <span class="predefined-type">KeyStore</span>.LoadStoreParameter() {
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="predefined-type">KeyStore</span>.ProtectionParameter getProtectionParameter() {
+        <span class="keyword">return</span> <span class="keyword">new</span> <span class="predefined-type">KeyStore</span>.CallbackHandlerProtection(callbackHandler)
+    }
+};
+
+ks.load(lsp)
+
+<span class="keyword">def</span> privateKey = (<span class="predefined-type">PrivateKey</span>) ks.getKey(<span class="string"><span class="delimiter">'</span><span class="content">CertAutenticacion</span><span class="delimiter">'</span></span>, <span class="predefined-constant">null</span>)</code></pre>
+</div>
+</div>
+</section>
+<section class="slide" id="_dnie_firma">
+<h2>DNIe Firma</h2>
+<div class="ulist">
+<ul>
+<li><p>
+Firma de Pdf mediante Apache Pdfbox<div class="ulist">
+<ul>
+<li>compile 'org.apache.pdfbox:pdfbox:2.0.1'</li>
+</ul>
+</div></p></li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">/src/griffon-app/services/SignService.groovy</div>
+<div class="content">
+<pre class="CodeRay"><code class="groovy language-groovy"><span class="directive">final</span> PDDocument doc = PDDocument.load(fDestination)
+<span class="directive">final</span> PDSignature signature = <span class="keyword">new</span> PDSignature()
+doc.addSignature(signature, <span class="keyword">new</span> SignatureInterface() {
+    <span class="annotation">@Override</span>
+    <span class="type">byte</span><span class="type">[]</span> sign(<span class="predefined-type">InputStream</span> content) <span class="directive">throws</span> <span class="exception">IOException</span> {
+        <span class="predefined-type">List</span>&lt;<span class="predefined-type">Certificate</span>&gt; certList = [dnie.certificate]
+        Store certs = <span class="keyword">new</span> JcaCertStore(certList)
+        ...
+        ContentSigner sha1Signer = <span class="keyword">new</span> JcaContentSignerBuilder(<span class="string"><span class="delimiter">&quot;</span><span class="content">SHA256WithRSA</span><span class="delimiter">&quot;</span></span>).build(dnie.privateKey);
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+</section>
+<section class="slide" id="_links_e_info">
+<h2>Links e Info</h2>
+<div class="ulist">
+<ul>
+<li>@jagedn Jorge Aguilera (me)</li>
+<li>@pvidasoftware (<a class="bare" href="http://www.puravida-software.com">http://www.puravida-software.com</a>) Puravida Software</li>
+<li>Griffon (<a class="bare" href="http://griffon-framework.org/">http://griffon-framework.org/</a>)</li>
+</ul>
+</div>
+</section>
+<section class="slide canvas-image" id="_gracias" style="background-image: url(../../gracias_multilingue.jpg)">
 
 </section>
 <div aria-role="navigation">
