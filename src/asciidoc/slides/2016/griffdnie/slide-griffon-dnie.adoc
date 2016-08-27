@@ -10,6 +10,7 @@ Jorge Aguilera
 :status:
 :goto:
 :linkattrs:
+:encoding: utf-8
 
 == $whoami
 
@@ -27,10 +28,10 @@ Jorge Aguilera
 
 == Desktop vs Web
 
-video::krjv8DxptQI[youtube, width=320, height=240, start=85, end=105]
+9 de cada 10 arquitectos software recomiendan una aplicaci&oacute;n web ....
 
 [%step]
-9 de cada 10 arquitectos software recomiendan una aplicaci&oacute;n web ....
+video::krjv8DxptQI[youtube, width=640, height=480, start=85, end=105]
 
 == Desktopqueeee
 
@@ -40,18 +41,26 @@ video::krjv8DxptQI[youtube, width=320, height=240, start=85, end=105]
 |image:DSC_0454.JPG[caption='']
 |===
 
-== GriffDnie
+== Alternativas RCP
 
-Aplicaci&oacute;n de ejemplo:
+RCP = Rich Client Platform
 
-- Griffon Framework
-- Swing
-- Identificaci&oacute;n de usuario mediante DNIe
-- Consumo de servicio REST
-- Firma digital de documentos con certificados del DNIe
-- show me the app
+[%step]
+NetBeans RCP
+
+[%step]
+Eclipse RCP
+
+[%step]
+Usando directamente Swing, JavaFX, ...
+
+[%step]
+Griffon
+
 
 == Griffon Framework
+
+Entorno de desarrollo de aplicaciones de escritorio inspirado en Grails.
 
 [%step]
 Quick Start = lazybones
@@ -60,12 +69,24 @@ Quick Start = lazybones
 Diferentes entornos (Swing, JavaFX, Apache Pivot) y lenguajes (Java, Groovy, Kotlin)
 
 [%step]
-Inspirado en Grails Framework, presenta numerosas similitudes
+Inspirado en Grails Framework, presenta numerosas similitudes (Controller, View, Services, DI, ...)
 
 [%step]
-Ejecutable en consola, desde web (JNLP), instalable, firmado, ...
+Ejecutable en consola, desde web (JNLP), instalable (IzPack, RPM, zip, tar), firmado, ...
+
+[%step]
+Groovy, Gradle, JUnit, Spock, AsciiDoctor ... en la punta de tus dedos
+
 
 == Griffon, estructura del proyecto
+
+[source,console]
+----
+lazybones create griffon-javafx-java sample-javax-java
+gradle build
+gradle test
+gradle run
+----
 
 * griffon-app
 ** conf
@@ -89,16 +110,14 @@ Ejecutable en consola, desde web (JNLP), instalable, firmado, ...
 * contiene las variables que usaran la vista y el controllador
 
 [source, groovy]
-./src/griffon-app/models/griffdni/GriffdniModel.groovy
+./src/griffon-app/models/griffdnifx/ChartModel.groovy
 ----
-import griffon.core.artifact.GriffonModel
-import griffon.metadata.ArtifactProviderFor
-import griffon.transform.Observable
-
 @ArtifactProviderFor(GriffonModel)
-class GriffdniModel {
-    @Observable String nif
-    @Observable String name
+class ChartModel {
+    @Observable Integer clickCount = 0
+
+    @Observable
+    ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList()
 }
 ----
 
@@ -107,20 +126,21 @@ class GriffdniModel {
 * Corresponde con el controller de Grails
 
 [source, groovy]
-./src/griffon-app/controllers/griffdni/GriffdnieController.groovy
+./src/griffon-app/controllers/griffdnifx/ChartController.groovy
 ----
-import griffon.core.artifact.GriffonController
-import griffon.metadata.ArtifactProviderFor
-import griffon.transform.Observable
-
 @ArtifactProviderFor(GriffonController)
-class GriffdniController implements ShutdownHandler{
-    GriffdniModel model
+class ChartController {
 
-    GriffdniView view
+    ChartModel model
 
-    boolean canShutdown(@Nonnull GriffonApplication application){
-        return model.nif == null
+    @Threading(Threading.Policy.OUTSIDE_UITHREAD)
+    void recalculateAction() {
+        // Long operation
+        // ...
+        runInsideUIsync{
+            model.pieChartData.clear()
+            model.pieChartData.addAll(datas)
+        }
     }
 }
 ----
@@ -130,32 +150,25 @@ class GriffdniController implements ShutdownHandler{
 * Corresponde (en cierta medida) con el GSP de Grails
 
 [source, groovy]
-./src/griffon-app/views/griffdni/GriffdnieView.groovy
+./src/griffon-app/views/griffdnifx/ChartView.groovy
 ----
-import griffon.core.artifact.GriffonView
-import griffon.metadata.ArtifactProviderFor
-import griffon.transform.Observable
-
 @ArtifactProviderFor(GriffonView)
-class GriffdniView{
+class ChartView extends AbstractJavaFXGriffonView{
     FactoryBuilderSupport builder
-
-    GriffdniModel model
+    ChartModel model
+    ChartController controller
 
     void initUI() {
-        builder.with {
-            application(size: [320, 160], id: 'mainWindow',
-                    extendedState: JFrame.MAXIMIZED_BOTH,
-                    title: application.configuration['application.title']){
-
-                    panel(){
-                        borderLayout()
-                        ...
-
+        builder.with{
+            content = fxml(resource('/com/puravida/chart.fxml'))
+        }
+    }
+}
 ----
 
 == MVC Group
 
+* $lazybones generate artifact::mvcgroup
 * artefacto que nos permite manejar el Modelo, la Vista y el Controlador como un todo.
 * tipicamente tendremos varios MVCGroups identificados por un nombre.
 * permite *inicializar* el conjunto
@@ -173,6 +186,7 @@ mvcGroups {
 }
 ----
 
+* *A día de hoy esta configuración la tienes que hacer tú a mano*
 
 == createMVCGroup
 
@@ -200,12 +214,364 @@ void showMemberInfo(){
 ./src/griffon-app/controllers/sample/SampleModel.groovy
 ----
 void mvcGroupInit(Map<String, Object> args) {
-    this.name = "$args.member.surname, $args.member.name"
+    this.name = args.member.surname+","+args.member.name
+}
+----
+
+== Service
+
+Al estilo de Grails podemos definir Servicios:
+
+[source, groovy]
+./src/griffon-app/services/sample/SampleService.groovy
+----
+@javax.inject.Singleton
+@ArtifactProviderFor(GriffonService)
+class SampleService {
+    int calculate(){
+        ...
+    }
+}
+----
+
+e inyectarlo en el controller que lo necesite
+[source, groovy]
+./src/griffon-app/controllers/sample/SampleController.groovy
+----
+...
+class SampleController{
+    @Inject
+    SampleService
+    ...
 }
 ----
 
 
-== Application
+== Threading
+
+La gestión de hilos en cualquier aplicación es crucial, y en una aplicación gráfica aún más si cabe.
+No podemos dejar "congelada" la aplicación mientras realizamos cálculos en el hilo gráfico.
+
+Griffon nos permite ejecutar código en el hilo correspondiente de una forma realmente fácil.
+
+[%step]
+Ejecución síncrona en el hilo gráfico
+
+runInsideUISync o @Threading(Threading.Policy.INSIDE_UITHREAD_SYNC)
+
+[%step]
+Ejecución asíncrona en el hilo gráfico
+
+runInsideUIAsync o @Threading(Threading.Policy.INSIDE_UITHREAD_ASYNC)
+
+[%step]
+Ejecución fuera del hilo gráfico
+
+runOutsideUI o @Threading(Threading.Policy.OUTSIDE_UITHREAD)
+
+== Events
+
+Griffon nos permite la comunicación entre componentes mediante eventos:
+
+application.eventRouter.publishEvent('MyEventName', ['arg0', 'arg1'])
+
+application.eventRouter.publishEventOutsideUI('MyEventName', ['arg0', 'arg1'])
+
+application.eventRouter.publishEventAsync('MyEventName', ['arg0', 'arg1'])
+
+class MyController {
+    void on*MyEventName*( args )
+        println args
+    }
+}
+
+== Internalizacion
+
+Griffon nos proporciona un sistema de internalización típico mediante:
+
+application.messageSource.getMessage('groovy.message', ['apples', 'bananas'])
+
+e incluso nos permite usar scripts de Groovy:
+
+[source, groovy]
+----
+import griffon.util.Environment
+warning.label = { args ->
+    if (Environment.current == Environment.PRODUCTION) {
+        "The application has encountered an error: $args"
+    } else {
+        "Somebody sent us a bomb! $args"
+    }
+}
+----
+
+== Pruebas Unitarias
+
+[source, groovy]
+----
+@TestFor(SampleController.class)
+public class SampleControllerTest {
+    @Rule
+    public final GriffonUnitRule griffon = new GriffonUnitRule();
+
+    @Test
+    public void executeSayHelloActionWithNoInput() {
+    ...
+    }
+}
+----
+
+== Pruebas Integracion
+
+[source, groovy]
+----
+import spock.lang.Specification
+
+public class SampleIntegrationSpec extends Specification{
+    @Rule
+    public final GriffonFestRule fest = new GriffonFestRule()
+
+    void 'Get default message if no input is given'() {
+        given:
+        window.textBox('inputField').enterText('Griffon')
+
+        when:
+        window.button('sayHelloButton').click()
+
+        then:
+        window.label('outputLabel').requireText('Hello Griffon')
+    }
+}
+----
+
+== Plugins
+
+Griffon cuenta con un extenso ecosistemas de plugins:
+
+- griffon-datasource-plugin (o hibernate, jpa, ibatis, ... )
+- griffon-fontawesome-plugin (o flagicons, fatcowicons, ..)
+- griffon-glazedlists-plugin
+- griffon-wslite-plugin
+- etc
 
 
+== Otros patrones
 
+Además del típico MVC Griffon permite utilizar otros patrones como son:
+
+- MVP (Model-View-Presenter)
+- MVVM (Model-View-ViewModel)
+- PVC (Presentation-View-Controller)
+
+
+== GriffDnieFx
+
+image:GriffDniFx.png[caption='']
+
+== GriffDnieFx
+
+Aplicaci&oacute;n de ejemplo:
+
+- Griffon Framework (JavaFx + Groovy)
+- Identificaci&oacute;n de usuario mediante DNIe
+- Controller controlando ControllerS
+- View embebiendo ViewS
+- Diferentes formas de construir vistas
+- Consumo de servicio REST
+- Firma digital de documentos con certificados del DNIe
+- Control de la navegación del usuario
+- show me the app
+
+== Config
+
+[source, groovy]
+./src/griffon-app/conf/Config.groovy
+----
+mvcGroups {
+    // MVC Group for "griffdnifx"
+    'griffdnifx' {
+        model      = 'com.puravida.GriffdnifxModel'
+        view       = 'com.puravida.GriffdnifxView'
+        controller = 'com.puravida.GriffdnifxController'
+    }
+
+    'login'{
+        model      = 'com.puravida.LoginModel'
+        view       = 'com.puravida.LoginView'
+        controller = 'com.puravida.LoginController'
+    }
+
+    'rest'{
+        model      = 'com.puravida.RestModel'
+        view       = 'com.puravida.RestView'
+        controller = 'com.puravida.RestController'
+    }
+
+    'agreement'{
+        model      = 'com.puravida.AgreementModel'
+        view       = 'com.puravida.AgreementView'
+        controller = 'com.puravida.AgreementController'
+    }
+
+    'chart'{
+        model      = 'com.puravida.ChartModel'
+        view       = 'com.puravida.ChartView'
+        controller = 'com.puravida.ChartController'
+    }
+}
+----
+
+== Control del usuario
+
+* No puede cerrar la aplicación cuando quiera:
+
+[source, groovy]
+./src/griffon-app/views/GriffdnifxView.groovy
+----
+
+...
+
+Stage stage = builder.application.primaryStage
+stage.maximized = true
+stage.onCloseRequest = { windowEvent ->
+    windowEvent.consume()
+}
+
+...
+
+----
+
+== Controller maestro vs especifico
+
+* GriffDnifxController gestiona el flujo de trabajo
+* LoginController gestiona el estado del lector
+* RestController realiza operaciones de REST
+* AgreementController gestiona la aceptación y firma
+* Los controllers se comunican con el padre
+
+Griffon inyecta dependencias y gestiona dependencias entre controller hijo y padre
+
+== Crear una vista mediante el DSL
+
+[source, groovy]
+./src/griffon-app/views/AgreementView.groovy
+----
+void initUI() {
+    FontAwesomeIcon icon = new FontAwesomeIcon(FontAwesome.FA_FILE_PDF_O)
+    builder.with{
+        tab(id:'mainTab', application.messageSource.getMessage('agreement'),
+                graphic:icon, closable:false){
+            borderPane{
+                top(align: 'center', margin: [0, 20, 20, 20]){
+                    button text: 'Acepto', userAgreeAction
+                }
+                center(){
+                    browser = webView(prefWidth: 200)
+                }
+            }
+        }
+    }
+    String url = application.resourceHandler.getResourceAsURL('web/viewer.html')
+    url += '?file=MadridGUG.pdf'
+    builder.browser.engine.load(url)
+    parentView.tabPane.tabs.add(tab=builder.mainTab);
+}
+----
+
+== Crear una vista mediante recursos
+
+(solo JavaFX)
+
+[source, groovy]
+./src/griffon-app/views/RestView.groovy
+----
+void initUI() {
+    builder.with{
+        content = fxml(resource('/com/puravida/restview.fxml')) {
+            bean(labelNif, text: bind(model.nifProperty))
+            ...
+        }
+    }
+    connectActions(builder.content, controller)
+    ...
+}
+----
+
+== Consumir REST
+
+[source, groovy]
+./src/griffon-app/views/RestController.groovy
+----
+@Threading(Threading.Policy.OUTSIDE_UITHREAD)
+void next(){
+    wsliteHandler.withRest([url: url], { Map<String, Object> params, RESTClient client ->
+        Response response = client.get(path: "/",accept: ContentType.JSON)
+        runInsideUIAsync{
+            model.list.add(RestModel.fromJson(response.json))
+        }
+    })
+}
+----
+
+== DNIe
+
+* Integración del DNIe
+
+- compile 'es.gob:jmulticard-jse:1.4'
+- compile 'es.gob:jmulticard-ui:1.4'
+
+== DNIe Login
+
+[source, groovy]
+./src/griffon-app/services/DnieService.groovy
+----
+provider = new DnieProvider(new SmartcardIoConnection())
+Security.addProvider(provider)
+
+final KeyStore ks = KeyStore.getInstance('DNI')
+
+final CallbackHandler callbackHandler = new DnieCallbackHandler()
+
+final KeyStore.LoadStoreParameter lsp = new KeyStore.LoadStoreParameter() {
+    @Override
+    public KeyStore.ProtectionParameter getProtectionParameter() {
+        return new KeyStore.CallbackHandlerProtection(callbackHandler)
+    }
+};
+
+ks.load(lsp)
+
+def privateKey = (PrivateKey) ks.getKey('CertAutenticacion', null)
+----
+
+== DNIe Firma
+
+* Firma de Pdf mediante Apache Pdfbox
+
+- compile 'org.apache.pdfbox:pdfbox:2.0.1'
+
+[source, groovy]
+./src/griffon-app/services/SignService.groovy
+----
+final PDDocument doc = PDDocument.load(fDestination)
+final PDSignature signature = new PDSignature()
+doc.addSignature(signature, new SignatureInterface() {
+    @Override
+    byte[] sign(InputStream content) throws IOException {
+        List<Certificate> certList = [dnie.certificate]
+        Store certs = new JcaCertStore(certList)
+        ...
+        ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA256WithRSA").build(dnie.privateKey);
+        ...
+    }
+}
+----
+
+== Links e Info
+
+* @jagedn Jorge Aguilera (me)
+* @pvidasoftware (http://www.puravida-software.com) Puravida Software
+* Griffon (http://griffon-framework.org/)
+
+[canvas-image=../../gracias_multilingue.jpg]
+== Gracias
