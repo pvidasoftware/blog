@@ -597,7 +597,9 @@ Integración del DNIe<div class="ulist">
 <div class="listingblock">
 <div class="title">/src/griffon-app/services/DnieService.groovy</div>
 <div class="content">
-<pre class="highlight"><code class="groovy language-groovy">provider = new DnieProvider(new SmartcardIoConnection())
+<pre class="highlight"><code class="groovy language-groovy">...
+
+provider = new DnieProvider(new SmartcardIoConnection())
 Security.addProvider(provider)
 
 final KeyStore ks = KeyStore.getInstance('DNI')
@@ -613,7 +615,9 @@ final KeyStore.LoadStoreParameter lsp = new KeyStore.LoadStoreParameter() {
 
 ks.load(lsp)
 
-def privateKey = (PrivateKey) ks.getKey('CertAutenticacion', null)</code></pre>
+def privateKey = (PrivateKey) ks.getKey('CertAutenticacion', null)
+
+...</code></pre>
 </div>
 </div>
 </section>
@@ -632,7 +636,9 @@ Firma de Pdf mediante Apache Pdfbox<div class="ulist">
 <div class="listingblock">
 <div class="title">/src/griffon-app/services/SignService.groovy</div>
 <div class="content">
-<pre class="highlight"><code class="groovy language-groovy">final PDDocument doc = PDDocument.load(fDestination)
+<pre class="highlight"><code class="groovy language-groovy">...
+
+final PDDocument doc = PDDocument.load(fDestination)
 final PDSignature signature = new PDSignature()
 doc.addSignature(signature, new SignatureInterface() {
     @Override
@@ -643,7 +649,9 @@ doc.addSignature(signature, new SignatureInterface() {
         ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA256WithRSA").build(dnie.privateKey);
         ...
     }
-}</code></pre>
+}
+
+...</code></pre>
 </div>
 </div>
 </section>
