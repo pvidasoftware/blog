@@ -149,9 +149,9 @@ integration-test<div class="ulist">
 <div class="content">
 <pre class="highlight"><code class="groovy language-groovy">@ArtifactProviderFor(GriffonModel)
 class ChartModel {
-    @Observable Integer clickCount = 0
+    @FXObservable Integer clickCount = 0
 
-    @Observable
+    @FXObservable
     ObservableList&lt;PieChart.Data&gt; pieChartData = FXCollections.observableArrayList()
 }</code></pre>
 </div>
