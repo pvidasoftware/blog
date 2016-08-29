@@ -355,7 +355,8 @@ warning.label = { args -&gt;
 <h2>Pruebas Unitarias</h2>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="groovy language-groovy">@TestFor(SampleController.class)
+<pre class="highlight"><code class="groovy language-groovy">// Extracto de test en JavaFX
+@TestFor(SampleController.class)
 public class SampleControllerTest {
     @Rule
     public final GriffonUnitRule griffon = new GriffonUnitRule();
@@ -372,7 +373,8 @@ public class SampleControllerTest {
 <h2>Pruebas Integracion</h2>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="groovy language-groovy">import spock.lang.Specification
+<pre class="highlight"><code class="groovy language-groovy">// Extracto de test en Swing
+import spock.lang.Specification
 
 public class SampleIntegrationSpec extends Specification{
     @Rule
