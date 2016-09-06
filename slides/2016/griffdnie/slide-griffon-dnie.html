@@ -192,18 +192,41 @@ class ChartController {
 </ul>
 </div>
 <div class="listingblock">
-<div class="title">/src/griffon-app/views/griffdnifx/ChartView.groovy</div>
+<div class="title">/src/griffon-app/views/griffdnifx/GriffdnifxView.groovy</div>
 <div class="content">
 <pre class="highlight"><code class="groovy language-groovy">@ArtifactProviderFor(GriffonView)
-class ChartView extends AbstractJavaFXGriffonView{
+class GriffdnifxView extends AbstractJavaFXGriffonView{
     FactoryBuilderSupport builder
-    ChartModel model
-    ChartController controller
 
     void initUI() {
-        builder.with{
-            content = fxml(resource('/com/puravida/chart.fxml'))
+        builder.application(title: application.configuration['application.title'],
+                sizeToScene: true, centerOnScreen: true, name: 'mainWindow') {
+            scene(stylesheets:['bootstrapfx.css']) {
+                borderPane{
+                    top {
+                        toolBar {
+                            button text: application.messageSource.getMessage('inicio'),
+                                    disable: bind(model.loggedProperty()),
+                                    styleClass: ['btn', 'btn-lg', 'btn-default'],
+                                    loginAction
+
+                            separator()
+
+                            label text: bind(model.nameProperty()),
+                                    styleClass: ['lbl','lbl-default']
+                        }
+                    }
+                    center {
+                        tabPane id: 'tabPane', styleClass: ['panel'], {
+
+                        }
+                    }
+                }
+            }
         }
+        tabPane = builder.tabPane
+
+        ...
     }
 }</code></pre>
 </div>
@@ -661,6 +684,7 @@ doc.addSignature(signature, new SignatureInterface() {
 <li>@jagedn Jorge Aguilera (me)</li>
 <li>@pvidasoftware (<a class="bare" href="http://www.puravida-software.com">http://www.puravida-software.com</a>) Puravida Software</li>
 <li>Griffon (<a class="bare" href="http://griffon-framework.org/">http://griffon-framework.org/</a>)</li>
+<li>GriffDnie ( <a class="bare" href="https://pvidasoftware.github.io/griffdnifx/">https://pvidasoftware.github.io/griffdnifx/</a> )</li>
 </ul>
 </div>
 </section>
