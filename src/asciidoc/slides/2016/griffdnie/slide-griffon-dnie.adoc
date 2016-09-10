@@ -4,8 +4,9 @@ Jorge Aguilera
 :backend: deckjs
 :deckjs_transition: horizontal-slide
 :deckjs_theme: neon
-:source-highlighter: coderay
+:source-highlighter: highlightjs
 :stylesheet: ../../../css/asciidoctor.css
+:customjs: ../../../js/customDeck.js
 :navigation:
 :status:
 :goto:
@@ -26,13 +27,6 @@ Jorge Aguilera
 |y desde hace +9 a&ntilde;os como freelance (a.k.a. chico para todo) en Puravida Software
 |===
 
-== Desktop vs Web
-
-9 de cada 10 arquitectos software recomiendan una aplicaci&oacute;n web ....
-
-[%step]
-video::krjv8DxptQI[youtube, width=640, height=480, start=85, end=105]
-
 == Desktopqueeee
 
 [cols="5,5"]
@@ -41,18 +35,24 @@ video::krjv8DxptQI[youtube, width=640, height=480, start=85, end=105]
 |image:DSC_0454.JPG[caption='']
 |===
 
-== Alternativas RCP
+== Desktop vs Web
 
-RCP = Rich Client Platform
+9 de cada 10 arquitectos software recomiendan una aplicaci&oacute;n web ....
+
+[%step]
+video::krjv8DxptQI[youtube, width=640, height=480, start=85, end=105]
+
+
+== Alternativas RCP  (Rich Client Platform)
+
+[%step]
+Usando directamente Swing, JavaFX, ...
 
 [%step]
 NetBeans RCP
 
 [%step]
 Eclipse RCP
-
-[%step]
-Usando directamente Swing, JavaFX, ...
 
 [%step]
 Griffon
@@ -114,9 +114,9 @@ gradle run
 ----
 @ArtifactProviderFor(GriffonModel)
 class ChartModel {
-    @Observable Integer clickCount = 0
+    @FXObservable Integer clickCount = 0
 
-    @Observable
+    @FXObservable
     ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList()
 }
 ----
@@ -150,18 +150,41 @@ class ChartController {
 * Corresponde (en cierta medida) con el GSP de Grails
 
 [source, groovy]
-./src/griffon-app/views/griffdnifx/ChartView.groovy
+./src/griffon-app/views/griffdnifx/GriffdnifxView.groovy
 ----
 @ArtifactProviderFor(GriffonView)
-class ChartView extends AbstractJavaFXGriffonView{
+class GriffdnifxView extends AbstractJavaFXGriffonView{
     FactoryBuilderSupport builder
-    ChartModel model
-    ChartController controller
 
     void initUI() {
-        builder.with{
-            content = fxml(resource('/com/puravida/chart.fxml'))
+        builder.application(title: application.configuration['application.title'],
+                sizeToScene: true, centerOnScreen: true, name: 'mainWindow') {
+            scene(stylesheets:['bootstrapfx.css']) {
+                borderPane{
+                    top {
+                        toolBar {
+                            button text: application.messageSource.getMessage('inicio'),
+                                    disable: bind(model.loggedProperty()),
+                                    styleClass: ['btn', 'btn-lg', 'btn-default'],
+                                    loginAction
+
+                            separator()
+
+                            label text: bind(model.nameProperty()),
+                                    styleClass: ['lbl','lbl-default']
+                        }
+                    }
+                    center {
+                        tabPane id: 'tabPane', styleClass: ['panel'], {
+
+                        }
+                    }
+                }
+            }
         }
+        tabPane = builder.tabPane
+
+        ...
     }
 }
 ----
@@ -241,7 +264,7 @@ e inyectarlo en el controller que lo necesite
 ...
 class SampleController{
     @Inject
-    SampleService
+    SampleService sampleService
     ...
 }
 ----
@@ -256,17 +279,14 @@ Griffon nos permite ejecutar código en el hilo correspondiente de una forma rea
 
 [%step]
 Ejecución síncrona en el hilo gráfico
-
 runInsideUISync o @Threading(Threading.Policy.INSIDE_UITHREAD_SYNC)
 
 [%step]
 Ejecución asíncrona en el hilo gráfico
-
 runInsideUIAsync o @Threading(Threading.Policy.INSIDE_UITHREAD_ASYNC)
 
 [%step]
 Ejecución fuera del hilo gráfico
-
 runOutsideUI o @Threading(Threading.Policy.OUTSIDE_UITHREAD)
 
 == Events
@@ -279,11 +299,14 @@ application.eventRouter.publishEventOutsideUI('MyEventName', ['arg0', 'arg1'])
 
 application.eventRouter.publishEventAsync('MyEventName', ['arg0', 'arg1'])
 
+[source, groovy]
+----
 class MyController {
-    void on*MyEventName*( args )
+    void onMyEventName( args )
         println args
     }
 }
+----
 
 == Internalizacion
 
@@ -309,6 +332,7 @@ warning.label = { args ->
 
 [source, groovy]
 ----
+// Extracto de test en JavaFX
 @TestFor(SampleController.class)
 public class SampleControllerTest {
     @Rule
@@ -325,6 +349,7 @@ public class SampleControllerTest {
 
 [source, groovy]
 ----
+// Extracto de test en Swing
 import spock.lang.Specification
 
 public class SampleIntegrationSpec extends Specification{
@@ -361,7 +386,7 @@ Además del típico MVC Griffon permite utilizar otros patrones como son:
 
 - MVP (Model-View-Presenter)
 - MVVM (Model-View-ViewModel)
-- PVC (Presentation-View-Controller)
+- PMVC (PresentationModel-View-Controller)
 
 
 == GriffDnieFx
@@ -525,6 +550,9 @@ void next(){
 [source, groovy]
 ./src/griffon-app/services/DnieService.groovy
 ----
+
+...
+
 provider = new DnieProvider(new SmartcardIoConnection())
 Security.addProvider(provider)
 
@@ -542,6 +570,9 @@ final KeyStore.LoadStoreParameter lsp = new KeyStore.LoadStoreParameter() {
 ks.load(lsp)
 
 def privateKey = (PrivateKey) ks.getKey('CertAutenticacion', null)
+
+...
+
 ----
 
 == DNIe Firma
@@ -553,6 +584,9 @@ def privateKey = (PrivateKey) ks.getKey('CertAutenticacion', null)
 [source, groovy]
 ./src/griffon-app/services/SignService.groovy
 ----
+
+...
+
 final PDDocument doc = PDDocument.load(fDestination)
 final PDSignature signature = new PDSignature()
 doc.addSignature(signature, new SignatureInterface() {
@@ -565,6 +599,9 @@ doc.addSignature(signature, new SignatureInterface() {
         ...
     }
 }
+
+...
+
 ----
 
 == Links e Info
@@ -572,6 +609,7 @@ doc.addSignature(signature, new SignatureInterface() {
 * @jagedn Jorge Aguilera (me)
 * @pvidasoftware (http://www.puravida-software.com) Puravida Software
 * Griffon (http://griffon-framework.org/)
+* GriffDnie ( https://pvidasoftware.github.io/griffdnifx/ )
 
 [canvas-image=../../gracias_multilingue.jpg]
 == Gracias

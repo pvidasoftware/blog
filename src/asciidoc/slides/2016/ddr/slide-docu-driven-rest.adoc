@@ -6,6 +6,7 @@ Jorge Aguilera
 :deckjs_theme: web-2.0
 :source-highlighter: coderay
 :stylesheet: ../../../css/asciidoctor.css
+:customjs: ../../../js/customDeck.js
 :navigation:
 :status:
 :goto:
