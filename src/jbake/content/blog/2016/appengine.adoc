@@ -115,7 +115,7 @@ $gcloud preview app deploy
 
 == Grails AppEngine profile
 
-Grails AppEngine profile https://github.com/jagedn/grails-profiles/appengine es un profile que genera un
+Grails AppEngine profile https://github.com/pvidasoftware/grails-profiles/ es un profile que genera un
 proyecto Grails 3.1 base para poder crear y subir una aplicación a AppEngine de una forma rápida.
 
 En primer lugar deberemos crear un proyecto mediante la consola de Google siguiendo los pasos oportunos.
